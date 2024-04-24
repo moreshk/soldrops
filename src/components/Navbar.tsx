@@ -56,7 +56,7 @@ export default function Navbar() {
           </div>
         ) : null}
       </div>
-      <div className="absolute right-10 top-10 sm:block hidden">
+      <div className="absolute right-24 top-10 sm:block hidden">
         <NovuNotification />
       </div>
     </div>

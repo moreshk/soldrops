@@ -1,6 +1,6 @@
 "use client";
 import { useWalletConnectButton } from "@solana/wallet-adapter-base-ui";
-import React, { ReactNode, useEffect } from "react";
+import React, { ReactNode } from "react";
 import { BaseWalletMultiButton } from "./wallet/BaseWalletMultiButton";
 import Image from "next/image";
 

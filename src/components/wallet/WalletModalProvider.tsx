@@ -36,6 +36,7 @@ export const ConnectWalletProvider: FC<WalletModalProviderProps> = ({
       .map((key) => new (allwalletAdatpers as any)[key]());
 
     return walletAdapters;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [network]);
 
   return (

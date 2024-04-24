@@ -4,10 +4,25 @@ import { Button } from "@/components/ui/button";
 import { WalletModalButton } from "../wallet/WalletModalButton";
 import { BaseWalletMultiButton } from "../wallet/BaseWalletMultiButton";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletConnectButton } from "@solana/wallet-adapter-base-ui";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export const Login = () => {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { connected } = useWallet();
+  const { buttonState } = useWalletConnectButton();
+  const { push } = useRouter();
+  const isLoggedIn = status === "authenticated";
+  const isWalletConnected = buttonState === "connected";
+
+  useEffect(() => {
+    if (isWalletConnected && isLoggedIn) {
+      console.log(isWalletConnected && isLoggedIn);
+      push("/dashboard");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, buttonState]);
 
   return (
     <div className="pt-10">

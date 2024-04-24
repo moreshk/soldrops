@@ -1,7 +1,4 @@
 import { pgTable, text, timestamp, foreignKey, primaryKey, integer } from "drizzle-orm/pg-core"
-  import { sql } from "drizzle-orm"
-
-
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey().notNull(),
@@ -14,7 +11,7 @@ export const user = pgTable("user", {
 
 export const session = pgTable("session", {
 	sessionToken: text("sessionToken").primaryKey().notNull(),
-	userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" } ),
+	userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
 	expires: timestamp("expires", { mode: 'string' }).notNull(),
 	id: text("id"),
 });
@@ -24,14 +21,14 @@ export const verificationToken = pgTable("verificationToken", {
 	token: text("token").notNull(),
 	expires: timestamp("expires", { mode: 'string' }).notNull(),
 },
-(table) => {
-	return {
-		verificationTokenIdentifierTokenPk: primaryKey({ columns: [table.identifier, table.token], name: "verificationToken_identifier_token_pk"})
-	}
-});
+	(table) => {
+		return {
+			verificationTokenIdentifierTokenPk: primaryKey({ columns: [table.identifier, table.token], name: "verificationToken_identifier_token_pk" })
+		}
+	});
 
 export const account = pgTable("account", {
-	userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" } ),
+	userId: text("userId").notNull().references(() => user.id, { onDelete: "cascade" }),
 	type: text("type").notNull(),
 	provider: text("provider").notNull(),
 	providerAccountId: text("providerAccountId").notNull(),
@@ -43,8 +40,8 @@ export const account = pgTable("account", {
 	idToken: text("id_token"),
 	sessionState: text("session_state"),
 },
-(table) => {
-	return {
-		accountProviderProviderAccountIdPk: primaryKey({ columns: [table.provider, table.providerAccountId], name: "account_provider_providerAccountId_pk"})
-	}
-});
+	(table) => {
+		return {
+			accountProviderProviderAccountIdPk: primaryKey({ columns: [table.provider, table.providerAccountId], name: "account_provider_providerAccountId_pk" })
+		}
+	});
