@@ -1,7 +1,5 @@
 "use client";
 import { useWalletConnectButton } from "@solana/wallet-adapter-base-ui";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import React, { ReactNode, useEffect } from "react";
 import { BaseWalletMultiButton } from "./wallet/BaseWalletMultiButton";
 import Image from "next/image";

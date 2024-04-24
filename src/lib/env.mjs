@@ -9,7 +9,6 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     TWITTER_CLIENT_ID: z.string().min(1),
     TWITTER_CLIENT_SECRET: z.string().min(1),
-
     NEXTAUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string().min(1)
@@ -24,6 +23,8 @@ export const env = createEnv({
   },
   client: {
     NEXT_PUBLIC_GLITCHTIP_DNS: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
+    NEXT_PUBLIC_POSTHOG_HOST: z.string().min(1),
   },
   // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
   // runtimeEnv: {
