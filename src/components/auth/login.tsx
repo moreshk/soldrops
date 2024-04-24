@@ -34,7 +34,9 @@ export const Login = () => {
       )}
 
       {status === "unauthenticated" && (
-        <Button onClick={() => signIn()}>Connect Twitter</Button>
+        <Button onClick={() => signIn("twitter", { callbackUrl: "/" })}>
+          Connect Twitter
+        </Button>
       )}
     </div>
   );
