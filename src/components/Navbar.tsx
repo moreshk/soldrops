@@ -25,7 +25,7 @@ export default function Navbar() {
             </h1>
           </div>
           <div className="flex justify-center items-center gap-2">
-            <NovuNotification />
+            {/* <NovuNotification /> */}
             <Button variant="ghost" onClick={() => setOpen(!open)}>
               <AlignRight />
             </Button>
@@ -56,9 +56,9 @@ export default function Navbar() {
           </div>
         ) : null}
       </div>
-      <div className="absolute right-24 top-10 sm:block hidden">
+      {/* <div className="absolute right-24 top-10 sm:block hidden">
         <NovuNotification />
-      </div>
+      </div> */}
     </div>
   );
 }

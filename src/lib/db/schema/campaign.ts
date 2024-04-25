@@ -28,7 +28,7 @@ export const campaign = pgTable("campaign", {
   totalWalletNumber: integer("total_wallet_number").notNull(),
   twitterHandel: varchar("twitter_handel", { length: 256 }),
   announcementTweet: varchar("announcement_tweet", { length: 256 }),
-  goLiveData: timestamp("go_live_data").notNull(),
+  goLiveData: timestamp("go_live_data", { mode: 'string' }).notNull(),
   visibilityStatus: boolean("visibility_status").notNull().default(false),
   isCampaignEnded: boolean("is_campaign_ended").notNull().default(false),
   canCampaignUpdate: boolean("can_campaign_update").notNull().default(true),
@@ -54,8 +54,8 @@ export const insertCampaignParams = baseSchema
     totalWalletNumber: z.coerce.number(),
     tokenDecimal: z.coerce.number(),
     goLiveData: z.coerce.string().min(1),
-    twitterHandel: z.coerce.string(),
-    announcementTweet: z.coerce.string()
+    twitterHandel: z.coerce?.string(),
+    announcementTweet: z.coerce?.string()
   })
   .omit({
     id: true,

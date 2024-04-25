@@ -52,19 +52,21 @@ const CampaignForm = ({
     defaultValues: campaign
       ? {
           tokenContractAddress: campaign.tokenContractAddress,
+          tokenDecimal: campaign.tokenDecimal,
           tokenSymbol: campaign.tokenSymbol,
           tokenImage: campaign.tokenImage,
           totalTokenDrop: campaign.totalTokenDrop,
           totalWalletNumber: campaign.totalWalletNumber,
           twitterHandel: campaign.twitterHandel || "",
           announcementTweet: campaign.announcementTweet || "",
-          goLiveData: campaign.goLiveData.toISOString(),
+          goLiveData: campaign.goLiveData.toString(),
         }
       : {
           tokenContractAddress: "",
           tokenSymbol: "",
           tokenImage: "",
           totalTokenDrop: 0,
+          tokenDecimal: 0,
           totalWalletNumber: 0,
           twitterHandel: "",
           announcementTweet: "",
@@ -109,7 +111,10 @@ const CampaignForm = ({
     if (editing) {
       updateCampaign({ ...values, id: campaign.id });
     } else {
-      createCampaign(values);
+      createCampaign({
+        ...values,
+        goLiveData: new Date(values.goLiveData).toISOString(),
+      });
     }
   };
   return (
@@ -153,6 +158,19 @@ const CampaignForm = ({
                 <Input {...field} />
               </FormControl>
 
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="tokenDecimal"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Token Decimal</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -251,7 +269,6 @@ const CampaignForm = ({
                   />
                 </PopoverContent>
               </Popover>
-
               <FormMessage />
             </FormItem>
           )}
