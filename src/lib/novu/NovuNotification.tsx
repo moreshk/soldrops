@@ -13,7 +13,7 @@ export const NovuNotification = () => {
   return (
     <NovuProvider
       backendUrl="https://novu.soldrops.xyz/api"
-      socketUrl="https://novu.soldrops.xyz/ws/"
+      socketUrl="https://ws-novu.soldrops.xyz"
       subscriberId="662931db7531a9f306b34274"
       applicationIdentifier="00s_if8oSQZF"
     >
