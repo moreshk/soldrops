@@ -14,6 +14,7 @@ import Image from "next/image";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
   return (
     <div>
       <div className="md:hidden border-b mb-4 pb-2 w-full">
@@ -25,7 +26,7 @@ export default function Navbar() {
             </h1>
           </div>
           <div className="flex justify-center items-center gap-2">
-            {/* <NovuNotification /> */}
+            <NovuNotification />
             <Button variant="ghost" onClick={() => setOpen(!open)}>
               <AlignRight />
             </Button>
@@ -56,9 +57,9 @@ export default function Navbar() {
           </div>
         ) : null}
       </div>
-      {/* <div className="absolute right-24 top-10 sm:block hidden">
+      <div className="absolute right-24 top-10 sm:block hidden">
         <NovuNotification />
-      </div> */}
+      </div>
     </div>
   );
 }
