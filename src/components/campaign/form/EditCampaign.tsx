@@ -19,7 +19,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
-import { z } from "zod";
 import {
   Popover,
   PopoverContent,
@@ -36,7 +35,7 @@ const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
   const router = useRouter();
   const utils = trpc.useContext();
 
-  const form = useForm<z.infer<typeof updateCampaignParams>>({
+  const form = useForm<UpdateCampaignParams>({
     resolver: zodResolver(updateCampaignParams),
     defaultValues: {
       ...campaign,
