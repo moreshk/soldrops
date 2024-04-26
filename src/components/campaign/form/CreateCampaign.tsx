@@ -49,7 +49,7 @@ const CampaignForm = () => {
   const router = useRouter();
   const utils = trpc.useContext();
 
-  const form = useForm<z.infer<typeof insertCampaignParams>>({
+  const form = useForm<NewCampaignParams>({
     resolver: zodResolver(insertCampaignParams),
     defaultValues: {
       tokenContractAddress: "",
