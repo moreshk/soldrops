@@ -7,14 +7,17 @@ import {
   deleteCampaign,
   updateCampaign,
 } from "@/lib/api/campaign/mutations";
-import { 
+import {
   campaignIdSchema,
   insertCampaignParams,
-  updateCampaignParams 
+  updateCampaignParams
 } from "@/lib/db/schema/campaign";
+import { getUserAuth } from "@/lib/auth/utils";
 
 export async function POST(req: Request) {
   try {
+    const { session } = await getUserAuth();
+    if (!session) return new Response("Error", { status: 400 });
     const validatedData = insertCampaignParams.parse(await req.json());
     const { campaign } = await createCampaign(validatedData);
 
@@ -33,6 +36,8 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
+    const { session } = await getUserAuth();
+    if (!session) return new Response("Error", { status: 400 });
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -53,6 +58,8 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    const { session } = await getUserAuth();
+    if (!session) return new Response("Error", { status: 400 });
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 

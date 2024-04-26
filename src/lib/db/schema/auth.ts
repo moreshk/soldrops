@@ -4,7 +4,7 @@ import {
   text,
   primaryKey,
   integer,
-  serial
+  boolean,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 
@@ -15,6 +15,9 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   walletAddress: text("walletAddress"),
+  isAdmin: boolean("isAdmin").default(false),
+  userType: text("user_type").default("user"),
+  defaultURL: text("default_url").default("/dashboard"),
 });
 
 export const accounts = pgTable(
@@ -40,7 +43,7 @@ export const accounts = pgTable(
 );
 
 export const sessions = pgTable("session", {
-  id: text('id'),
+  id: text("id"),
   sessionToken: text("sessionToken").notNull().primaryKey(),
   userId: text("userId")
     .notNull()

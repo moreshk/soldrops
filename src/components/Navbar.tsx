@@ -3,17 +3,17 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
-
 import { AlignRight } from "lucide-react";
 import { defaultLinks } from "@/config/nav";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <div>
@@ -26,7 +26,7 @@ export default function Navbar() {
             </h1>
           </div>
           <div className="flex justify-center items-center gap-2">
-            <NovuNotification />
+            <NovuNotification subscriberId={session?.user.id} />
             <Button variant="ghost" onClick={() => setOpen(!open)}>
               <AlignRight />
             </Button>
@@ -58,7 +58,7 @@ export default function Navbar() {
         ) : null}
       </div>
       <div className="absolute right-24 top-10 sm:block hidden">
-        <NovuNotification />
+        <NovuNotification subscriberId={session?.user.id} />
       </div>
     </div>
   );

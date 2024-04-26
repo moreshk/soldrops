@@ -9,6 +9,8 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     TWITTER_CLIENT_ID: z.string().min(1),
     TWITTER_CLIENT_SECRET: z.string().min(1),
+    NOVU_API_KEY: z.string().min(1),
+    HELIUS_RPC_URL: z.string().min(1),
     NEXTAUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string().min(1)

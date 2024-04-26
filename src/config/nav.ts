@@ -21,6 +21,11 @@ export const additionalLinks: AdditionalLinks[] = [
         title: "Campaign",
         icon: Globe,
       },
+      {
+        href: "/join-campaign",
+        title: "Join Campaign",
+        icon: Globe,
+      },
     ],
   },
 

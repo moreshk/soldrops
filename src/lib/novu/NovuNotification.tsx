@@ -3,21 +3,44 @@ import {
   NovuProvider,
   PopoverNotificationCenter,
   NotificationBell,
+  ButtonTypeEnum,
+  IMessage,
 } from "@novu/notification-center";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
-export const NovuNotification = () => {
+export const NovuNotification = ({
+  subscriberId,
+}: {
+  subscriberId?: string;
+}) => {
   const { systemTheme, theme } = useTheme();
   const notificationTheme = getNotificationTheme(theme, systemTheme);
+  const { push } = useRouter();
+  if (!subscriberId) {
+    return null;
+  }
 
   return (
     <NovuProvider
       backendUrl="https://novu.soldrops.xyz/api"
       socketUrl="https://ws-novu.soldrops.xyz"
-      subscriberId="662931db7531a9f306b34274"
-      applicationIdentifier="00s_if8oSQZF"
+      subscriberId={subscriberId}
+      applicationIdentifier={
+        process.env.NEXT_PUBLIC_NOVU_APPLICATION_IDENTIFIER!
+      }
     >
-      <PopoverNotificationCenter colorScheme={notificationTheme}>
+      <PopoverNotificationCenter
+        footer={() => <></>}
+        colorScheme={notificationTheme}
+        onActionClick={(
+          templateIdentifier: string,
+          type: ButtonTypeEnum,
+          message: IMessage
+        ) => {
+          if (message.cta?.data.url) push(message.cta?.data.url);
+        }}
+      >
         {({ unseenCount }) => <NotificationBell unseenCount={unseenCount} />}
       </PopoverNotificationCenter>
     </NovuProvider>
