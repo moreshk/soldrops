@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
+import { z } from "zod";
 import {
   Popover,
   PopoverContent,
@@ -47,7 +48,8 @@ const CampaignForm = () => {
   const [isSendingFee, setIsSendingFee] = useState(false);
   const router = useRouter();
   const utils = trpc.useContext();
-  const form = useForm<NewCampaignParams>({
+
+  const form = useForm<z.infer<typeof insertCampaignParams>>({
     resolver: zodResolver(insertCampaignParams),
     defaultValues: {
       tokenContractAddress: "",
