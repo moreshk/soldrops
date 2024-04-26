@@ -8,8 +8,6 @@ import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { clusterApiUrl } from "@solana/web3.js";
 import * as AllWalletAdapters from "@solana/wallet-adapter-wallets";
 
 const {
@@ -27,16 +25,16 @@ export const ConnectWalletProvider: FC<WalletModalProviderProps> = ({
   ...props
 }) => {
   const [visible, setVisible] = useState(false);
-  const network = WalletAdapterNetwork.Devnet;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
+  const endpoint =
+    "https://multi-wiser-sponge.solana-mainnet.quiknode.pro/26d3156efb1255e9810b3aa12d197d6d73414636/";
   const wallets = useMemo(() => {
     const walletAdapters = Object.keys(allwalletAdatpers)
       .filter((key) => key.includes("Adapter"))
       .map((key) => new (allwalletAdatpers as any)[key]());
 
     return walletAdapters;
-  }, [network]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>

@@ -7,6 +7,11 @@ import NextAuthProvider from "@/lib/auth/Provider";
 import TrpcProvider from "@/lib/trpc/Provider";
 import { cookies } from "next/headers";
 import { ConnectWalletProvider } from "@/components/wallet/WalletModalProvider";
+import { PHProvider } from "@/lib/posthog/PosthogProvider";
+import dynamic from "next/dynamic";
+const PostHogPageView = dynamic(() => import("@/lib/posthog/PostHogPageView"), {
+  ssr: false,
+});
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -57,12 +62,17 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextAuthProvider>
-            <TrpcProvider cookies={cookies().toString()}>
-              <ConnectWalletProvider>{children}</ConnectWalletProvider>
-            </TrpcProvider>
-          </NextAuthProvider>
-          <Toaster richColors />
+          <PHProvider>
+            <NextAuthProvider>
+              <TrpcProvider cookies={cookies().toString()}>
+                <ConnectWalletProvider>
+                  {children}
+                  <PostHogPageView />
+                </ConnectWalletProvider>
+              </TrpcProvider>
+            </NextAuthProvider>
+            <Toaster richColors />
+          </PHProvider>
         </ThemeProvider>
       </body>
     </html>

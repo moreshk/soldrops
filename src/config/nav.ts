@@ -12,4 +12,22 @@ export const defaultLinks: SidebarLink[] = [
   { href: "/settings", title: "Settings", icon: Cog },
 ];
 
-export const additionalLinks: AdditionalLinks[] = [];
+export const additionalLinks: AdditionalLinks[] = [
+  {
+    title: "Entities",
+    links: [
+      {
+        href: "/campaign",
+        title: "Campaign",
+        icon: Globe,
+      },
+      {
+        href: "/join-campaign",
+        title: "Join Campaign",
+        icon: Globe,
+      },
+    ],
+  },
+
+];
+

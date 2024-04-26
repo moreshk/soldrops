@@ -4,6 +4,7 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env.mjs"
+import TwitterProvider from "next-auth/providers/twitter";
 
 
 declare module "next-auth" {
@@ -26,6 +27,7 @@ export type AuthSession = {
 
 export const authOptions: NextAuthOptions = {
   adapter: DrizzleAdapter(db) as Adapter,
+  secret: env.NEXTAUTH_SECRET,
   callbacks: {
     session: ({ session, user }) => {
       session.user.id = user.id;
@@ -33,7 +35,11 @@ export const authOptions: NextAuthOptions = {
     },
   },
   providers: [
-
+    TwitterProvider({
+      clientId: env.TWITTER_CLIENT_ID!,
+      clientSecret: env.TWITTER_CLIENT_SECRET!,
+      version: "2.0"
+    })
   ],
 };
 

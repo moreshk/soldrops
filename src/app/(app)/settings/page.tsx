@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 
 export default function Page() {
-  const { setTheme } = useTheme();
+  const { setTheme, systemTheme } = useTheme();
   return (
     <div>
       <h1 className="text-2xl font-semibold">Settings</h1>
