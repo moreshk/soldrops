@@ -18,10 +18,7 @@ export const getCampaigns = async () => {
 };
 
 export const getLiveCampaigns = async () => {
-  const rows = await db
-    .select()
-    .from(campaign)
-    .where(eq(campaign.isCampaignEnded, true));
+  const rows = await db.select().from(campaign);
   const c = rows;
   return { campaign: c };
 };

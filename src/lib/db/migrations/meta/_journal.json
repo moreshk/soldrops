@@ -50,6 +50,20 @@
       "when": 1714156759869,
       "tag": "0006_right_bloodscream",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1714198353553,
+      "tag": "0007_shocking_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1714466121599,
+      "tag": "0008_careful_purifiers",
+      "breakpoints": true
     }
   ]
 }

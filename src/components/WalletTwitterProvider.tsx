@@ -1,16 +1,69 @@
 "use client";
 import { useWalletConnectButton } from "@solana/wallet-adapter-base-ui";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { BaseWalletMultiButton } from "./wallet/BaseWalletMultiButton";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { Button } from "./ui/button";
+import { UnplugIcon } from "lucide-react";
+import { trpc } from "@/lib/trpc/client";
+import { toast } from "sonner";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const WalletTwitterProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
+  const { data: session, update } = useSession();
   const { buttonState } = useWalletConnectButton();
-  const isWalletConnected = buttonState === "connected";
+  const [walletError, setWalletError] = useState(false);
+  const { publicKey } = useWallet();
+  const isWalletConnected =
+    buttonState === "connected" &&
+    session?.user?.walletAddress === publicKey?.toString();
+
+  const onComplete = async (data?: { error?: string }) => {
+    if (data?.error) {
+      toast.error(data.error);
+      return;
+    }
+    if (session) {
+      await update();
+      toast.success(`Account connected successfully`);
+      window.location.reload();
+    }
+  };
+  const { mutate: updateWallet, isLoading: isUpdating } =
+    trpc.auth.updateUserWallet.useMutation({
+      onSuccess: (res) => onComplete(),
+      onError: (err) => {
+        onComplete({ error: err.message });
+      },
+    });
+
+  const linkWalletAddress = () => {
+    const walletAddress = publicKey?.toString();
+    if (walletAddress) {
+      updateWallet({ walletAddress });
+    }
+  };
+
+  useEffect(() => {
+    if (buttonState === "connected" && publicKey) {
+      if (session?.user) {
+        if (session.user.walletAddress) {
+          if (session.user.walletAddress !== publicKey.toString()) {
+            setWalletError(true);
+            toast.error(`Invalid wallet connected with twitter account`);
+          }
+        } else {
+          linkWalletAddress();
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [publicKey, buttonState, session]);
 
   return isWalletConnected ? (
     children
@@ -32,7 +85,34 @@ export const WalletTwitterProvider = ({
                   greatest airdrops on Solana
                 </h1>
               </div>
-              <div className="flex flex-col gap-2">
+              {isUpdating && (
+                <div>
+                  <p>Please wait</p>
+                  <p>
+                    we are Connecting you Twitter account with the wallet
+                    Address
+                  </p>
+                </div>
+              )}
+              {walletError && (
+                <p>
+                  Invalid wallet connected with twitter account please connect{" "}
+                  {session?.user.walletAddress} refresh the page
+                </p>
+              )}
+              <div className="flex items-center gap-3">
+                {session && (
+                  <>
+                    <Button>
+                      <div className="flex gap-2 items-center">
+                        <p className="text-xs">{session?.user.name ?? ""}</p>
+                      </div>
+                    </Button>
+                    <Button>
+                      <UnplugIcon className="rotate-45" />
+                    </Button>
+                  </>
+                )}
                 <BaseWalletMultiButton
                   labels={{
                     "change-wallet": "Change Wallet",

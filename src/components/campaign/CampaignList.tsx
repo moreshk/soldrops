@@ -44,7 +44,10 @@ const Campaign = ({ campaign }: { campaign: CompleteCampaign }) => {
             {campaign.tokenSymbol} ({campaign.tokenContractAddress})
           </div>
           <div>
-            Go live date - {format(new Date(campaign.goLiveData), "PPP")}
+            Go live date - {format(new Date(campaign.startDate), "PPP")}
+          </div>
+          <div>
+            Campain End date - {format(new Date(campaign.endDate), "PPP")}
           </div>
           {campaign.twitterHandel && (
             <div>Twitter handel {campaign.twitterHandel}</div>
