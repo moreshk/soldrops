@@ -1,12 +1,17 @@
-import { DefaultSession } from "next-auth";
+import { DefaultUser } from "next-auth";
 import NextAuth from "next-auth/next";
 import { authOptions } from "@/lib/auth/utils";
 
 declare module "next-auth" {
+  interface User extends DefaultUser {
+    id: string;
+    walletAddress?: string;
+    isAdmin: boolean;
+    userType: string;
+    defaultURL: string;
+  }
   interface Session {
-    user: DefaultSession["user"] & {
-      id: string;
-    };
+    user: User;
   }
 }
 

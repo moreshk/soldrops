@@ -20,17 +20,10 @@ import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { CalendarIcon, Loader2 } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { LaunchDate } from "./LaunchDate";
 
 const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
   const router = useRouter();
@@ -43,14 +36,12 @@ const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
       id: campaign.id,
       twitterHandel: campaign.twitterHandel || "",
       announcementTweet: campaign.announcementTweet || "",
-      goLiveData: campaign.goLiveData.toString(),
+      startDate: campaign.startDate,
+      endDate: campaign.endDate,
     },
   });
 
-  const onComplete = async (
-    action: "create" | "update" | "delete",
-    data?: { error?: string }
-  ) => {
+  const onComplete = async (data?: { error?: string }) => {
     if (data?.error) {
       toast.error(data.error);
       return;
@@ -62,14 +53,13 @@ const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
   };
   const { mutate: updateCampaign, isLoading: isUpdating } =
     trpc.campaign.updateCampaign.useMutation({
-      onSuccess: (res) => onComplete("update"),
-      onError: (err) => onComplete("update", { error: err.message }),
+      onSuccess: (res) => onComplete(),
+      onError: (err) => onComplete({ error: err.message }),
     });
 
   const handleSubmit = async (values: UpdateCampaignParams) => {
     updateCampaign({
       ...values,
-      goLiveData: new Date(values.goLiveData).toISOString(),
       id: campaign.id,
     });
   };
@@ -141,54 +131,7 @@ const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
               )}
             />
           </fieldset>
-          <fieldset className="border-4 rounded-xl border-solid px-6 pt-5 pb-7 hover:border-blue-300 group">
-            <legend className="text-lg font-medium group-hover:text-blue-300">
-              Launch details
-            </legend>
-            <FormField
-              control={form.control}
-              name="goLiveData"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Go Live Data</FormLabel>
-                  <br />
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          disabled={field.disabled}
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(new Date(field.value), "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={new Date(field.value)}
-                        onSelect={field.onChange}
-                        disabled={(date) =>
-                          date < new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </fieldset>
+          <LaunchDate />
           <Button type="submit" className="w-full" disabled={isUpdating}>
             {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             <>{isUpdating ? "Updating Campaign..." : "Update Campaign"}</>

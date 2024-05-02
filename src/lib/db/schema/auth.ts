@@ -7,6 +7,8 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
+import { createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 export const users = pgTable("user", {
   id: text("id").notNull().primaryKey(),
@@ -62,3 +64,12 @@ export const verificationTokens = pgTable(
     compoundKey: primaryKey(vt.identifier, vt.token),
   })
 );
+
+const baseSchema = createSelectSchema(users);
+export type UserType = typeof users.$inferSelect;
+
+export const userWalletSchema = baseSchema.pick({ walletAddress: true });
+
+export const userIdSchema = baseSchema.pick({ id: true });
+
+export type UserId = z.infer<typeof userIdSchema>["id"];

@@ -17,6 +17,11 @@ export const additionalLinks: AdditionalLinks[] = [
     title: "Entities",
     links: [
       {
+        href: "/whitelist",
+        title: "Whitelist",
+        icon: Globe,
+      },
+      {
         href: "/campaign",
         title: "Campaign",
         icon: Globe,

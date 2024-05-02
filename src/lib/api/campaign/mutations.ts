@@ -28,7 +28,7 @@ export const createCampaign = async (campaignData: NewCampaignParams) => {
     await novu.topics.addSubscribers(c.id, {
       subscribers: [session?.user.id!],
     });
-    const a = await novu.broadcast("new-campaign-created", {
+    await novu.broadcast("new-campaign-created", {
       payload: {
         token_name: c.tokenSymbol,
         campain_id: c.id,
@@ -58,7 +58,8 @@ export const updateCampaign = async (
       .update(campaign)
       .set({
         updatedAt: new Date(),
-        goLiveData: updatedCampaign.goLiveData,
+        startDate: updatedCampaign.startDate,
+        endDate: updatedCampaign.endDate,
         twitterHandel: updatedCampaign.twitterHandel,
         announcementTweet: updatedCampaign.announcementTweet,
       })
@@ -91,7 +92,7 @@ export const deleteCampaign = async (id: CampaignId) => {
         )
       )
       .returning();
-    const response = await novu.topics.delete(campaignId);
+    await novu.topics.delete(campaignId);
     return { campaign: c };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";

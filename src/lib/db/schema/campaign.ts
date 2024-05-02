@@ -28,7 +28,8 @@ export const campaign = pgTable("campaign", {
   totalWalletNumber: integer("total_wallet_number").notNull(),
   twitterHandel: varchar("twitter_handel", { length: 256 }),
   announcementTweet: varchar("announcement_tweet", { length: 256 }),
-  goLiveData: timestamp("go_live_data", { mode: "string" }).notNull(),
+  startDate: timestamp("start_data", { mode: "date" }).notNull(),
+  endDate: timestamp("end_Date", { mode: "date" }).notNull(),
   visibilityStatus: boolean("visibility_status").notNull().default(true),
   isCampaignEnded: boolean("is_campaign_ended").notNull().default(false),
   transactionHash: varchar("transaction_hash", { length: 256 }),
@@ -44,20 +45,23 @@ export const campaign = pgTable("campaign", {
     .default(sql`now()`),
 });
 
-// Schema for campaign - used to validate API requests
 const baseSchema = createSelectSchema(campaign).omit(timestamps);
 
 export const insertCampaignSchema =
   createInsertSchema(campaign).omit(timestamps);
 export const insertCampaignParams = baseSchema
   .extend({
-    totalTokenDrop: z.coerce.number(),
-    totalWalletNumber: z.coerce.number(),
+    totalTokenDrop: z.coerce.number().gte(1),
+    totalWalletNumber: z.coerce.number().gte(1),
     tokenDecimal: z.coerce.number(),
-    goLiveData: z.coerce.string().min(1),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date(),
     twitterHandel: z.coerce?.string(),
     announcementTweet: z.coerce?.string(),
     transactionHash: z.coerce?.string(),
+    tokenContractAddress: z.coerce.string().nonempty(),
+    tokenSymbol: z.coerce.string().nonempty(),
+    tokenImage: z.coerce.string().nonempty(),
   })
   .omit({
     id: true,
@@ -70,7 +74,8 @@ export const insertCampaignParams = baseSchema
 export const updateCampaignSchema = baseSchema;
 export const updateCampaignParams = baseSchema
   .extend({
-    goLiveData: z.coerce.string().min(1),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date(),
     twitterHandel: z.coerce?.string(),
     announcementTweet: z.coerce?.string(),
   })
