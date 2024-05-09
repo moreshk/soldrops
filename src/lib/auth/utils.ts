@@ -14,6 +14,8 @@ declare module "next-auth" {
     isAdmin: boolean;
     userType: string;
     defaultURL: string;
+    username?: string;
+    walletAddress?: string;
   }
   interface Session {
     user: User;
@@ -28,7 +30,9 @@ export type AuthSession = {
       email?: string;
       isAdmin: boolean;
       userType: string;
+      username?: string;
       defaultURL: string;
+      walletAddress: string;
     };
   } | null;
 };
@@ -45,6 +49,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, user }) => {
       session.user.id = user.id;
+      session.user.isAdmin = user.isAdmin;
+      session.user.walletAddress = user.walletAddress;
+      session.user.userType = user.userType;
+      session.user.defaultURL = user.defaultURL;
+      session.user.username = user.username;
       return session;
     },
   },

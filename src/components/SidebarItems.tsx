@@ -12,6 +12,7 @@ export interface SidebarLink {
   title: string;
   href: string;
   icon: LucideIcon;
+  visibility: boolean;
 }
 
 const SidebarItems = () => {
@@ -53,11 +54,13 @@ const SidebarLinkGroup = ({
         </h4>
       ) : null}
       <ul>
-        {links.map((link) => (
-          <li key={link.title}>
-            <SidebarLink link={link} active={pathname === link.href} />
-          </li>
-        ))}
+        {links
+          .filter((link) => link.visibility)
+          .map((link) => (
+            <li key={link.title}>
+              <SidebarLink link={link} active={pathname === link.href} />
+            </li>
+          ))}
       </ul>
     </div>
   );
@@ -80,7 +83,7 @@ const SidebarLink = ({
         <div
           className={cn(
             "opacity-0 left-0 h-6 w-[4px] absolute rounded-r-lg bg-primary",
-            active ? "opacity-100" : "",
+            active ? "opacity-100" : ""
           )}
         />
         <link.icon className="h-3.5 mr-1" />
