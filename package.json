@@ -18,7 +18,7 @@
   "dependencies": {
     "@auth/core": "^0.30.0",
     "@auth/drizzle-adapter": "^1.0.0",
-    "@hookform/resolvers": "^3.3.4",
+    "@hookform/resolvers": "^3.3.1",
     "@novu/node": "^0.24.1",
     "@novu/notification-center": "^0.24.1",
     "@radix-ui/react-avatar": "^1.0.4",
@@ -39,10 +39,14 @@
     "@solana/web3.js": "^1.91.7",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^4.32.6",
+    "@trigger.dev/nextjs": "^2.3.18",
+    "@trigger.dev/react": "^2.3.18",
+    "@trigger.dev/sdk": "^2.3.18",
     "@trpc/client": "^10.37.1",
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
+    "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
@@ -68,6 +72,8 @@
     "zod": "3.21.4"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.7",
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -81,5 +87,8 @@
     "tailwindcss": "^3.4.1",
     "tsx": "^4.7.2",
     "typescript": "^5"
+  },
+  "trigger.dev": {
+    "endpointId": "dev-rYj4"
   }
 }

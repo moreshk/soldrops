@@ -35,7 +35,7 @@ export const campaign = pgTable("campaign", {
   transactionHash: varchar("transaction_hash", { length: 256 }),
   canCampaignUpdate: boolean("can_campaign_update").notNull().default(true),
   userId: varchar("user_id", { length: 256 })
-    .references(() => users.id, { onDelete: "cascade" })
+    .references(() => users.id)
     .notNull(),
   createdAt: timestamp("created_at")
     .notNull()

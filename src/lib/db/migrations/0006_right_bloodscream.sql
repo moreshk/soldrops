@@ -1,1 +1,0 @@
-ALTER TABLE "campaign" ALTER COLUMN "transaction_hash" SET DATA TYPE varchar(256);

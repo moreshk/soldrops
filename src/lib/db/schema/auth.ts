@@ -7,19 +7,22 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "@auth/core/adapters";
-import { createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { nanoid } from "@/lib/utils";
 
 export const users = pgTable("user", {
-  id: text("id").notNull().primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
   name: text("name"),
   email: text("email"),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
-  walletAddress: text("walletAddress"),
+  username: text("user_name"),
   isAdmin: boolean("isAdmin").default(false),
   userType: text("user_type").default("user"),
   defaultURL: text("default_url").default("/dashboard"),
+  walletAddress: text("wallet_address").notNull().unique(),
+  privateKey: text("private_key").notNull().unique(),
 });
 
 export const accounts = pgTable(
@@ -40,13 +43,14 @@ export const accounts = pgTable(
     session_state: text("session_state"),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
   })
 );
 
 export const sessions = pgTable("session", {
-  id: text("id"),
-  sessionToken: text("sessionToken").notNull().primaryKey(),
+  sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
@@ -61,15 +65,6 @@ export const verificationTokens = pgTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   })
 );
-
-const baseSchema = createSelectSchema(users);
-export type UserType = typeof users.$inferSelect;
-
-export const userWalletSchema = baseSchema.pick({ walletAddress: true });
-
-export const userIdSchema = baseSchema.pick({ id: true });
-
-export type UserId = z.infer<typeof userIdSchema>["id"];

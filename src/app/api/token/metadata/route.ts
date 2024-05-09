@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getUserAuth } from "@/lib/auth/utils";
-import { tokenData } from "@/lib/zod/schema/token-data";
 import { env } from "@/lib/env.mjs";
+
+export const tokenData = z.object({
+  tokenAddress: z.string(),
+});
+
+export type TokenDataSchema = z.infer<typeof tokenData>;
 
 export async function POST(req: Request) {
   try {
@@ -36,6 +41,7 @@ export async function POST(req: Request) {
     const responseData = await response.json();
     const data = {
       name: responseData.result.content.metadata.name,
+      description: responseData.result.content.metadata.description,
       symbol: responseData.result.content.metadata.symbol,
       decimals: responseData.result.token_info.decimals,
       image: responseData.result.content?.links?.image,
@@ -43,6 +49,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
+    console.log(err);
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
     } else {

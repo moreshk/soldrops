@@ -2,13 +2,13 @@ import { computersRouter } from "./computers";
 import { router } from "@/lib/server/trpc";
 import { campaignRouter } from "./campaign";
 import { whitelistRouter } from "./whitelist";
-import { authRouter } from "./auth";
+import { tokensRouter } from "./tokens";
 
 export const appRouter = router({
   computers: computersRouter,
   campaign: campaignRouter,
   whitelist: whitelistRouter,
-  auth: authRouter,
+  tokens: tokensRouter,
 });
 
 export type AppRouter = typeof appRouter;
