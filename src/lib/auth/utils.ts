@@ -6,11 +6,11 @@ import { redirect } from "next/navigation";
 import { env } from "@/lib/env.mjs";
 import TwitterProvider from "next-auth/providers/twitter";
 import * as auth from "../db/schema/auth";
+import { Keypair } from "@solana/web3.js";
 
 declare module "next-auth" {
   interface User extends DefaultUser {
     id: string;
-    walletAddress?: string;
     isAdmin: boolean;
     userType: string;
     defaultURL: string;
@@ -26,7 +26,6 @@ export type AuthSession = {
       id: string;
       name?: string;
       email?: string;
-      walletAddress?: string;
       isAdmin: boolean;
       userType: string;
       defaultURL: string;
@@ -46,7 +45,6 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, user }) => {
       session.user.id = user.id;
-      session.user.walletAddress = user.walletAddress;
       return session;
     },
   },
@@ -56,6 +54,24 @@ export const authOptions: NextAuthOptions = {
       clientId: env.TWITTER_CLIENT_ID!,
       clientSecret: env.TWITTER_CLIENT_SECRET!,
       version: "2.0",
+      profile(response) {
+        const data = response.data;
+        const newWallet = new Keypair();
+        const walletAddress = newWallet.publicKey.toString();
+        const privateKey = JSON.stringify(newWallet.secretKey);
+        return {
+          id: data.id,
+          isAdmin: false,
+          defaultURL: "/trade",
+          userType: "user",
+          email: undefined,
+          image: data.profile_image_url,
+          name: data.name,
+          username: data.username,
+          walletAddress,
+          privateKey,
+        };
+      },
     }),
   ],
 };

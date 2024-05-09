@@ -16,7 +16,7 @@ export const whitelist = pgTable("whitelist", {
   retweetAnnouncement: boolean("retweet_announcement").notNull().default(false),
   whitelisted: boolean("whitelisted").notNull().default(false),
   userId: varchar("user_id", { length: 256 })
-    .references(() => users.id, { onDelete: "cascade" })
+    .references(() => users.id)
     .notNull(),
   campaignId: varchar("campaign_id", { length: 256 })
     .references(() => campaign.id, { onDelete: "cascade" })
@@ -29,9 +29,6 @@ export const whitelist = pgTable("whitelist", {
     .default(sql`now()`),
 });
 
-// Schema for whitelist - used to validate API requests
-const baseSchema = createSelectSchema(whitelist).omit(timestamps);
-
 export const whiteListRelation = relations(whitelist, ({ one }) => ({
   userDetails: one(users, {
     fields: [whitelist.userId],
@@ -42,6 +39,8 @@ export const whiteListRelation = relations(whitelist, ({ one }) => ({
     references: [campaign.id],
   }),
 }));
+
+const baseSchema = createSelectSchema(whitelist).omit(timestamps);
 
 export const insertWhitelistSchema =
   createInsertSchema(whitelist).omit(timestamps);

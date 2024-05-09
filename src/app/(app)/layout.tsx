@@ -1,7 +1,6 @@
 import { checkAuth } from "@/lib/auth/utils";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
-import { WalletTwitterProvider } from "@/components/WalletTwitterProvider";
 
 export default async function AppLayout({
   children,
@@ -10,16 +9,14 @@ export default async function AppLayout({
 }) {
   await checkAuth();
   return (
-    <WalletTwitterProvider>
-      <main>
-        <div className="flex h-screen">
-          <Sidebar />
-          <main className="flex-1 md:p-8 pt-2 p-8 overflow-y-auto">
-            <Navbar />
-            {children}
-          </main>
-        </div>
-      </main>
-    </WalletTwitterProvider>
+    <main>
+      <div className="flex h-screen">
+        <Sidebar />
+        <main className="flex-1 md:p-8 pt-2 p-8 overflow-y-auto">
+          <Navbar />
+          {children}
+        </main>
+      </div>
+    </main>
   );
 }
