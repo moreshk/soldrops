@@ -1,53 +1,25 @@
 "use client";
 import { useSession, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { WalletModalButton } from "../wallet/WalletModalButton";
-import { BaseWalletMultiButton } from "../wallet/BaseWalletMultiButton";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useWalletConnectButton } from "@solana/wallet-adapter-base-ui";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export const Login = () => {
   const { status } = useSession();
-  const { connected } = useWallet();
-  const { buttonState } = useWalletConnectButton();
   const { push } = useRouter();
   const isLoggedIn = status === "authenticated";
-  const isWalletConnected = buttonState === "connected";
 
   useEffect(() => {
-    if (isWalletConnected && isLoggedIn) {
-      console.log(isWalletConnected && isLoggedIn);
-      push("/dashboard");
-    }
+    if (isLoggedIn) push("/dashboard");
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, buttonState]);
+  }, [status]);
 
   return (
     <div className="pt-10">
       {status === "loading" && (
         <div className="w-36 rounded-md animate-pulse h-10 bg-primary/10" />
       )}
-      {status === "authenticated" && (
-        <div>
-          {connected ? (
-            <BaseWalletMultiButton
-              labels={{
-                "change-wallet": "Change Wallet",
-                "copy-address": "Copy address",
-                "has-wallet": "Has Wallet",
-                "no-wallet": "No Wallet",
-                connecting: "Connecting...",
-                disconnect: "Disconnect",
-              }}
-            />
-          ) : (
-            <WalletModalButton />
-          )}
-        </div>
-      )}
-
       {status === "unauthenticated" && (
         <Button onClick={() => signIn("twitter", { callbackUrl: "/" })}>
           Connect Twitter
