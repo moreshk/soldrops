@@ -5,8 +5,8 @@ export default async function Home() {
   return (
     <main className="space-y-4">
       {session ? (
-        <pre className="bg-secondary p-4 rounded-sm shadow-sm text-secondary-foreground break-all whitespace-break-spaces">
-          {JSON.stringify(session, null, 2)}
+        <pre className="bg-secondary p-4 rounded-sm shadow-sm text-secondary-foreground break-all whitespace-break-spaces mt-10">
+          welcome {session.user.name} to SolDrops
         </pre>
       ) : null}
     </main>
