@@ -20,11 +20,17 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const swapTokens = useSwapStoreSelectors.use.swapTokens();
   const setReceiveToken = useSwapStoreSelectors.use.setReceiveToken();
   const setSendToken = useSwapStoreSelectors.use.setSendToken();
+  const setReceiveAmount = useSwapStoreSelectors.use.setReceiveAmount();
+  const setSendAmount = useSwapStoreSelectors.use.setSendAmount();
+  const receiveAmount = useSwapStoreSelectors.use.receiveAmount();
+  const sendAmount = useSwapStoreSelectors.use.sendAmount();
 
   return (
     <div className="flex min-h-screen overflow-y-auto flex-col justify-center items-center ">
       <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground">
         <SwapInput
+          onChange={(e) => setSendAmount(e.target.value)}
+          value={sendAmount}
           onTokenChange={setSendToken}
           tokens={data.tokens}
           selectedToken={sendToken}
@@ -45,6 +51,8 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           </button>
         </div>
         <SwapInput
+          onChange={(e) => setReceiveAmount(e.target.value)}
+          value={receiveAmount}
           inputHeader={
             <div className="pb-1 ">
               <p className="font-medium text-sm">To receive</p>
