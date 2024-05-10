@@ -1,19 +1,32 @@
-import { getTokenById, getTokens } from "@/lib/api/tokens/queries";
+import {
+  getAllTokens,
+  getTokenById,
+  getTokens,
+} from "@/lib/api/tokens/queries";
 import { publicProcedure, router } from "@/lib/server/trpc";
 import {
   tokenIdSchema,
   insertTokenParams,
   updateTokenParams,
 } from "@/lib/db/schema/tokens";
-import { createToken, deleteToken, updateToken } from "@/lib/api/tokens/mutations";
+import {
+  createToken,
+  deleteToken,
+  updateToken,
+} from "@/lib/api/tokens/mutations";
 
 export const tokensRouter = router({
   getTokens: publicProcedure.query(async () => {
     return getTokens();
   }),
-  getTokenById: publicProcedure.input(tokenIdSchema).query(async ({ input }) => {
-    return getTokenById(input.id);
+  getAllTokens: publicProcedure.query(async () => {
+    return getAllTokens();
   }),
+  getTokenById: publicProcedure
+    .input(tokenIdSchema)
+    .query(async ({ input }) => {
+      return getTokenById(input.id);
+    }),
   createToken: publicProcedure
     .input(insertTokenParams)
     .mutation(async ({ input }) => {
