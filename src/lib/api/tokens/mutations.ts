@@ -1,6 +1,14 @@
 import { db } from "@/lib/db/index";
 import { and, eq } from "drizzle-orm";
-import { Connection, Keypair, VersionedTransaction } from "@solana/web3.js";
+import {
+  AddressLookupTableAccount,
+  Connection,
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
 import fetch from "cross-fetch";
 import bs58 from "bs58";
 import {
@@ -18,6 +26,10 @@ import { env } from "@/lib/env.mjs";
 import CryptoJS from "crypto-js";
 import { getSignature } from "@/lib/tokens/utils/getSignature";
 import { transactionSenderAndConfirmationWaiter } from "@/lib/tokens/utils/transactionSender";
+import { QuoteResponse } from "@jup-ag/api";
+import { getFeeAddress } from "@/lib/tokens/utils/getFeeAddress";
+import { solToken } from "@/lib/tokens/utils/defaultTokens";
+import { TOKEN_PROGRAM_ID, createTransferInstruction } from "@solana/spl-token";
 
 const connection = new Connection(env.HELIUS_RPC_URL);
 
@@ -56,8 +68,14 @@ export const swapToken = async (amountQuoteUrl: string) => {
       )
     );
     const wallet = Keypair.fromSecretKey(bs58.decode(privateKey));
-    const quoteResponseData = await fetch(`${amountQuoteUrl}`);
-    const quoteResponse = await quoteResponseData.json();
+    const quoteResponseData = await fetch(
+      `${amountQuoteUrl}&platformFeeBps=100`
+    );
+    const quoteResponse: QuoteResponse = await quoteResponseData.json();
+    const feeWallet = new PublicKey(
+      "9BAa8bSQrUAT3nipra5bt3DJbW2Wyqfc2SXw3vGcjpbj"
+    );
+
     const swapTransactionData = await fetch(
       "https://quote-api.jup.ag/v6/swap",
       {
@@ -69,8 +87,6 @@ export const swapToken = async (amountQuoteUrl: string) => {
           quoteResponse,
           userPublicKey: user.walletAddress,
           wrapAndUnwrapSol: true,
-          // feeAccount: "9BAa8bSQrUAT3nipra5bt3DJbW2Wyqfc2SXw3vGcjpbj",
-          prioritizationFeeLamports: "auto",
         }),
       }
     );
@@ -78,6 +94,64 @@ export const swapToken = async (amountQuoteUrl: string) => {
       await swapTransactionData.json();
     const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
     var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+
+    const splMintToken =
+      quoteResponse.outputMint === solToken.address
+        ? quoteResponse.inputMint
+        : quoteResponse.outputMint;
+
+    const addressLookupTableAccounts = await Promise.all(
+      transaction.message.addressTableLookups.map(async (lookup) => {
+        return new AddressLookupTableAccount({
+          key: lookup.accountKey,
+          state: AddressLookupTableAccount.deserialize(
+            await connection.getAccountInfo(lookup.accountKey).then(
+              // @ts-ignore
+              (res) => res.data
+            )
+          ),
+        });
+      })
+    );
+    var message = TransactionMessage.decompile(transaction.message, {
+      addressLookupTableAccounts: addressLookupTableAccounts,
+    });
+
+    if (quoteResponse.outputMint === solToken.address) {
+      const solTransferInstruction = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: feeWallet,
+        lamports: +quoteResponse.platformFee?.amount!,
+      });
+      message.instructions.push(solTransferInstruction);
+    } else {
+      const { ix, pubkey: feeAta } = await getFeeAddress(
+        connection,
+        feeWallet,
+        new PublicKey(splMintToken),
+        wallet.publicKey
+      );
+      const { pubkey: senderAta } = await getFeeAddress(
+        connection,
+        wallet.publicKey,
+        new PublicKey(splMintToken),
+        wallet.publicKey
+      );
+      if (ix) message.instructions.push(ix);
+      const feeTx = createTransferInstruction(
+        senderAta,
+        feeAta,
+        wallet.publicKey,
+        +quoteResponse.platformFee?.amount!,
+        [wallet.publicKey],
+        TOKEN_PROGRAM_ID
+      );
+      message.instructions.push(feeTx);
+    }
+    transaction.message = message.compileToV0Message(
+      addressLookupTableAccounts
+    );
+
     transaction.sign([wallet]);
     const signature = getSignature(transaction);
 
