@@ -8,7 +8,8 @@ import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
 import { trpc } from "@/lib/trpc/client";
 import { useSwapStoreSelectors } from "@/store/swap-store";
-
+import { useEffect } from "react";
+import { useDebouncedCallback } from "use-debounce";
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
   const { data } = trpc.tokens.getTokens.useQuery(undefined, {
@@ -24,14 +25,28 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const setSendAmount = useSwapStoreSelectors.use.setSendAmount();
   const receiveAmount = useSwapStoreSelectors.use.receiveAmount();
   const sendAmount = useSwapStoreSelectors.use.sendAmount();
+  const setFocus = useSwapStoreSelectors.use.setFocus();
+  const fetchTokenAmount = useSwapStoreSelectors.use.fetchTokenAmount();
+  const isFetching = useSwapStoreSelectors.use.isFetching();
+  const inputFocus = useSwapStoreSelectors.use.inputFocus();
+  const callApi = useDebouncedCallback(fetchTokenAmount, 1000);
 
   return (
     <div className="flex min-h-screen overflow-y-auto flex-col justify-center items-center ">
       <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground">
         <SwapInput
-          onChange={(e) => setSendAmount(e.target.value)}
+          isLoading={isFetching === "loading" && inputFocus === "receive"}
+          onBlur={() => setFocus("unfocused")}
+          onFocus={() => setFocus("send")}
+          onChange={(e) => {
+            setSendAmount(e.target.value);
+            callApi();
+          }}
           value={sendAmount}
-          onTokenChange={setSendToken}
+          onTokenChange={(token: CompleteToken) => {
+            setSendToken(token);
+            callApi();
+          }}
           tokens={data.tokens}
           selectedToken={sendToken}
           inputHeader={
@@ -51,14 +66,23 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           </button>
         </div>
         <SwapInput
-          onChange={(e) => setReceiveAmount(e.target.value)}
+          isLoading={isFetching === "loading" && inputFocus === "send"}
+          onBlur={() => setFocus("unfocused")}
+          onFocus={() => setFocus("receive")}
+          onChange={(e) => {
+            setReceiveAmount(e.target.value);
+            fetchTokenAmount();
+          }}
           value={receiveAmount}
           inputHeader={
             <div className="pb-1 ">
               <p className="font-medium text-sm">To receive</p>
             </div>
           }
-          onTokenChange={setReceiveToken}
+          onTokenChange={(token: CompleteToken) => {
+            setSendToken(token);
+            fetchTokenAmount();
+          }}
           tokens={data.tokens}
           selectedToken={receiveToken}
         />
