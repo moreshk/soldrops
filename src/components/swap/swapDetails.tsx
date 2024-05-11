@@ -80,7 +80,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
             </div>
           }
           onTokenChange={(token: CompleteToken) => {
-            setSendToken(token);
+            setReceiveToken(token);
             fetchTokenAmount();
           }}
           tokens={data.tokens}
