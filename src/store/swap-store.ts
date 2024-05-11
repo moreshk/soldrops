@@ -1,40 +1,45 @@
-import { CompleteToken, Token } from "@/lib/db/schema/tokens";
+import { CompleteToken } from "@/lib/db/schema/tokens";
 import { create } from "zustand";
 import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
-import { popcatToken, solToken } from "@/lib/tokens/utils/defaultTokens";
+import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
+import { QuoteResponse } from "@jup-ag/api";
 
-type InputFocusType = "receive" | "send" | "unfocused";
 export interface SwapState {
   sendToken: CompleteToken;
   sendAmount: string;
   receiveAmount: string;
   receiveToken: CompleteToken;
-  inputFocus: InputFocusType;
+  quoteResponse?: QuoteResponse;
+  inputFocus: "receive" | "send";
   isFetching: "unloaded" | "loaded" | "loading" | "error";
+  isSwapping: "unloaded" | "loaded" | "loading" | "error";
   setSendToken: (token: CompleteToken) => void;
   setReceiveToken: (token: CompleteToken) => void;
-  swapTokens: () => void;
-  fetchTokenAmount: () => void;
+  onArrayUpDownClick: () => void;
+  getQuoteAmount: () => void;
   setSendAmount: (value: string) => void;
   setReceiveAmount: (value: string) => void;
-  setFocus: (value: InputFocusType) => void;
+  setFocus: (value: "receive" | "send") => void;
+  getQuoteTokenURL: () => string | undefined;
 }
 
 export const useSwapStore = create<SwapState>()((set, get) => ({
   sendAmount: "",
   receiveAmount: "",
-  inputFocus: "unfocused",
+  inputFocus: "send",
+  isSwapping: "unloaded",
   sendToken: solToken,
-  receiveToken: popcatToken,
+  receiveToken: stableUSDC,
+  quoteResponse: undefined,
   isFetching: "unloaded",
   setSendAmount: (input: string) =>
     set(
       produce((state: SwapState) => {
-        state.sendAmount = input.replace(/[^0-9]/g, "");
+        state.sendAmount = input.replace(/[^\d.]+/g, "");
       })
     ),
-  setFocus: (inputFocus: InputFocusType) =>
+  setFocus: (inputFocus: "receive" | "send") =>
     set(
       produce((state: SwapState) => {
         state.inputFocus = inputFocus;
@@ -43,10 +48,10 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
   setReceiveAmount: (input: string) =>
     set(
       produce((state: SwapState) => {
-        state.receiveAmount = input.replace(/[^0-9]/g, "");
+        state.receiveAmount = input.replace(/[^\d.]+/g, "");
       })
     ),
-  setSendToken: (token: Token) =>
+  setSendToken: (token: CompleteToken) =>
     set(
       produce((state: SwapState) => {
         if (!(token.address === state.sendToken.address)) {
@@ -61,7 +66,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
         }
       })
     ),
-  setReceiveToken: (token: Token) =>
+  setReceiveToken: (token: CompleteToken) =>
     set(
       produce((state: SwapState) => {
         if (!(token.address === state.receiveToken.address)) {
@@ -76,7 +81,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
         }
       })
     ),
-  swapTokens: () =>
+  onArrayUpDownClick: () =>
     set(
       produce((state: SwapState) => {
         const tempSendToken = state.sendToken;
@@ -84,65 +89,87 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
         state.receiveToken = tempSendToken;
       })
     ),
-  fetchTokenAmount: async () => {
+  getQuoteAmount: async () => {
     const { sendToken, receiveToken, sendAmount, receiveAmount, inputFocus } =
       get();
-    if (sendToken && receiveToken && (sendAmount || receiveAmount)) {
-      try {
-        set(
-          produce((state: SwapState) => {
-            state.isFetching = "loading";
-          })
-        );
-        let inputMint;
-        let outputMint;
-        let amount;
-        if (inputFocus === "send" || inputFocus === "unfocused") {
-          inputMint = sendToken;
-          outputMint = receiveToken;
-          amount = parseFloat(sendAmount) * Math.pow(10, sendToken.decimal);
-        }
-        if (inputFocus === "receive") {
-          inputMint = receiveToken;
-          outputMint = sendToken;
-          amount = parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
-        }
-        const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}`;
-        const response = await fetch(url);
-        const data = await response.json();
-        if (data && data.outAmount) {
+    if (
+      sendToken &&
+      receiveToken &&
+      (typeof +sendAmount === "number" || typeof +receiveAmount === "number")
+    ) {
+      if (+sendAmount > 0 || +receiveAmount > 0) {
+        try {
+          set(
+            produce((state: SwapState) => {
+              state.isFetching = "loading";
+            })
+          );
+          let inputMint;
+          let outputMint;
+          let amount;
+          if (inputFocus === "send") {
+            inputMint = sendToken;
+            outputMint = receiveToken;
+            amount = parseFloat(sendAmount) * Math.pow(10, sendToken.decimal);
+          }
+          if (inputFocus === "receive") {
+            inputMint = receiveToken;
+            outputMint = sendToken;
+            amount =
+              parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
+          }
+          const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}&platformFeeBps=100`;
+          const response = await fetch(url);
+          const quoteResponse = await response.json();
           const quotePrice =
-            data.outAmount / Math.pow(10, outputMint?.decimal!);
+            quoteResponse.outAmount / Math.pow(10, outputMint?.decimal!);
           if (inputFocus === "receive") {
             set(
               produce((state: SwapState) => {
                 state.isFetching = "loaded";
                 state.sendAmount = quotePrice.toString();
+                state.quoteResponse = quoteResponse;
               })
             );
           }
-          if (inputFocus === "send" || inputFocus === "unfocused") {
+          if (inputFocus === "send") {
             set(
               produce((state: SwapState) => {
                 state.isFetching = "loaded";
                 state.receiveAmount = quotePrice.toString();
+                state.quoteResponse = quoteResponse;
               })
             );
           }
-        } else {
+        } catch (e) {
           set(
             produce((state: SwapState) => {
               state.isFetching = "error";
             })
           );
         }
-      } catch (e) {
-        set(
-          produce((state: SwapState) => {
-            state.isFetching = "error";
-          })
-        );
       }
+    }
+  },
+  getQuoteTokenURL: () => {
+    const { sendToken, receiveToken, sendAmount, receiveAmount, inputFocus } =
+      get();
+    if (sendToken && receiveToken && (sendAmount || receiveAmount)) {
+      let inputMint;
+      let outputMint;
+      let amount;
+      if (inputFocus === "send") {
+        inputMint = sendToken;
+        outputMint = receiveToken;
+        amount = parseFloat(sendAmount) * Math.pow(10, sendToken.decimal);
+      }
+      if (inputFocus === "receive") {
+        inputMint = receiveToken;
+        outputMint = sendToken;
+        amount = parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
+      }
+      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}`;
+      return url;
     }
   },
 }));

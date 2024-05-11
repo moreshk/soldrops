@@ -8,10 +8,12 @@ import {
   tokenIdSchema,
   insertTokenParams,
   updateTokenParams,
+  swapSchema,
 } from "@/lib/db/schema/tokens";
 import {
   createToken,
   deleteToken,
+  swapToken,
   updateToken,
 } from "@/lib/api/tokens/mutations";
 
@@ -42,4 +44,7 @@ export const tokensRouter = router({
     .mutation(async ({ input }) => {
       return deleteToken(input.id);
     }),
+  swapToken: publicProcedure.input(swapSchema).mutation(async ({ input }) => {
+    return swapToken(input.quotedURL);
+  }),
 });

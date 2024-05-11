@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Loader2 } from "lucide-react";
 import { SwapInput } from "../ui/swap-Input";
 import LoginModal from "../auth/LoginModal";
 import { Button } from "../ui/button";
@@ -9,16 +9,17 @@ import { CompleteToken } from "@/lib/db/schema/tokens";
 import { trpc } from "@/lib/trpc/client";
 import { useSwapStoreSelectors } from "@/store/swap-store";
 import { useDebouncedCallback } from "use-debounce";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
-  const { data } = trpc.tokens.getTokens.useQuery(undefined, {
+  const { data } = trpc.tokens.getAllTokens.useQuery(undefined, {
     initialData: { tokens },
     refetchOnMount: false,
   });
   const sendToken = useSwapStoreSelectors.use.sendToken();
   const receiveToken = useSwapStoreSelectors.use.receiveToken();
-  const swapTokens = useSwapStoreSelectors.use.swapTokens();
+  const onArrayUpDownClick = useSwapStoreSelectors.use.onArrayUpDownClick();
   const setReceiveToken = useSwapStoreSelectors.use.setReceiveToken();
   const setSendToken = useSwapStoreSelectors.use.setSendToken();
   const setReceiveAmount = useSwapStoreSelectors.use.setReceiveAmount();
@@ -26,26 +27,46 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const receiveAmount = useSwapStoreSelectors.use.receiveAmount();
   const sendAmount = useSwapStoreSelectors.use.sendAmount();
   const setFocus = useSwapStoreSelectors.use.setFocus();
-  const fetchTokenAmount = useSwapStoreSelectors.use.fetchTokenAmount();
+  const getQuoteAmount = useSwapStoreSelectors.use.getQuoteAmount();
+  const getQuoteTokenURL = useSwapStoreSelectors.use.getQuoteTokenURL();
   const isFetching = useSwapStoreSelectors.use.isFetching();
   const inputFocus = useSwapStoreSelectors.use.inputFocus();
-  const callApi = useDebouncedCallback(fetchTokenAmount, 1000);
+  const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
+  const { mutate: swapToken, isLoading: isTokenSwapping } =
+    trpc.tokens.swapToken.useMutation({
+      onSuccess: (res) => {
+        console.log(res);
+      },
+      onError: (err) => {
+        console.log(err);
+      },
+    });
 
   return (
     <div className="flex min-h-screen overflow-y-auto flex-col justify-center items-center ">
-      <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground">
+      <div className="flex justify-between max-w-md w-full">
+        <button
+          onClick={getQuoteAmount}
+          className="bg-primary-foreground p-1 rounded-full mb-1 ml-1"
+        >
+          <ReloadIcon />
+        </button>
+      </div>
+      <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
         <SwapInput
-          isLoading={isFetching === "loading" && inputFocus === "receive"}
-          onBlur={() => setFocus("unfocused")}
+          isLoading={
+            (isFetching === "loading" && inputFocus === "receive") ||
+            isTokenSwapping
+          }
           onFocus={() => setFocus("send")}
           onChange={(e) => {
             setSendAmount(e.target.value);
-            callApi();
+            getQuoteAmountDebounced();
           }}
           value={sendAmount}
           onTokenChange={(token: CompleteToken) => {
             setSendToken(token);
-            callApi();
+            getQuoteAmountDebounced();
           }}
           tokens={data.tokens}
           selectedToken={sendToken}
@@ -57,8 +78,12 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
         />
         <div className="py-4">
           <button
+            disabled={isTokenSwapping || isFetching === "loading"}
             className="border-b-2 w-full relative cursor-pointer"
-            onClick={swapTokens}
+            onClick={() => {
+              onArrayUpDownClick();
+              getQuoteAmountDebounced();
+            }}
           >
             <div className=" w-full absolute -translate-y-1/2">
               <ArrowUpDown className="flex justify-center items-center mx-auto bg-primary-foreground p-2 rounded-full border-2 w-9 h-9" />
@@ -66,12 +91,14 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           </button>
         </div>
         <SwapInput
-          isLoading={isFetching === "loading" && inputFocus === "send"}
-          onBlur={() => setFocus("unfocused")}
+          isLoading={
+            (isFetching === "loading" && inputFocus === "send") ||
+            isTokenSwapping
+          }
           onFocus={() => setFocus("receive")}
           onChange={(e) => {
             setReceiveAmount(e.target.value);
-            fetchTokenAmount();
+            getQuoteAmount();
           }}
           value={receiveAmount}
           inputHeader={
@@ -81,15 +108,33 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           }
           onTokenChange={(token: CompleteToken) => {
             setReceiveToken(token);
-            fetchTokenAmount();
+            getQuoteAmount();
           }}
           tokens={data.tokens}
           selectedToken={receiveToken}
         />
         {status === "unauthenticated" && <LoginModal />}
         {status === "authenticated" && (
-          <Button size="lg" className="w-full rounded-2xl">
-            Swap
+          <Button
+            disabled={isFetching === "loading" || isTokenSwapping}
+            onClick={async () => {
+              try {
+                await getQuoteAmount();
+                const quotedURL = getQuoteTokenURL();
+                if (quotedURL) {
+                  swapToken({ quotedURL });
+                }
+              } catch (e) {
+                console.log(e);
+              }
+            }}
+            size="lg"
+            className="w-full rounded-2xl"
+          >
+            {isTokenSwapping && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            {isTokenSwapping ? "Swapping...." : "Swap"}
           </Button>
         )}
       </div>

@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
         const newWallet = new Keypair();
         const walletAddress = newWallet.publicKey.toString();
         var privateKey = CryptoJS.AES.encrypt(
-          JSON.stringify(newWallet.secretKey),
+          newWallet.secretKey.toString(),
           env.DECODE_ENCODE_KEY
         ).toString();
 
