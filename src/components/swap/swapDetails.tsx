@@ -8,8 +8,8 @@ import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
 import { trpc } from "@/lib/trpc/client";
 import { useSwapStoreSelectors } from "@/store/swap-store";
-import { useEffect } from "react";
 import { useDebouncedCallback } from "use-debounce";
+
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
   const { data } = trpc.tokens.getTokens.useQuery(undefined, {

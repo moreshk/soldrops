@@ -7,6 +7,7 @@ import { env } from "@/lib/env.mjs";
 import TwitterProvider from "next-auth/providers/twitter";
 import * as auth from "../db/schema/auth";
 import { Keypair } from "@solana/web3.js";
+import CryptoJS from "crypto-js";
 
 declare module "next-auth" {
   interface User extends DefaultUser {
@@ -67,7 +68,11 @@ export const authOptions: NextAuthOptions = {
         const data = response.data;
         const newWallet = new Keypair();
         const walletAddress = newWallet.publicKey.toString();
-        const privateKey = JSON.stringify(newWallet.secretKey);
+        var privateKey = CryptoJS.AES.encrypt(
+          JSON.stringify(newWallet.secretKey),
+          env.DECODE_ENCODE_KEY
+        ).toString();
+
         return {
           id: data.id,
           isAdmin: false,

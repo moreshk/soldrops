@@ -1,11 +1,12 @@
 import type { Config } from "drizzle-kit";
 import { env } from "@/lib/env.mjs";
+import { defineConfig } from "drizzle-kit";
 
-export default {
+export default defineConfig({
   schema: "./src/lib/db/schema",
   out: "./src/lib/db/migrations",
-  driver: "pg",
+  dialect: "postgresql",
   dbCredentials: {
-    connectionString: env.DATABASE_URL,
-  }
-} satisfies Config;
+    url: env.DATABASE_URL,
+  },
+});
