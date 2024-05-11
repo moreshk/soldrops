@@ -116,7 +116,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
             inputMint = receiveToken;
             outputMint = sendToken;
             amount =
-              parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
+              parseFloat(receiveAmount) * Math.pow(10, receiveToken.decimal);
           }
           const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}&platformFeeBps=100`;
           const response = await fetch(url);
