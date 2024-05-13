@@ -15,8 +15,10 @@ const LoginModal = () => {
   const path = usePathname();
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button>Login</Button>
+      <DialogTrigger asChild className="w-full">
+        <Button className="w-full rounded-2xl" size="lg">
+          Login
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
