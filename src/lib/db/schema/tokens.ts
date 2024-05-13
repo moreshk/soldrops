@@ -77,3 +77,7 @@ export type TokenId = z.infer<typeof tokenIdSchema>["id"];
 export type CompleteToken = Awaited<
   ReturnType<typeof getTokens>
 >["tokens"][number];
+
+export const tokenData = z.object({
+  tokenAddress: z.string(),
+});

@@ -13,10 +13,6 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
-  const { data } = trpc.tokens.getAllTokens.useQuery(undefined, {
-    initialData: { tokens },
-    refetchOnMount: false,
-  });
   const sendToken = useSwapStoreSelectors.use.sendToken();
   const receiveToken = useSwapStoreSelectors.use.receiveToken();
   const onArrayUpDownClick = useSwapStoreSelectors.use.onArrayUpDownClick();
@@ -68,7 +64,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
             setSendToken(token);
             getQuoteAmountDebounced();
           }}
-          tokens={data.tokens}
+          tokens={tokens}
           selectedToken={sendToken}
           inputHeader={
             <div className="pb-1">
@@ -110,7 +106,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
             setReceiveToken(token);
             getQuoteAmount();
           }}
-          tokens={data.tokens}
+          tokens={tokens}
           selectedToken={receiveToken}
         />
         {status === "unauthenticated" && <LoginModal />}
@@ -119,7 +115,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
             disabled={isFetching === "loading" || isTokenSwapping}
             onClick={async () => {
               try {
-                await getQuoteAmount();
+                getQuoteAmount();
                 const quotedURL = getQuoteTokenURL();
                 if (quotedURL) {
                   swapToken({ quotedURL });
