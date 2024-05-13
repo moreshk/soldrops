@@ -26,7 +26,6 @@ import { toast } from "sonner";
 import { TokenContractAddress } from "./TokenContractAddress";
 import { useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { useSession } from "next-auth/react";
 
 const TokenForm = ({
   token,
@@ -37,7 +36,6 @@ const TokenForm = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const editing = !!token?.id;
-  const session = useSession();
   const router = useRouter();
   const utils = trpc.useContext();
 
