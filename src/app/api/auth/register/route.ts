@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 import { db } from "@/lib/db";
-import { signInSchema, users } from "@/lib/db/schema/auth";
+import { registerSchema, users } from "@/lib/db/schema/auth";
 import { env } from "@/lib/env.mjs";
 import { Keypair } from "@solana/web3.js";
 import { hash } from "bcrypt";
@@ -11,7 +11,7 @@ import { NextResponse } from "next/server";
 export const POST = async (request: Request) => {
   try {
     const body: unknown = await request.json();
-    const result = signInSchema.safeParse(body);
+    const result = registerSchema.safeParse(body);
     if (!result.success) {
       let zodErrors = {};
       result.error.issues.forEach((issue) => {
@@ -43,6 +43,7 @@ export const POST = async (request: Request) => {
       .values({
         password: hashedPassword,
         email: result.data.email,
+        name: result.data.name,
         walletAddress,
         privateKey,
       })

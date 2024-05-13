@@ -1,6 +1,6 @@
 "use client";
 
-import { signInSchema } from "@/lib/db/schema/auth";
+import { loginSchema } from "@/lib/db/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,11 +18,11 @@ import { Button } from "../ui/button";
 
 export const EmailRegister = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const handleSubmit = async (value: z.infer<typeof signInSchema>) => {
+  const handleSubmit = async (value: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
       ("use server");
@@ -49,6 +49,24 @@ export const EmailRegister = () => {
         >
           <FormField
             control={form.control}
+            name="name"
+            defaultValue=""
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    disabled={isLoading || field.disabled}
+                    placeholder="tim@apple.com"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -63,6 +81,7 @@ export const EmailRegister = () => {
                 <FormMessage />
               </FormItem>
             )}
+            defaultValue=""
           />
           <FormField
             control={form.control}
@@ -81,6 +100,7 @@ export const EmailRegister = () => {
                 <FormMessage />
               </FormItem>
             )}
+            defaultValue=""
           />
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Logging in...." : "Login In"}

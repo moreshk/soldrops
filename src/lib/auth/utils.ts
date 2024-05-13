@@ -122,7 +122,7 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          const { email, password } = await auth.signInSchema.parseAsync(
+          const { email, password } = await auth.loginSchema.parseAsync(
             credentials
           );
           const [user] = await db
