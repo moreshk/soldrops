@@ -144,7 +144,6 @@ export const authOptions: NextAuthOptions = {
                 walletAddress: user.walletAddress,
                 defaultURL: user.defaultURL || "/",
               };
-              console.log(userDetails);
               return userDetails;
             }
           }

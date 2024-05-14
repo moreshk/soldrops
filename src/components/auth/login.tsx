@@ -10,7 +10,7 @@ export const Login = () => {
   const isLoggedIn = status === "authenticated";
 
   useEffect(() => {
-    if (isLoggedIn) push("/dashboard");
+    if (isLoggedIn) push("/swap");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);

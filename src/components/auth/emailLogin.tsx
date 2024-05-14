@@ -1,6 +1,5 @@
 "use client";
 
-import { signInSchema } from "@/lib/db/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,24 +15,31 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { signIn } from "next-auth/react";
+import { loginSchema } from "@/lib/db/schema/auth";
+import { toast } from "sonner";
 
-export const EmailLogin = () => {
+export const EmailLogin = ({
+  onOpen,
+}: {
+  onOpen: (value: boolean) => void;
+}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const handleSubmit = async (value: z.infer<typeof signInSchema>) => {
+  const handleSubmit = async (value: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
-      ("use server");
-      const a = await signIn("credentials", {
+      await signIn("credentials", {
         email: value.email,
         password: value.password,
+        redirect: false,
+        callbackUrl: "/swap",
       });
+      toast.success("Login successfully");
       setIsLoading(false);
     } catch (e) {
-      console.log(e);
       setIsLoading(false);
     }
   };
@@ -48,6 +54,7 @@ export const EmailLogin = () => {
           <FormField
             control={form.control}
             name="email"
+            defaultValue=""
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
@@ -63,6 +70,7 @@ export const EmailLogin = () => {
             )}
           />
           <FormField
+            defaultValue=""
             control={form.control}
             name="password"
             render={({ field }) => (

@@ -85,10 +85,6 @@ export const registerSchema = object({
     .max(32, "Password must be less than 32 characters"),
 });
 export const loginSchema = object({
-  name: string({ required_error: "Email is required" }).min(
-    3,
-    "Name must be more the 3 character"
-  ),
   email: string({ required_error: "Email is required" })
     .min(1, "Email is required")
     .email("Invalid email"),

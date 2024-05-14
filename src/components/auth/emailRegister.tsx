@@ -1,6 +1,6 @@
 "use client";
 
-import { loginSchema } from "@/lib/db/schema/auth";
+import { registerSchema } from "@/lib/db/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,14 +15,20 @@ import {
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
-export const EmailRegister = () => {
+export const EmailRegister = ({
+  onOpen,
+}: {
+  onOpen: (value: boolean) => void;
+}) => {
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const handleSubmit = async (value: z.infer<typeof loginSchema>) => {
+  const handleSubmit = async (value: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
       ("use server");
@@ -31,8 +37,17 @@ export const EmailRegister = () => {
         body: JSON.stringify({
           email: value.email,
           password: value.password,
+          name: value.name,
         }),
       });
+      await signIn("credentials", {
+        email: value.email,
+        password: value.password,
+        redirect: false,
+        callbackUrl: "/swap",
+      });
+      onOpen(false);
+      toast.success("User registered successfully");
       setIsLoading(false);
     } catch (e) {
       console.log(e);
@@ -58,7 +73,7 @@ export const EmailRegister = () => {
                   <Input
                     {...field}
                     disabled={isLoading || field.disabled}
-                    placeholder="tim@apple.com"
+                    placeholder="tim"
                   />
                 </FormControl>
                 <FormMessage />
@@ -103,7 +118,7 @@ export const EmailRegister = () => {
             defaultValue=""
           />
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Logging in...." : "Login In"}
+            {isLoading ? "Signing up...." : "Signup"}
           </Button>
         </form>
       </Form>
