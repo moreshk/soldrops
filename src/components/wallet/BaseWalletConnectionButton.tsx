@@ -1,4 +1,4 @@
-laimport type { WalletName } from "@solana/wallet-adapter-base";
+import type { WalletName } from "@solana/wallet-adapter-base";
 import React from "react";
 import { WalletIcon } from "./WalletIcon";
 import { Button, ButtonProps } from "../ui/button";
