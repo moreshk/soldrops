@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,20 +8,25 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useSession } from "next-auth/react";
-import { Coins } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Coins, Copy } from "lucide-react";
 import Link from "next/link";
+import { Button } from "../ui/button";
+import { toast } from "sonner";
 
-const OnBoardingModal = () => {
-  const [open, setOpen] = useState(true);
-  const { theme, systemTheme } = useTheme();
-  const widgetTheme = (theme === "system" ? systemTheme : theme) || "dark";
+const OnBoardingModal = ({ balance }: { balance?: number }) => {
+  const [open, setOpen] = useState(false);
   const { data: session } = useSession();
-  const [showPaymentProvider, setShowPaymentProvider] = useState(false);
+
+  useEffect(() => {
+    if (typeof balance === "number") {
+      if (!balance) setOpen(true);
+    }
+  }, [balance]);
+
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[470px]">
+        <DialogContent className="sm:max-w-[520px]">
           <>
             <DialogHeader>
               <DialogTitle>Awesome, let’s load up some Solana!</DialogTitle>
@@ -29,15 +34,32 @@ const OnBoardingModal = () => {
             <div className="space-y-10">
               <div>
                 <p>Deposit sol</p>
+                <p>Current Balance - {balance}</p>
                 <div className="border p-2 rounded-lg">
                   <p>
                     Send Solana from a CEX or another wallet to your Drops
                     account.
                   </p>
                   <p>Drops wallet address:</p>
-                  <p className="text-sm break-all bg-secondary p-3 rounded-lg mt-3">
-                    {session?.user.walletAddress}
-                  </p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <p className="text-sm break-all bg-secondary p-3 rounded-lg">
+                      {session?.user.walletAddress}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        if (session?.user.walletAddress) {
+                          navigator.clipboard.writeText(
+                            session?.user.walletAddress
+                          );
+                          toast.success("Wallet address copied");
+                        }
+                      }}
+                    >
+                      <Copy className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               <div>

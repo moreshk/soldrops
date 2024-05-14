@@ -13,7 +13,13 @@ export const BuyCrypto = () => {
       <p className="font-bold text-4xl">Soldrops</p>
       <p className="font-bold text-4xl">Buy crypto</p>
       <iframe
-        src={`https://buy.onramper.com?apiKey=pk_prod_01HXRR2B13Q9Q7KD086MYFM28A&partnerContext=Soldrops&mode=buy&defaultCrypto=sol&onlyCryptos=sol&wallets=sol:${session?.user.walletAddress}&onlyCryptoNetworks=solana&themeName=${widgetTheme}`}
+        src={`https://buy.onramper.com?apiKey=pk_prod_01HXRR2B13Q9Q7KD086MYFM28A&partnerContext=Soldrops&mode=buy&defaultCrypto=sol&onlyCryptos=sol&wallets=sol:${
+          session?.user.walletAddress
+        }&onlyCryptoNetworks=solana&themeName=${widgetTheme}&successRedirectUrl=${encodeURI(
+          `${process.env.NEXT_PUBLIC_URL!}/swap?tokenTransfer=success`
+        )}&failureRedirectUrl=${encodeURI(
+          `${process.env.NEXT_PUBLIC_URL!}/swap?tokenTransfer=error`
+        )}`}
         title="Soldrops"
         height="630px"
         className=" rounded-xl"

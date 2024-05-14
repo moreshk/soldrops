@@ -1,9 +1,10 @@
 import {
   getAllTokens,
+  getTokenBalance,
   getTokenById,
   getTokens,
 } from "@/lib/api/tokens/queries";
-import { publicProcedure, router } from "@/lib/server/trpc";
+import { protectedProcedure, publicProcedure, router } from "@/lib/server/trpc";
 import {
   tokenIdSchema,
   insertTokenParams,
@@ -44,7 +45,12 @@ export const tokensRouter = router({
     .mutation(async ({ input }) => {
       return deleteToken(input.id);
     }),
-  swapToken: publicProcedure.input(swapSchema).mutation(async ({ input }) => {
-    return swapToken(input.quotedURL);
+  getTokenBalance: protectedProcedure.query(async () => {
+    return getTokenBalance();
   }),
+  swapToken: protectedProcedure
+    .input(swapSchema)
+    .mutation(async ({ input }) => {
+      return swapToken(input.quotedURL);
+    }),
 });

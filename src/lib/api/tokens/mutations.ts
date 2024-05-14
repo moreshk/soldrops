@@ -31,7 +31,7 @@ import { getFeeAddress } from "@/lib/tokens/utils/getFeeAddress";
 import { solToken } from "@/lib/tokens/utils/defaultTokens";
 import { TOKEN_PROGRAM_ID, createTransferInstruction } from "@solana/spl-token";
 
-const connection = new Connection(env.HELIUS_RPC_URL);
+export const connection = new Connection(env.HELIUS_RPC_URL);
 
 export const createToken = async (token: NewTokenParams) => {
   const { session } = await getUserAuth();

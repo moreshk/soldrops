@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpDown, Loader2 } from "lucide-react";
+import { ArrowUpDown, Loader2, Wallet } from "lucide-react";
 import { SwapInput } from "../ui/swap-Input";
 import LoginModal from "../auth/LoginModal";
 import { Button } from "../ui/button";
@@ -11,9 +11,19 @@ import { useSwapStoreSelectors } from "@/store/swap-store";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import OnBoardingModal from "../auth/onBoardingModal";
+import { useTokenBalance } from "./useTokenBalance";
+import { useSearchParams } from "next/navigation";
+import TokenTransferredModal from "../auth/tokenTransferredModal";
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
+  const { balance, isLoading } = useTokenBalance(status === "authenticated");
+  const searchParams = useSearchParams();
+  const tokenTransfer = searchParams.get("tokenTransfer") as
+    | "success"
+    | "error"
+    | undefined;
+
   const sendToken = useSwapStoreSelectors.use.sendToken();
   const receiveToken = useSwapStoreSelectors.use.receiveToken();
   const onArrayUpDownClick = useSwapStoreSelectors.use.onArrayUpDownClick();
@@ -69,8 +79,20 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           tokens={tokens}
           selectedToken={sendToken}
           inputHeader={
-            <div className="pb-1">
+            <div className="pb-1 flex justify-between items-center">
               <p className="font-medium text-sm">You are paying</p>
+              {status === "authenticated" && (
+                <div className="flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  <p>
+                    {isLoading ? (
+                      "-"
+                    ) : (
+                      <>{balance ? balance / 1000000000 : 0}</>
+                    )}
+                  </p>
+                </div>
+              )}
             </div>
           }
         />
@@ -112,7 +134,13 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           selectedToken={receiveToken}
         />
         {status === "unauthenticated" && <LoginModal />}
-        {status === "authenticated" && <OnBoardingModal />}
+        {status === "authenticated" && !tokenTransfer && (
+          <OnBoardingModal balance={balance} />
+        )}
+        {(tokenTransfer === "success" || tokenTransfer === "error") &&
+          status === "unauthenticated" && (
+            <TokenTransferredModal balance={balance} />
+          )}
         {status === "authenticated" && (
           <Button
             disabled={isFetching === "loading" || isTokenSwapping}
