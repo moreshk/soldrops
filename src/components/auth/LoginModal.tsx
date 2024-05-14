@@ -45,7 +45,7 @@ const LoginModal = () => {
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="login">
-                  <EmailLogin onOpen={setOpen} />
+                  <EmailLogin />
                 </TabsContent>
                 <TabsContent value="signup">
                   <EmailRegister onOpen={setOpen} />

@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc/client";
 import { useSwapStoreSelectors } from "@/store/swap-store";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import OnBoardingModal from "../auth/onBoardingModal";
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
@@ -28,6 +29,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const isFetching = useSwapStoreSelectors.use.isFetching();
   const inputFocus = useSwapStoreSelectors.use.inputFocus();
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
+
   const { mutate: swapToken, isLoading: isTokenSwapping } =
     trpc.tokens.swapToken.useMutation({
       onSuccess: (res) => {
@@ -110,6 +112,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           selectedToken={receiveToken}
         />
         {status === "unauthenticated" && <LoginModal />}
+        {status === "authenticated" && <OnBoardingModal />}
         {status === "authenticated" && (
           <Button
             disabled={isFetching === "loading" || isTokenSwapping}

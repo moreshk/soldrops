@@ -18,11 +18,7 @@ import { signIn } from "next-auth/react";
 import { loginSchema } from "@/lib/db/schema/auth";
 import { toast } from "sonner";
 
-export const EmailLogin = ({
-  onOpen,
-}: {
-  onOpen: (value: boolean) => void;
-}) => {
+export const EmailLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
