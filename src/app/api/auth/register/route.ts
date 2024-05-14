@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { registerSchema, users } from "@/lib/db/schema/auth";
 import { env } from "@/lib/env.mjs";
 import { Keypair } from "@solana/web3.js";
-import { hash } from "bcrypt";
+import { hash } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { User } from "next-auth";
 import { NextResponse } from "next/server";

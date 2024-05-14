@@ -52,7 +52,7 @@
     "@trpc/next": "^10.37.1",
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "bs58": "^5.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -86,7 +86,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
-    "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
     "@types/promise-retry": "^1.1.6",

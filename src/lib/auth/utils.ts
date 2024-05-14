@@ -14,7 +14,7 @@ import * as auth from "../db/schema/auth";
 import { Keypair } from "@solana/web3.js";
 import CryptoJS from "crypto-js";
 import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcrypt";
+import { compare } from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { encode, decode } from "next-auth/jwt";
 
