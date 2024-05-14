@@ -1,12 +1,11 @@
 "use client";
 
-import { ArrowUpDown, Loader2, Wallet } from "lucide-react";
+import { ArrowUpDown, Wallet } from "lucide-react";
 import { SwapInput } from "../ui/swap-Input";
 import LoginModal from "../auth/LoginModal";
 import { Button } from "../ui/button";
 import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
-import { trpc } from "@/lib/trpc/client";
 import { useSwapStoreSelectors } from "@/store/swap-store";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
@@ -14,9 +13,12 @@ import OnBoardingModal from "../auth/onBoardingModal";
 import { useTokenBalance } from "./useTokenBalance";
 import { useSearchParams } from "next/navigation";
 import TokenTransferredModal from "../auth/tokenTransferredModal";
+import { SwapConfirmationModal } from "./swapConfirmationModal";
+import { useState } from "react";
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
+  const [confirmation, setConfirmation] = useState<boolean>(false);
   const { balance, isLoading } = useTokenBalance(status === "authenticated");
   const searchParams = useSearchParams();
   const tokenTransfer = searchParams.get("tokenTransfer") as
@@ -35,20 +37,9 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const sendAmount = useSwapStoreSelectors.use.sendAmount();
   const setFocus = useSwapStoreSelectors.use.setFocus();
   const getQuoteAmount = useSwapStoreSelectors.use.getQuoteAmount();
-  const getQuoteTokenURL = useSwapStoreSelectors.use.getQuoteTokenURL();
   const isFetching = useSwapStoreSelectors.use.isFetching();
   const inputFocus = useSwapStoreSelectors.use.inputFocus();
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
-
-  const { mutate: swapToken, isLoading: isTokenSwapping } =
-    trpc.tokens.swapToken.useMutation({
-      onSuccess: (res) => {
-        console.log(res);
-      },
-      onError: (err) => {
-        console.log(err);
-      },
-    });
 
   return (
     <div className="flex min-h-screen overflow-y-auto flex-col justify-center items-center ">
@@ -62,10 +53,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
       </div>
       <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
         <SwapInput
-          isLoading={
-            (isFetching === "loading" && inputFocus === "receive") ||
-            isTokenSwapping
-          }
+          isLoading={isFetching === "loading" && inputFocus === "receive"}
           onFocus={() => setFocus("send")}
           onChange={(e) => {
             setSendAmount(e.target.value);
@@ -98,7 +86,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
         />
         <div className="py-4">
           <button
-            disabled={isTokenSwapping || isFetching === "loading"}
+            disabled={isFetching === "loading"}
             className="border-b-2 w-full relative cursor-pointer"
             onClick={() => {
               onArrayUpDownClick();
@@ -111,10 +99,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           </button>
         </div>
         <SwapInput
-          isLoading={
-            (isFetching === "loading" && inputFocus === "send") ||
-            isTokenSwapping
-          }
+          isLoading={isFetching === "loading" && inputFocus === "send"}
           onFocus={() => setFocus("receive")}
           onChange={(e) => {
             setReceiveAmount(e.target.value);
@@ -143,27 +128,24 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           )}
         {status === "authenticated" && (
           <Button
-            disabled={isFetching === "loading" || isTokenSwapping}
-            onClick={async () => {
-              try {
-                getQuoteAmount();
-                const quotedURL = getQuoteTokenURL();
-                if (quotedURL) {
-                  swapToken({ quotedURL });
-                }
-              } catch (e) {
-                console.log(e);
+            disabled={isFetching === "loading"}
+            onClick={() => {
+              const isSendNumber =
+                typeof +sendAmount === "number" && +sendAmount > 0;
+              const isReceiveNumber =
+                typeof +receiveAmount === "number" && +receiveAmount > 0;
+
+              if (isSendNumber && isReceiveNumber) {
+                setConfirmation(true);
               }
             }}
             size="lg"
             className="w-full rounded-2xl"
           >
-            {isTokenSwapping && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {isTokenSwapping ? "Swapping...." : "Swap"}
+            Confirm
           </Button>
         )}
+        <SwapConfirmationModal open={confirmation} setOpen={setConfirmation} />
       </div>
     </div>
   );
