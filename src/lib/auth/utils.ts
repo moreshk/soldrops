@@ -52,7 +52,6 @@ export const authOptions: NextAuthOptions = {
     accountsTable: auth.accounts,
     // @ts-expect-error
     usersTable: auth.users,
-    // @ts-expect-error
     sessionsTable: auth.sessions,
     verificationTokensTable: auth.verificationTokens,
   }) as Adapter,
