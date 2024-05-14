@@ -15,6 +15,7 @@ import {
   createToken,
   deleteToken,
   swapToken,
+  swapTokenOutputFee,
   updateToken,
 } from "@/lib/api/tokens/mutations";
 
@@ -52,5 +53,10 @@ export const tokensRouter = router({
     .input(swapSchema)
     .mutation(async ({ input }) => {
       return swapToken(input.quotedURL);
+    }),
+  swapTokenOutputFee: protectedProcedure
+    .input(swapSchema)
+    .mutation(async ({ input }) => {
+      return swapTokenOutputFee(input.quotedURL);
     }),
 });

@@ -50,7 +50,7 @@ export const createToken = async (token: NewTokenParams) => {
   }
 };
 
-export const swapToken = async (amountQuoteUrl: string) => {
+export const swapTokenOutputFee = async (amountQuoteUrl: string) => {
   try {
     const { session } = await getUserAuth();
     const [user] = await db
@@ -147,6 +147,131 @@ export const swapToken = async (amountQuoteUrl: string) => {
         TOKEN_PROGRAM_ID
       );
       message.instructions.push(feeTx);
+    }
+    transaction.message = message.compileToV0Message(
+      addressLookupTableAccounts
+    );
+
+    transaction.sign([wallet]);
+    const signature = getSignature(transaction);
+
+    const { value: simulatedTransactionResponse } =
+      await connection.simulateTransaction(transaction, {
+        replaceRecentBlockhash: true,
+        commitment: "processed",
+      });
+    const { err, logs } = simulatedTransactionResponse;
+    if (err) {
+      console.error("Simulation Error:");
+      console.error({ err, logs });
+      return { message: "Simulation Error:" };
+    }
+
+    const serializedTransaction = Buffer.from(transaction.serialize());
+    const blockhash = transaction.message.recentBlockhash;
+
+    const transactionResponse = await transactionSenderAndConfirmationWaiter({
+      connection,
+      serializedTransaction,
+      blockhashWithExpiryBlockHeight: {
+        blockhash,
+        lastValidBlockHeight: lastValidBlockHeight,
+      },
+    });
+
+    if (!transactionResponse) {
+      console.error("Transaction not confirmed");
+      return { message: "Transaction not confirmed" };
+    }
+    return { signature };
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+    throw { message };
+  }
+};
+export const swapToken = async (amountQuoteUrl: string) => {
+  try {
+    const { session } = await getUserAuth();
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, session?.user.id!));
+    const hashedPrivatekey = user.privateKey;
+    var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
+    const privateKey = bs58.encode(
+      Uint8Array.from(
+        decrypt
+          .toString(CryptoJS.enc.Utf8)
+          .split(",")
+          .map((a) => Number(a))
+      )
+    );
+    const wallet = Keypair.fromSecretKey(bs58.decode(privateKey));
+    const quoteResponseData = await fetch(
+      `${amountQuoteUrl}&platformFeeBps=100`
+    );
+    const quoteResponse: QuoteResponse = await quoteResponseData.json();
+    const feeWallet = new PublicKey(
+      "9BAa8bSQrUAT3nipra5bt3DJbW2Wyqfc2SXw3vGcjpbj"
+    );
+
+    const swapTransactionData = await fetch(
+      "https://quote-api.jup.ag/v6/swap",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          quoteResponse,
+          userPublicKey: user.walletAddress,
+          wrapAndUnwrapSol: true,
+        }),
+      }
+    );
+    const { swapTransaction, lastValidBlockHeight } =
+      await swapTransactionData.json();
+    const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
+    var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+
+    const splMintToken =
+      quoteResponse.outputMint === solToken.address
+        ? quoteResponse.inputMint
+        : quoteResponse.outputMint;
+
+    const addressLookupTableAccounts = await Promise.all(
+      transaction.message.addressTableLookups.map(async (lookup) => {
+        return new AddressLookupTableAccount({
+          key: lookup.accountKey,
+          state: AddressLookupTableAccount.deserialize(
+            await connection.getAccountInfo(lookup.accountKey).then(
+              // @ts-ignore
+              (res) => res.data
+            )
+          ),
+        });
+      })
+    );
+    var message = TransactionMessage.decompile(transaction.message, {
+      addressLookupTableAccounts: addressLookupTableAccounts,
+    });
+
+    if (quoteResponse.outputMint === solToken.address) {
+      const solTransferInstruction = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: feeWallet,
+        lamports: +quoteResponse.platformFee?.amount!,
+      });
+      message.instructions.push(solTransferInstruction);
+    } else {
+      const fees = +quoteResponse.inAmount / 100;
+      const solTransferInstruction = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: feeWallet,
+        lamports: fees,
+      });
+      message.instructions.push(solTransferInstruction);
     }
     transaction.message = message.compileToV0Message(
       addressLookupTableAccounts
