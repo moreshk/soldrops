@@ -1,0 +1,152 @@
+"use client";
+
+import { ArrowUpDown, Wallet } from "lucide-react";
+import { SwapInput } from "../ui/swap-Input";
+import LoginModal from "../auth/LoginModal";
+import { Button } from "../ui/button";
+import { useSession } from "next-auth/react";
+import { CompleteToken } from "@/lib/db/schema/tokens";
+import { useSwapStoreSelectors } from "@/store/swap-store";
+import { useDebouncedCallback } from "use-debounce";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import OnBoardingModal from "../auth/onBoardingModal";
+import { useTokenBalance } from "./useTokenBalance";
+import { useSearchParams } from "next/navigation";
+import TokenTransferredModal from "../auth/tokenTransferredModal";
+import { SwapConfirmationModal } from "./swapConfirmationModal";
+import { useState } from "react";
+
+export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
+  const { status } = useSession();
+  const [confirmation, setConfirmation] = useState<boolean>(false);
+  const { balance, isLoading } = useTokenBalance(status === "authenticated");
+  const searchParams = useSearchParams();
+  const tokenTransfer = searchParams.get("tokenTransfer") as
+    | "success"
+    | "error"
+    | undefined;
+
+  const sendToken = useSwapStoreSelectors.use.sendToken();
+  const receiveToken = useSwapStoreSelectors.use.receiveToken();
+  const onArrayUpDownClick = useSwapStoreSelectors.use.onArrayUpDownClick();
+  const setReceiveToken = useSwapStoreSelectors.use.setReceiveToken();
+  const setSendToken = useSwapStoreSelectors.use.setSendToken();
+  const setReceiveAmount = useSwapStoreSelectors.use.setReceiveAmount();
+  const setSendAmount = useSwapStoreSelectors.use.setSendAmount();
+  const receiveAmount = useSwapStoreSelectors.use.receiveAmount();
+  const sendAmount = useSwapStoreSelectors.use.sendAmount();
+  const setFocus = useSwapStoreSelectors.use.setFocus();
+  const getQuoteAmount = useSwapStoreSelectors.use.getQuoteAmount();
+  const isFetching = useSwapStoreSelectors.use.isFetching();
+  const inputFocus = useSwapStoreSelectors.use.inputFocus();
+  const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
+
+  return (
+    <div className="flex min-h-screen overflow-y-auto flex-col justify-center items-center ">
+      <div className="flex justify-between max-w-md w-full">
+        <button
+          onClick={getQuoteAmount}
+          className="bg-primary-foreground p-1 rounded-full mb-1 ml-1"
+        >
+          <ReloadIcon />
+        </button>
+      </div>
+      <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
+        <SwapInput
+          isLoading={isFetching === "loading" && inputFocus === "receive"}
+          onFocus={() => setFocus("send")}
+          onChange={(e) => {
+            setSendAmount(e.target.value);
+            getQuoteAmountDebounced();
+          }}
+          value={sendAmount}
+          onTokenChange={(token: CompleteToken) => {
+            setSendToken(token);
+            getQuoteAmountDebounced();
+          }}
+          tokens={tokens}
+          selectedToken={sendToken}
+          inputHeader={
+            <div className="pb-1 flex justify-between items-center">
+              <p className="font-medium text-sm">You are paying</p>
+              {status === "authenticated" && (
+                <div className="flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  <p>
+                    {isLoading ? (
+                      "-"
+                    ) : (
+                      <>{balance ? balance / 1000000000 : 0}</>
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
+          }
+        />
+        <div className="py-4">
+          <button
+            disabled={isFetching === "loading"}
+            className="border-b-2 w-full relative cursor-pointer"
+            onClick={() => {
+              onArrayUpDownClick();
+              getQuoteAmountDebounced();
+            }}
+          >
+            <div className=" w-full absolute -translate-y-1/2">
+              <ArrowUpDown className="flex justify-center items-center mx-auto bg-primary-foreground p-2 rounded-full border-2 w-9 h-9" />
+            </div>
+          </button>
+        </div>
+        <SwapInput
+          isLoading={isFetching === "loading" && inputFocus === "send"}
+          onFocus={() => setFocus("receive")}
+          onChange={(e) => {
+            setReceiveAmount(e.target.value);
+            getQuoteAmount();
+          }}
+          value={receiveAmount}
+          inputHeader={
+            <div className="pb-1 ">
+              <p className="font-medium text-sm">To receive</p>
+            </div>
+          }
+          onTokenChange={(token: CompleteToken) => {
+            setReceiveToken(token);
+            getQuoteAmount();
+          }}
+          tokens={tokens}
+          selectedToken={receiveToken}
+        />
+        {status === "unauthenticated" && <LoginModal />}
+        {status === "authenticated" && !tokenTransfer && (
+          <OnBoardingModal balance={balance} />
+        )}
+        {(tokenTransfer === "success" || tokenTransfer === "error") &&
+          status === "unauthenticated" && (
+            <TokenTransferredModal balance={balance} />
+          )}
+        {status === "authenticated" && (
+          <Button
+            disabled={isFetching === "loading"}
+            onClick={() => {
+              const isSendNumber =
+                typeof +sendAmount === "number" && +sendAmount > 0;
+              const isReceiveNumber =
+                typeof +receiveAmount === "number" && +receiveAmount > 0;
+
+              if (isSendNumber && isReceiveNumber) {
+                setConfirmation(true);
+              }
+            }}
+            size="lg"
+            className="w-full rounded-2xl"
+          >
+            Confirm
+          </Button>
+        )}
+        <SwapConfirmationModal open={confirmation} setOpen={setConfirmation} />
+      </div>
+    </div>
+  );
+};

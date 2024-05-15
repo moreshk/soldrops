@@ -1,19 +1,36 @@
-import { getTokenById, getTokens } from "@/lib/api/tokens/queries";
-import { publicProcedure, router } from "@/lib/server/trpc";
+import {
+  getAllTokens,
+  getTokenBalance,
+  getTokenById,
+  getTokens,
+} from "@/lib/api/tokens/queries";
+import { protectedProcedure, publicProcedure, router } from "@/lib/server/trpc";
 import {
   tokenIdSchema,
   insertTokenParams,
   updateTokenParams,
+  swapSchema,
 } from "@/lib/db/schema/tokens";
-import { createToken, deleteToken, updateToken } from "@/lib/api/tokens/mutations";
+import {
+  createToken,
+  deleteToken,
+  swapToken,
+  swapTokenOutputFee,
+  updateToken,
+} from "@/lib/api/tokens/mutations";
 
 export const tokensRouter = router({
   getTokens: publicProcedure.query(async () => {
     return getTokens();
   }),
-  getTokenById: publicProcedure.input(tokenIdSchema).query(async ({ input }) => {
-    return getTokenById(input.id);
+  getAllTokens: publicProcedure.query(async () => {
+    return getAllTokens();
   }),
+  getTokenById: publicProcedure
+    .input(tokenIdSchema)
+    .query(async ({ input }) => {
+      return getTokenById(input.id);
+    }),
   createToken: publicProcedure
     .input(insertTokenParams)
     .mutation(async ({ input }) => {
@@ -28,5 +45,18 @@ export const tokensRouter = router({
     .input(tokenIdSchema)
     .mutation(async ({ input }) => {
       return deleteToken(input.id);
+    }),
+  getTokenBalance: protectedProcedure.query(async () => {
+    return getTokenBalance();
+  }),
+  swapToken: protectedProcedure
+    .input(swapSchema)
+    .mutation(async ({ input }) => {
+      return swapToken(input.quotedURL);
+    }),
+  swapTokenOutputFee: protectedProcedure
+    .input(swapSchema)
+    .mutation(async ({ input }) => {
+      return swapTokenOutputFee(input.quotedURL);
     }),
 });

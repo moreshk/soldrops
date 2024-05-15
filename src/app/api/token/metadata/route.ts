@@ -2,12 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getUserAuth } from "@/lib/auth/utils";
 import { env } from "@/lib/env.mjs";
-
-export const tokenData = z.object({
-  tokenAddress: z.string(),
-});
-
-export type TokenDataSchema = z.infer<typeof tokenData>;
+import { tokenData } from "@/lib/db/schema/tokens";
 
 export async function POST(req: Request) {
   try {

@@ -2,6 +2,8 @@ import { db } from "@/lib/db/index";
 import { eq, and } from "drizzle-orm";
 import { getUserAuth } from "@/lib/auth/utils";
 import { type TokenId, tokenIdSchema, tokens } from "@/lib/db/schema/tokens";
+import { connection } from "./mutations";
+import { PublicKey } from "@solana/web3.js";
 
 export const getTokens = async () => {
   const { session } = await getUserAuth();
@@ -29,4 +31,10 @@ export const getTokenById = async (id: TokenId) => {
   if (row === undefined) return {};
   const t = row;
   return { token: t };
+};
+export const getTokenBalance = async () => {
+  const { session } = await getUserAuth();
+  const walletAddress = new PublicKey(session?.user.walletAddress!);
+  const balance = await connection.getBalance(walletAddress);
+  return { balance };
 };

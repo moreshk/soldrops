@@ -1,10 +1,10 @@
 {
-  "id": "11854255-285e-4bac-adbd-3b3ba7f02ea1",
-  "prevId": "e8576512-01b7-42c1-af77-2b9f2ffebf9e",
-  "version": "5",
-  "dialect": "pg",
+  "id": "46f37964-6c98-4643-a177-6000d4cb9ce6",
+  "prevId": "5c41c66a-992b-4d37-a973-feba1957214e",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "account": {
+    "public.account": {
       "name": "account",
       "schema": "",
       "columns": {
@@ -102,7 +102,7 @@
       },
       "uniqueConstraints": {}
     },
-    "session": {
+    "public.session": {
       "name": "session",
       "schema": "",
       "columns": {
@@ -144,7 +144,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user": {
+    "public.user": {
       "name": "user",
       "schema": "",
       "columns": {
@@ -184,25 +184,31 @@
           "primaryKey": false,
           "notNull": false
         },
+        "password": {
+          "name": "password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "isAdmin": {
           "name": "isAdmin",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": false
         },
         "user_type": {
           "name": "user_type",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'user'"
         },
         "default_url": {
           "name": "default_url",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "'/dashboard'"
         },
         "wallet_address": {
@@ -238,7 +244,7 @@
         }
       }
     },
-    "verificationToken": {
+    "public.verificationToken": {
       "name": "verificationToken",
       "schema": "",
       "columns": {
@@ -274,7 +280,7 @@
       },
       "uniqueConstraints": {}
     },
-    "campaign": {
+    "public.campaign": {
       "name": "campaign",
       "schema": "",
       "columns": {
@@ -411,7 +417,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "tokens": {
+    "public.tokens": {
       "name": "tokens",
       "schema": "",
       "columns": {
@@ -441,7 +447,7 @@
         },
         "description": {
           "name": "description",
-          "type": "varchar(256)",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -455,7 +461,8 @@
           "name": "listing",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": false
         },
         "address": {
           "name": "address",
@@ -465,7 +472,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "varchar(256)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -503,7 +510,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "whitelist": {
+    "public.whitelist": {
       "name": "whitelist",
       "schema": "",
       "columns": {
