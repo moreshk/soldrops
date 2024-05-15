@@ -1,4 +1,4 @@
-import { LoginSignupModal } from "@/components/auth/modal/LoginSignupModal";
+import { AuthLoginSignup } from "@/components/auth/AuthLoginSignup";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ export default function LandingPage() {
                 </h1>
               </div>
               <div className="flex flex-col gap-2">
-                <LoginSignupModal showOauth={true} />
+                <AuthLoginSignup showOauth />
               </div>
             </div>
           </div>

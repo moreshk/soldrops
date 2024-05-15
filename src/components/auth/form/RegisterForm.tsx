@@ -61,7 +61,7 @@ export const RegisterForm = ({
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-none">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
           <CardHeader>

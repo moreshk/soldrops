@@ -23,7 +23,7 @@ export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
         Sign up
       </Button>
       <Dialog open={open} onOpenChange={!isLoading ? setOpen : undefined}>
-        <DialogContent className="max-w-md p-0 border-none">
+        <DialogContent className="max-w-md p-0">
           {form === "login" && (
             <LoginForm
               onChangeLoading={setLoading}
