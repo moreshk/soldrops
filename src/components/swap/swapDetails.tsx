@@ -2,7 +2,6 @@
 
 import { ArrowUpDown, Wallet } from "lucide-react";
 import { SwapInput } from "../ui/swap-Input";
-import LoginModal from "../auth/LoginModal";
 import { Button } from "../ui/button";
 import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
@@ -15,6 +14,7 @@ import { useSearchParams } from "next/navigation";
 import TokenTransferredModal from "../auth/tokenTransferredModal";
 import { SwapConfirmationModal } from "./swapConfirmationModal";
 import { useState } from "react";
+import { LoginSignupModal } from "../auth/modal/LoginSignupModal";
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
@@ -118,7 +118,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           tokens={tokens}
           selectedToken={receiveToken}
         />
-        {status === "unauthenticated" && <LoginModal />}
+        {status === "unauthenticated" && <LoginSignupModal showOauth />}
         {status === "authenticated" && !tokenTransfer && (
           <OnBoardingModal balance={balance} />
         )}
