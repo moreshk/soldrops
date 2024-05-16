@@ -15,6 +15,13 @@
       "when": 1715618361603,
       "tag": "0001_loving_meltdown",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1715856261172,
+      "tag": "0002_sweet_doorman",
+      "breakpoints": true
     }
   ]
 }
