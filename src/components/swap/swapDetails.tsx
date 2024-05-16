@@ -5,21 +5,26 @@ import { SwapInput } from "../ui/swap-Input";
 import { Button } from "../ui/button";
 import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
-import { useSwapStoreSelectors } from "@/store/swap-store";
+import { InputFocusEnum, useSwapStoreSelectors } from "@/store/swap-store";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import OnBoardingModal from "../auth/onBoardingModal";
-import { useTokenBalance } from "./useTokenBalance";
 import { useSearchParams } from "next/navigation";
 import TokenTransferredModal from "../auth/tokenTransferredModal";
 import { SwapConfirmationModal } from "./swapConfirmationModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoginSignupModal } from "../auth/modal/LoginSignupModal";
+import { trpc } from "@/lib/trpc/client";
 
+declare global {
+  interface Window {
+    trpc: ReturnType<typeof trpc.useUtils>["client"];
+  }
+}
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
+  window.trpc = trpc.useUtils().client;
   const [confirmation, setConfirmation] = useState<boolean>(false);
-  const { balance, isLoading } = useTokenBalance(status === "authenticated");
   const searchParams = useSearchParams();
   const tokenTransfer = searchParams.get("tokenTransfer") as
     | "success"
@@ -32,17 +37,25 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const setReceiveToken = useSwapStoreSelectors.use.setReceiveToken();
   const setSendToken = useSwapStoreSelectors.use.setSendToken();
   const setReceiveAmount = useSwapStoreSelectors.use.setReceiveAmount();
+  const receiveBalance = useSwapStoreSelectors.use.receiveBalance();
   const setSendAmount = useSwapStoreSelectors.use.setSendAmount();
+  const sendBalance = useSwapStoreSelectors.use.sendBalance();
   const receiveAmount = useSwapStoreSelectors.use.receiveAmount();
   const sendAmount = useSwapStoreSelectors.use.sendAmount();
   const setFocus = useSwapStoreSelectors.use.setFocus();
   const getQuoteAmount = useSwapStoreSelectors.use.getQuoteAmount();
   const isFetching = useSwapStoreSelectors.use.isFetching();
+  const getBalance = useSwapStoreSelectors.use.getBalance();
   const inputFocus = useSwapStoreSelectors.use.inputFocus();
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
 
+  useEffect(() => {
+    if (status === "authenticated") getBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
   return (
-    <div className="flex min-h-screen overflow-y-auto flex-col justify-center items-center ">
+    <div className="flex flex-col justify-center items-center w-full">
       <div className="flex justify-between max-w-md w-full">
         <button
           onClick={getQuoteAmount}
@@ -54,10 +67,14 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
       <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
         <SwapInput
           isLoading={isFetching === "loading" && inputFocus === "receive"}
-          onFocus={() => setFocus("send")}
+          onFocus={() => setFocus(InputFocusEnum.send)}
           onChange={(e) => {
             setSendAmount(e.target.value);
-            getQuoteAmountDebounced();
+            if (+e.target.value) {
+              getQuoteAmountDebounced();
+            } else {
+              setReceiveAmount("0");
+            }
           }}
           value={sendAmount}
           onTokenChange={(token: CompleteToken) => {
@@ -67,20 +84,38 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           tokens={tokens}
           selectedToken={sendToken}
           inputHeader={
-            <div className="pb-1 flex justify-between items-center">
+            <div className="pb-2 flex justify-between items-center">
               <p className="font-medium text-sm">You are paying</p>
-              {status === "authenticated" && (
-                <div className="flex items-center gap-2">
-                  <Wallet className="w-4 h-4" />
-                  <p>
-                    {isLoading ? (
-                      "-"
-                    ) : (
-                      <>{balance ? balance / 1000000000 : 0}</>
-                    )}
-                  </p>
-                </div>
-              )}
+              <div className="flex items-center gap-1 mr-2">
+                {typeof +sendBalance === "number" && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mr-3">
+                    <Wallet className="w-3 h-3" />
+                    {+sendBalance} {sendToken.symbol}
+                  </div>
+                )}
+                <button
+                  className="text-[10px] hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
+                  onClick={() => {
+                    if (+sendBalance) {
+                      setSendAmount(`${+sendBalance / 2}`);
+                      getQuoteAmount();
+                    }
+                  }}
+                >
+                  Half
+                </button>
+                <button
+                  onClick={() => {
+                    if (+sendBalance) {
+                      setSendAmount(`${+sendBalance}`);
+                      getQuoteAmount();
+                    }
+                  }}
+                  className="text-[10px] hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
+                >
+                  Max
+                </button>
+              </div>
             </div>
           }
         />
@@ -90,7 +125,7 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
             className="border-b-2 w-full relative cursor-pointer"
             onClick={() => {
               onArrayUpDownClick();
-              getQuoteAmountDebounced();
+              getQuoteAmount();
             }}
           >
             <div className=" w-full absolute -translate-y-1/2">
@@ -99,16 +134,28 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           </button>
         </div>
         <SwapInput
-          isLoading={isFetching === "loading" && inputFocus === "send"}
-          onFocus={() => setFocus("receive")}
+          isLoading={
+            isFetching === "loading" && inputFocus === InputFocusEnum.send
+          }
+          onFocus={() => setFocus(InputFocusEnum.receive)}
           onChange={(e) => {
             setReceiveAmount(e.target.value);
-            getQuoteAmount();
+            if (+e.target.value) {
+              getQuoteAmountDebounced();
+            } else {
+              setSendAmount("0");
+            }
           }}
           value={receiveAmount}
           inputHeader={
-            <div className="pb-1 ">
+            <div className="pb-2 flex justify-between items-center">
               <p className="font-medium text-sm">To receive</p>
+              {typeof +receiveBalance === "number" && (
+                <div className="flex items-center gap-2 text-muted-foreground text-xs mr-3">
+                  <Wallet className="w-3 h-3" />
+                  {+receiveBalance} {receiveToken.symbol}
+                </div>
+              )}
             </div>
           }
           onTokenChange={(token: CompleteToken) => {
@@ -119,13 +166,9 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           selectedToken={receiveToken}
         />
         {status === "unauthenticated" && <LoginSignupModal showOauth />}
-        {status === "authenticated" && !tokenTransfer && (
-          <OnBoardingModal balance={balance} />
-        )}
+        {status === "authenticated" && !tokenTransfer && <OnBoardingModal />}
         {(tokenTransfer === "success" || tokenTransfer === "error") &&
-          status === "unauthenticated" && (
-            <TokenTransferredModal balance={balance} />
-          )}
+          status === "authenticated" && <TokenTransferredModal />}
         {status === "authenticated" && (
           <Button
             disabled={isFetching === "loading"}
@@ -150,3 +193,5 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
     </div>
   );
 };
+
+export default SwapDetails;

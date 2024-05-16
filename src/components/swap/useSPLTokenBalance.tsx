@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc/client";
 
-export const useTokenBalance = (fetchStatus: boolean) => {
+export const useSPLTokenBalance = (fetchStatus: boolean, address: string) => {
   const {
     data: t,
     isLoading,

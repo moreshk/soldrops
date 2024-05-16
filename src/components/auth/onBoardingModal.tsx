@@ -12,10 +12,12 @@ import { Coins, Copy } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
+import { useTokenBalance } from "../swap/useTokenBalance";
 
-const OnBoardingModal = ({ balance }: { balance?: number }) => {
+const OnBoardingModal = () => {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
+  const { balance } = useTokenBalance(true);
 
   useEffect(() => {
     if (typeof balance === "number") {

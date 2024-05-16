@@ -10,10 +10,12 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
+import { useTokenBalance } from "../swap/useTokenBalance";
 
-const TokenTransferredModal = ({ balance }: { balance?: number }) => {
+const TokenTransferredModal = () => {
   const [open, setOpen] = useState(true);
   const router = useRouter();
+  const { balance } = useTokenBalance(true);
 
   const searchParams = useSearchParams();
   const tokenTransfer = searchParams.get("tokenTransfer") as

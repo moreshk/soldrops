@@ -4,6 +4,7 @@ import { getUserAuth } from "@/lib/auth/utils";
 import { type TokenId, tokenIdSchema, tokens } from "@/lib/db/schema/tokens";
 import { connection } from "./mutations";
 import { PublicKey } from "@solana/web3.js";
+import { getATAAddressSync } from "@saberhq/token-utils";
 
 export const getTokens = async () => {
   const { session } = await getUserAuth();
@@ -32,9 +33,51 @@ export const getTokenById = async (id: TokenId) => {
   const t = row;
   return { token: t };
 };
-export const getTokenBalance = async () => {
-  const { session } = await getUserAuth();
-  const walletAddress = new PublicKey(session?.user.walletAddress!);
-  const balance = await connection.getBalance(walletAddress);
-  return { balance };
+
+export const getSolTokenBalance = async () => {
+  try {
+    const { session } = await getUserAuth();
+    const walletAddress = new PublicKey(session?.user.walletAddress!);
+    const balance = await connection.getBalance(walletAddress);
+    return { balance };
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+    throw { message };
+  }
+};
+
+export const getSwapTokenBalance = async (id: TokenId) => {
+  try {
+    const { session } = await getUserAuth();
+    const { id: tokenAddress } = tokenIdSchema.parse({ id });
+    const walletAddress = new PublicKey(session?.user.walletAddress!);
+    const solBalance = await connection.getBalance(walletAddress);
+    const ataAtaAddress = getATAAddressSync({
+      mint: new PublicKey(tokenAddress),
+      owner: walletAddress,
+    });
+    const ataTokenBalance = await connection.getTokenAccountBalance(
+      ataAtaAddress
+    );
+    return { solBalance, ataTokenBalance: ataTokenBalance.value.amount };
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+    throw { message };
+  }
+};
+
+export const getATATokenBalance = async (id: TokenId) => {
+  try {
+    const { session } = await getUserAuth();
+    const { id: tokenAddress } = tokenIdSchema.parse({ id });
+    const walletAddress = new PublicKey(tokenAddress);
+    const balance = await connection.getTokenAccountBalance(walletAddress);
+    return { balance };
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+    throw { message };
+  }
 };

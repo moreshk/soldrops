@@ -1,6 +1,8 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import {
+  // @ts-ignore
   createAssociatedTokenAccountInstruction,
+  // @ts-ignore
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 
