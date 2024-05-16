@@ -82,7 +82,6 @@ const WidgetForm = ({
     trpc.widgets.createWidget.useMutation({
       onSuccess: (res) => onSuccess("create"),
       onError: (err) => {
-        console.log("🚀 ~ err:", err.message);
         onSuccess("create", { error: err.message });
       },
     });
