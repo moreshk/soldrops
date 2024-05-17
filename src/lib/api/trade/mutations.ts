@@ -79,7 +79,6 @@ export const tradeToken = async (
       await swapTransactionData.json();
     const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
     var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-
     const addressLookupTableAccounts = await Promise.all(
       transaction.message.addressTableLookups.map(async (lookup) => {
         return new AddressLookupTableAccount({
@@ -96,7 +95,6 @@ export const tradeToken = async (
     var message = TransactionMessage.decompile(transaction.message, {
       addressLookupTableAccounts: addressLookupTableAccounts,
     });
-
     if (quoteResponse.outputMint === solToken.address) {
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
@@ -105,7 +103,7 @@ export const tradeToken = async (
       });
       message.instructions.push(solTransferInstruction);
     } else {
-      const fees = +quoteResponse.inAmount / 100;
+      const fees = Math.ceil(+quoteResponse.inAmount / 100);
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,
@@ -161,6 +159,7 @@ export const tradeToken = async (
       .returning();
     return { signature };
   } catch (err) {
+    console.log(err);
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
     throw { message };

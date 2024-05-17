@@ -266,7 +266,7 @@ export const swapToken = async (amountQuoteUrl: string) => {
       });
       message.instructions.push(solTransferInstruction);
     } else {
-      const fees = +quoteResponse.inAmount / 100;
+      const fees = Math.ceil(+quoteResponse.inAmount / 100);
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,

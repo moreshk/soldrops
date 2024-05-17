@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, X } from "lucide-react";
+import { CheckCircle2, Loader2, X } from "lucide-react";
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "sonner";
 import { addressShortener } from "@/lib/tokens/utils/addressShortener";
@@ -146,6 +146,7 @@ export const TradConfirmationModal = ({
               </div>
               <AlertDialogFooter>
                 <AlertDialogAction
+                  disabled={isTokenSwapping}
                   onClick={() => {
                     const quotedURL = getQuoteTokenURL();
                     if (quotedURL) {
@@ -159,7 +160,10 @@ export const TradConfirmationModal = ({
                   }}
                   className="w-full rounded-2xl"
                 >
-                  {isTokenSwapping ? "Buying..." : "Buy"} {receiveToken.symbol}
+                  {isTokenSwapping && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {isTokenSwapping ? "Buying..." : `Buy ${receiveToken.symbol}`}
                 </AlertDialogAction>
               </AlertDialogFooter>
               <div className="flex justify-between items-center text-muted-foreground font-medium text-sm">
