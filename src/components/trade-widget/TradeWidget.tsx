@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { IsFetchingEnum } from "@/store/store-types";
 import { trpc } from "@/lib/trpc/client";
 import { TradConfirmationModal } from "./TradConfirmationModal";
+import { solToken, stableUSDC } from "@/lib/tokens/utils/defaultTokens";
 
 const TradeWidget = ({
   widget,
@@ -45,6 +46,8 @@ const TradeWidget = ({
 
   useEffect(() => {
     setReceiveToken(widget.token);
+    const sol = tokens.find((token) => token.address === solToken.address);
+    if (sol) setSendToken(sol);
   }, []);
 
   useEffect(() => {
