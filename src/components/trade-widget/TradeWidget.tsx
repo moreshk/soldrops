@@ -43,6 +43,7 @@ const TradeWidget = ({
   const onArrayUpDownClick = useTradeStoreSelectors.use.onArrayUpDownClick();
   const receiveToken = useTradeStoreSelectors.use.receiveToken();
   const getQuoteAmount = useTradeStoreSelectors.use.getQuoteAmount();
+  const getBalance = useTradeStoreSelectors.use.getBalance();
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
 
   useEffect(() => {
@@ -53,6 +54,11 @@ const TradeWidget = ({
 
   useEffect(() => {
     if (status === "authenticated") setLoggedIn(status === "authenticated");
+  }, [status]);
+
+  useEffect(() => {
+    if (status === "authenticated") getBalance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   return (
