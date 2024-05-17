@@ -153,13 +153,11 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
                 state.sendBalance =
                   sendToken.address === solToken.address
                     ? `${solBalance / Math.pow(10, sendToken.decimal)}`
-                    : `${+ataTokenBalance / Math.pow(10, sendToken.decimal)}`;
+                    : `${+ataTokenBalance}`;
                 state.receiveBalance =
                   receiveToken.address === solToken.address
                     ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
-                    : `${
-                        +ataTokenBalance / Math.pow(10, receiveToken.decimal)
-                      }`;
+                    : `${+ataTokenBalance}`;
               })
             );
           }
