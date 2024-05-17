@@ -129,7 +129,7 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
         const usdcResponse = await fetch(UsdToSOlUrl);
         const usdcQuoteResponse: QuoteResponse = await usdcResponse.json();
 
-        const url = `https://quote-api.jup.ag/v6/quote?inputMint=${sendToken.address}&outputMint=${receiveToken.address}&amount=${usdcQuoteResponse.outAmount}&platformFeeBps=100`;
+        const url = `https://quote-api.jup.ag/v6/quote?inputMint=${sendToken.address}&outputMint=${receiveToken.address}&amount=${usdcQuoteResponse.outAmount}&platformFeeBps=100&slippageBps=500`;
         const response = await fetch(url);
         const quoteResponse: QuoteResponse = await response.json();
         const sendAmount =

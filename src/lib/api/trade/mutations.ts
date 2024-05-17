@@ -54,7 +54,7 @@ export const tradeToken = async (
     );
     const wallet = Keypair.fromSecretKey(bs58.decode(privateKey));
     const quoteResponseData = await fetch(
-      `${amountQuoteUrl}&platformFeeBps=100`
+      `${amountQuoteUrl}&platformFeeBps=100&slippageBps=500`
     );
     const quoteResponse: QuoteResponse = await quoteResponseData.json();
     const feeWallet = new PublicKey(
@@ -72,6 +72,7 @@ export const tradeToken = async (
           quoteResponse,
           userPublicKey: user.walletAddress,
           wrapAndUnwrapSol: true,
+          prioritizationFeeLamports: { autoMultiplier: 3 },
         }),
       }
     );
