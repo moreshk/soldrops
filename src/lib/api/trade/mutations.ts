@@ -96,20 +96,35 @@ export const tradeToken = async (
       addressLookupTableAccounts: addressLookupTableAccounts,
     });
     if (quoteResponse.outputMint === solToken.address) {
+      const fullFee = +quoteResponse.platformFee?.amount!;
+      const platformFee = (fullFee * (100 - widget.feePercentage)) / 100;
+      const remainingFee = (fullFee * widget.feePercentage) / 100;
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,
-        lamports: +quoteResponse.platformFee?.amount!,
+        lamports: platformFee,
       });
-      message.instructions.push(solTransferInstruction);
+      const remainingFeeTx = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: feeWallet,
+        lamports: remainingFee,
+      });
+      message.instructions.push(solTransferInstruction, remainingFeeTx);
     } else {
       const fees = Math.ceil(+quoteResponse.inAmount / 100);
+      const platformFee = (fees * (100 - widget.feePercentage)) / 100;
+      const remainingFee = (fees * widget.feePercentage) / 100;
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,
-        lamports: fees,
+        lamports: platformFee,
       });
-      message.instructions.push(solTransferInstruction);
+      const remainingFeeTx = SystemProgram.transfer({
+        fromPubkey: wallet.publicKey,
+        toPubkey: feeWallet,
+        lamports: remainingFee,
+      });
+      message.instructions.push(solTransferInstruction, remainingFeeTx);
     }
     transaction.message = message.compileToV0Message(
       addressLookupTableAccounts

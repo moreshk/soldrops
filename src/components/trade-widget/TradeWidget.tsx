@@ -4,7 +4,7 @@
 import { CompleteWidget } from "@/lib/db/schema/widgets";
 import { useTradeStoreSelectors } from "@/store/trade-store";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { ArrowUpDown, Wallet } from "lucide-react";
+import { ArrowUpDown, ExternalLink, Wallet } from "lucide-react";
 import { AuthLoginSignup } from "../auth/AuthLoginSignup";
 import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
@@ -16,6 +16,7 @@ import { IsFetchingEnum } from "@/store/store-types";
 import { trpc } from "@/lib/trpc/client";
 import { TradConfirmationModal } from "./TradConfirmationModal";
 import { solToken, stableUSDC } from "@/lib/tokens/utils/defaultTokens";
+import { addressShortener } from "@/lib/tokens/utils/addressShortener";
 
 const TradeWidget = ({
   widget,
@@ -26,7 +27,7 @@ const TradeWidget = ({
 }) => {
   const [confirmationModal, setConfirmationModal] = useState(false);
   window.trpc = trpc.useUtils().client;
-  const { status } = useSession();
+  const { status, data } = useSession();
   const amountInput = useTradeStoreSelectors.use.amountInput();
   const setLoggedIn = useTradeStoreSelectors.use.setLoggedIn();
   const sendBalance = useTradeStoreSelectors.use.sendBalance();
@@ -64,8 +65,18 @@ const TradeWidget = ({
 
       <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
         <div className="space-y-2">
-          <div className="flex mr-3">
+          <div className="flex mr-3 justify-between items-center ">
             <p>Enter Amount</p>
+            {data?.user.walletAddress && (
+              <a
+                target="_blank"
+                href={`https://solscan.io/account/${data?.user.walletAddress}#portfolio`}
+                className="text-xs underline flex items-center gap-2"
+              >
+                Account {addressShortener(data.user.walletAddress)}
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
           </div>
           <div className="relative group border border-input flex rounded-2xl bg-background items-center gap-2 pl-3 h-[72px] ">
             <p className="text-2xl font-medium">$</p>

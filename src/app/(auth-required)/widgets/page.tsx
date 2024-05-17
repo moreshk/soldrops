@@ -6,7 +6,7 @@ import { checkAuth } from "@/lib/auth/utils";
 export default async function Widgets() {
   await checkAuth();
   const { widgets } = await api.widgets.getWidgets.query();
-  const { tokens } = await api.tokens.getTokens.query();
+  const { tokens } = await api.tokens.getAllTokens.query();
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
