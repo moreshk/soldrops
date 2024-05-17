@@ -97,8 +97,10 @@ export const tradeToken = async (
     });
     if (quoteResponse.outputMint === solToken.address) {
       const fullFee = +quoteResponse.platformFee?.amount!;
-      const platformFee = (fullFee * (100 - widget.feePercentage)) / 100;
-      const remainingFee = (fullFee * widget.feePercentage) / 100;
+      const platformFee = Math.ceil(
+        (fullFee * (100 - widget.feePercentage)) / 100
+      );
+      const remainingFee = Math.ceil((fullFee * widget.feePercentage) / 100);
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,
@@ -112,8 +114,10 @@ export const tradeToken = async (
       message.instructions.push(solTransferInstruction, remainingFeeTx);
     } else {
       const fees = Math.ceil(+quoteResponse.inAmount / 100);
-      const platformFee = (fees * (100 - widget.feePercentage)) / 100;
-      const remainingFee = (fees * widget.feePercentage) / 100;
+      const platformFee = Math.ceil(
+        (fees * (100 - widget.feePercentage)) / 100
+      );
+      const remainingFee = Math.ceil((fees * widget.feePercentage) / 100);
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,

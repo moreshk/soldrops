@@ -139,10 +139,6 @@ export const TradConfirmationModal = ({
                     {receiveAmount} {receiveToken.symbol}
                   </p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">Platform fee</p>
-                  <p className="font-semibold text-sm">1%</p>
-                </div>
               </div>
               <AlertDialogFooter>
                 <AlertDialogAction
