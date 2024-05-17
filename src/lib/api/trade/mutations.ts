@@ -166,17 +166,17 @@ export const tradeToken = async (
       console.error("Transaction not confirmed");
       return { message: "Transaction not confirmed" };
     }
-    await db
-      .insert(widgetsTx)
-      .values({
-        receiveTokenId,
-        sendTokenId,
-        widgetId: widget.id,
-        userId: session?.user.id!,
-        swapDetails: JSON.stringify(quoteResponse),
-        tx: signature,
-      })
-      .returning();
+    // await db
+    //   .insert(widgetsTx)
+    //   .values({
+    //     receiveTokenId,
+    //     sendTokenId,
+    //     widgetId: widget.id,
+    //     userId: session?.user.id!,
+    //     swapDetails: JSON.stringify(quoteResponse),
+    //     tx: signature,
+    //   })
+    //   .returning();
     return { signature };
   } catch (err) {
     console.log(err);
