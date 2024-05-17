@@ -29,6 +29,7 @@ import { Loader2 } from "lucide-react";
 type LoginFormProps = {
   showOath?: boolean;
   onRegisterClick: () => void;
+  onClose: () => void;
   isLoading: boolean;
   onChangeLoading: (value: boolean) => void;
 };
@@ -38,6 +39,7 @@ export const LoginForm = ({
   showOath,
   isLoading,
   onChangeLoading,
+  onClose,
 }: LoginFormProps) => {
   const pathname = usePathname();
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -55,6 +57,7 @@ export const LoginForm = ({
       });
       toast.success("Login successfully");
       onChangeLoading(false);
+      onClose();
     } catch (e) {
       toast.error("Oops something went wrong");
       onChangeLoading(false);

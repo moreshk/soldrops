@@ -28,6 +28,7 @@ import { Loader2 } from "lucide-react";
 type RegisterFormProps = {
   showOath?: boolean;
   onLoginClick: () => void;
+  onClose: () => void;
   isLoading: boolean;
   onChangeLoading: (value: boolean) => void;
 };
@@ -37,6 +38,7 @@ export const RegisterForm = ({
   showOath,
   isLoading,
   onChangeLoading,
+  onClose,
 }: RegisterFormProps) => {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -54,6 +56,7 @@ export const RegisterForm = ({
       });
       toast.success("Registered successfully");
       onChangeLoading(false);
+      onClose();
     } catch (e) {
       toast.error("Oops something went wrong");
       onChangeLoading(false);

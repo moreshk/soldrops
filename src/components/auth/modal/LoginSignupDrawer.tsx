@@ -37,6 +37,7 @@ export const LoginSignupDrawer = ({ showOauth }: LoginSignupDrawerProps) => {
           <div>
             {form === "login" && (
               <LoginForm
+                onClose={onClose}
                 onChangeLoading={setLoading}
                 isLoading={isLoading}
                 onRegisterClick={onRegisterClick}
@@ -45,6 +46,7 @@ export const LoginSignupDrawer = ({ showOauth }: LoginSignupDrawerProps) => {
             )}
             {form === "register" && (
               <RegisterForm
+                onClose={onClose}
                 onLoginClick={onLoginClick}
                 showOath={showOauth}
                 onChangeLoading={setLoading}

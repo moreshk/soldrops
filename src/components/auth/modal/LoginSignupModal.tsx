@@ -16,6 +16,7 @@ export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
 
   const onLoginClick = () => setForm("login");
   const onRegisterClick = () => setForm("register");
+  const onClose = () => setOpen(false);
 
   return (
     <>
@@ -30,6 +31,7 @@ export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
         <DialogContent className="max-w-md p-0">
           {form === "login" && (
             <LoginForm
+              onClose={onClose}
               onChangeLoading={setLoading}
               isLoading={isLoading}
               onRegisterClick={onRegisterClick}
@@ -38,6 +40,7 @@ export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
           )}
           {form === "register" && (
             <RegisterForm
+              onClose={onClose}
               onLoginClick={onLoginClick}
               showOath={showOauth}
               onChangeLoading={setLoading}
