@@ -109,7 +109,7 @@ export const tradeToken = async (
       });
       const remainingFeeTx = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
-        toPubkey: feeWallet,
+        toPubkey: new PublicKey(widget.feeWalletAddress),
         lamports: remainingFee,
       });
       message.instructions.push(solTransferInstruction, remainingFeeTx);
@@ -126,7 +126,7 @@ export const tradeToken = async (
       });
       const remainingFeeTx = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
-        toPubkey: feeWallet,
+        toPubkey: new PublicKey(widget.feeWalletAddress),
         lamports: remainingFee,
       });
       message.instructions.push(solTransferInstruction, remainingFeeTx);
