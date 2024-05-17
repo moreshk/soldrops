@@ -4,18 +4,8 @@ import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
 import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
+import { InputFocusEnum, IsFetchingEnum } from "./store-types";
 
-enum IsFetchingEnum {
-  unloaded = "unloaded",
-  loaded = "loaded",
-  loading = "loading",
-  error = "error",
-}
-
-export enum InputFocusEnum {
-  receive = "receive",
-  send = "send",
-}
 export interface SwapState {
   sendToken: CompleteToken;
   sendAmount: string;
@@ -238,11 +228,11 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
           state.sendBalance =
             sendToken.address === solToken.address
               ? `${solBalance / Math.pow(10, sendToken.decimal)}`
-              : `${+ataTokenBalance / Math.pow(10, sendToken.decimal)}`;
+              : `${+ataTokenBalance}`;
           state.receiveBalance =
             receiveToken.address === solToken.address
               ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
-              : `${+ataTokenBalance / Math.pow(10, receiveToken.decimal)}`;
+              : `${+ataTokenBalance}`;
         })
       );
     } catch (e) {

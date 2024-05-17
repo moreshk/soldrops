@@ -20,15 +20,19 @@ export const getWidgets = async () => {
 };
 
 export const getWidgetById = async (id: WidgetId) => {
-  const { id: widgetId } = widgetIdSchema.parse({ id });
-  const row = await db.query.widgets.findFirst({
-    where: eq(widgets.id, widgetId),
-    with: {
-      token: true,
-    },
-  });
+  try {
+    const { id: widgetId } = widgetIdSchema.parse({ id });
+    const row = await db.query.widgets.findFirst({
+      where: eq(widgets.id, widgetId),
+      with: {
+        token: true,
+      },
+    });
 
-  if (row === undefined) return {};
-  const w = row;
-  return { widget: w };
+    if (row === undefined) return {};
+    const w = row;
+    return { widget: w };
+  } catch (e) {
+    return {};
+  }
 };

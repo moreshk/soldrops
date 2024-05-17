@@ -3,7 +3,7 @@ import { LoginSignupDrawer } from "./modal/LoginSignupDrawer";
 import { LoginSignupModal } from "./modal/LoginSignupModal";
 
 type AuthLoginSignupProps = {
-  showOauth: boolean;
+  showOauth?: boolean;
 };
 
 export const AuthLoginSignup = ({ showOauth }: AuthLoginSignupProps) => {

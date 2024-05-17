@@ -6,7 +6,7 @@ import { LoginForm } from "../form/LoginForm";
 import { RegisterForm } from "../form/RegisterForm";
 
 type LoginSignupDrawerProps = {
-  showOauth: boolean;
+  showOauth?: boolean;
 };
 
 export const LoginSignupDrawer = ({ showOauth }: LoginSignupDrawerProps) => {
@@ -20,7 +20,11 @@ export const LoginSignupDrawer = ({ showOauth }: LoginSignupDrawerProps) => {
 
   return (
     <>
-      <Button className="w-full" onClick={() => setOpen(true)}>
+      <Button
+        size="lg"
+        className="w-full rounded-2xl"
+        onClick={() => setOpen(true)}
+      >
         Sign up
       </Button>
       <Drawer

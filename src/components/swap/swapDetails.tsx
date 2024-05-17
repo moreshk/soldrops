@@ -5,7 +5,6 @@ import { SwapInput } from "../ui/swap-Input";
 import { Button } from "../ui/button";
 import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
-import { InputFocusEnum, useSwapStoreSelectors } from "@/store/swap-store";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import OnBoardingModal from "../auth/onBoardingModal";
@@ -15,12 +14,15 @@ import { SwapConfirmationModal } from "./swapConfirmationModal";
 import { useEffect, useState } from "react";
 import { LoginSignupModal } from "../auth/modal/LoginSignupModal";
 import { trpc } from "@/lib/trpc/client";
+import { InputFocusEnum } from "@/store/store-types";
+import { useSwapStoreSelectors } from "@/store/swap-store";
 
 declare global {
   interface Window {
     trpc: ReturnType<typeof trpc.useUtils>["client"];
   }
 }
+
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const { status } = useSession();
   window.trpc = trpc.useUtils().client;
@@ -150,10 +152,17 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           inputHeader={
             <div className="pb-2 flex justify-between items-center">
               <p className="font-medium text-sm">To receive</p>
+
               {typeof +receiveBalance === "number" && (
                 <div className="flex items-center gap-2 text-muted-foreground text-xs mr-3">
                   <Wallet className="w-3 h-3" />
-                  {+receiveBalance} {receiveToken.symbol}
+                  {isFetching === "loading" ? (
+                    <div className="w-10 h-10" />
+                  ) : (
+                    <p>
+                      {+receiveBalance} {receiveToken.symbol}
+                    </p>
+                  )}
                 </div>
               )}
             </div>

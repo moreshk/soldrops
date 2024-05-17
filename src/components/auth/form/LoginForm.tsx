@@ -27,7 +27,7 @@ import { usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 type LoginFormProps = {
-  showOath: boolean;
+  showOath?: boolean;
   onRegisterClick: () => void;
   isLoading: boolean;
   onChangeLoading: (value: boolean) => void;

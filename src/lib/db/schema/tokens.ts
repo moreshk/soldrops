@@ -65,6 +65,12 @@ export const tokenIdSchema = baseSchema.pick({ id: true });
 export const swapSchema = z.object({
   quotedURL: z.string(),
 });
+export const tradeSchema = z.object({
+  quotedURL: z.string().url(),
+  widgetId: z.string().min(5, "Invalid widgetId"),
+  sendTokenId: z.string().min(5, "Invalid"),
+  receiveTokenId: z.string().min(5, "Invalid"),
+});
 
 // Types for tokens - used to type API request params and within Components
 export type Token = typeof tokens.$inferSelect;

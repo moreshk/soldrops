@@ -53,14 +53,23 @@ export const getSwapTokenBalance = async (id: TokenId) => {
     const { id: tokenAddress } = tokenIdSchema.parse({ id });
     const walletAddress = new PublicKey(session?.user.walletAddress!);
     const solBalance = await connection.getBalance(walletAddress);
+
     const ataAtaAddress = getATAAddressSync({
       mint: new PublicKey(tokenAddress),
       owner: walletAddress,
     });
-    const ataTokenBalance = await connection.getTokenAccountBalance(
-      ataAtaAddress
-    );
-    return { solBalance, ataTokenBalance: ataTokenBalance.value.amount };
+    try {
+      const ataTokenBalance = await connection.getTokenAccountBalance(
+        ataAtaAddress
+      );
+      return {
+        solBalance,
+        ataTokenBalance: ataTokenBalance.value.uiAmount ?? 0,
+      };
+    } catch (err) {
+      const message = (err as Error).message ?? "Error, please try again";
+      return { solBalance, ataTokenBalance: 0, message };
+    }
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);

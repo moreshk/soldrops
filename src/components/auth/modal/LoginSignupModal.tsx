@@ -6,7 +6,7 @@ import { RegisterForm } from "../form/RegisterForm";
 import { Button } from "@/components/ui/button";
 
 type LoginSignupModalProps = {
-  showOauth: boolean;
+  showOauth?: boolean;
 };
 
 export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
@@ -19,7 +19,11 @@ export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
 
   return (
     <>
-      <Button className="w-full" onClick={() => setOpen(true)}>
+      <Button
+        className="w-full rounded-2xl"
+        size="lg"
+        onClick={() => setOpen(true)}
+      >
         Sign up
       </Button>
       <Dialog open={open} onOpenChange={!isLoading ? setOpen : undefined}>
