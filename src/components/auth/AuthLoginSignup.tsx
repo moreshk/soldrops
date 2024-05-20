@@ -1,12 +1,24 @@
 "use client";
+import { useEffect } from "react";
 import { LoginSignupDrawer } from "./modal/LoginSignupDrawer";
 import { LoginSignupModal } from "./modal/LoginSignupModal";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type AuthLoginSignupProps = {
   showOauth?: boolean;
 };
 
 export const AuthLoginSignup = ({ showOauth }: AuthLoginSignupProps) => {
+  // const { data: session } = useSession();
+  // const { push } = useRouter();
+
+  // useEffect(() => {
+  //   if (session) {
+  //     push(session.user.defaultURL);
+  //   }
+  // }, [session]);
+
   return (
     <div className="w-full">
       <div className="w-full hidden sm:block">

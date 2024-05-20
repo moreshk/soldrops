@@ -48,6 +48,15 @@ export const RegisterForm = ({
   const handleSubmit = async (value: z.infer<typeof registerSchema>) => {
     onChangeLoading(true);
     try {
+      ("use server");
+      await fetch("/api/auth/register", {
+        method: "post",
+        body: JSON.stringify({
+          email: value.email,
+          password: value.password,
+          name: value.name,
+        }),
+      });
       await signIn("credentials", {
         email: value.email,
         password: value.password,
