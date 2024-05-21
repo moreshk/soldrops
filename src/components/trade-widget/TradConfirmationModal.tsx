@@ -10,7 +10,6 @@ import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -59,12 +58,10 @@ export const TradConfirmationModal = ({
               <div className="text-center flex flex-col gap-5">
                 <CheckCircle2 className="mx-auto  rounded-full w-9 h-9" />
                 <div>
-                  <p className="text-2xl font-semibold">
-                    Thanks for your order
-                  </p>
+                  <p className="text-2xl font-semibold">Swap Confirmed!</p>
                   <p className="text-muted-foreground">
-                    The order has been confirmed and Tokens have been arrived in
-                    your account
+                    Your swap is confirmed and the tokens are now in your
+                    account.
                   </p>
                 </div>
                 <div className="w-full flex border rounded-2xl justify-between items-center px-3 py-3 text-left">
@@ -99,7 +96,7 @@ export const TradConfirmationModal = ({
             <>
               <AlertDialogHeader className="space-y-0">
                 <div className="flex justify-between items-center">
-                  <AlertDialogTitle>Order Preview</AlertDialogTitle>
+                  <AlertDialogTitle>Confirmation</AlertDialogTitle>
                   <Button
                     disabled={isTokenSwapping}
                     variant="ghost"
@@ -112,9 +109,6 @@ export const TradConfirmationModal = ({
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
-                <AlertDialogDescription>
-                  This action cannot be undone.
-                </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="border-b" />
               <div className="py-1 text-center font-medium text-2xl">
@@ -124,17 +118,17 @@ export const TradConfirmationModal = ({
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">Amount</p>
+                  <p className="text-muted-foreground text-sm">Swap Value</p>
                   <p className="font-semibold text-sm">${amountInput}</p>
                 </div>
                 <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">You Pay</p>
+                  <p className="text-muted-foreground text-sm">You’re Paying</p>
                   <p className="font-semibold text-sm">
                     {sendAmount} {sendToken.symbol}
                   </p>
                 </div>
                 <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">You Receive</p>
+                  <p className="text-muted-foreground text-sm">To Receive</p>
                   <p className="font-semibold text-sm">
                     {receiveAmount} {receiveToken.symbol}
                   </p>

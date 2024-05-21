@@ -15,6 +15,8 @@ export interface TradeStoreState {
   quoteResponse?: QuoteResponse;
   sendBalance: string;
   amountInput: string;
+  sendBalanceInUSDC: string;
+  receiveBalanceInUSDC: string;
   isLoggedIn: boolean;
   receiveBalance: string;
   isFetching: IsFetchingEnum;
@@ -44,6 +46,8 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
   receiveToken: stableUSDC,
   quoteResponse: undefined,
   isFetching: IsFetchingEnum.unloaded,
+  sendBalanceInUSDC: "",
+  receiveBalanceInUSDC: "",
   setLoggedIn: (value: boolean) =>
     set(
       produce((state: TradeStoreState) => {
@@ -104,17 +108,21 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
         const tempSendToken = state.sendToken;
         const tempSendAmount = state.sendAmount;
         const tempSendBalance = state.sendBalance;
+        const tempSendBalanceUSDC = state.sendBalanceInUSDC;
 
         state.sendToken = state.receiveToken;
         state.receiveToken = tempSendToken;
         state.sendAmount = state.receiveAmount;
+        state.sendBalanceInUSDC = state.receiveBalanceInUSDC;
         state.receiveAmount = tempSendAmount;
         state.sendBalance = state.receiveBalance;
         state.receiveBalance = tempSendBalance;
+        state.receiveBalanceInUSDC = tempSendBalanceUSDC;
       })
     ),
   getQuoteAmount: async () => {
-    const { sendToken, receiveToken, amountInput, isLoggedIn } = get();
+    const { sendToken, receiveToken, amountInput, isLoggedIn, getBalance } =
+      get();
     if (+amountInput) {
       try {
         set(
@@ -172,6 +180,8 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
           })
         );
       }
+    } else {
+      getBalance();
     }
   },
   getQuoteTokenURL: () => {
@@ -197,11 +207,11 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
           state.sendBalance =
             sendToken.address === solToken.address
               ? `${solBalance / Math.pow(10, sendToken.decimal)}`
-              : `${+ataTokenBalance / Math.pow(10, sendToken.decimal)}`;
+              : `${+ataTokenBalance}`;
           state.receiveBalance =
             receiveToken.address === solToken.address
               ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
-              : `${+ataTokenBalance / Math.pow(10, receiveToken.decimal)}`;
+              : `${+ataTokenBalance}`;
         })
       );
     } catch (e) {

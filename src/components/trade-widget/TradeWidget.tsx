@@ -43,6 +43,9 @@ const TradeWidget = ({
     useTradeStoreSelectors.use.isFetching() === IsFetchingEnum.loading;
   const onArrayUpDownClick = useTradeStoreSelectors.use.onArrayUpDownClick();
   const receiveToken = useTradeStoreSelectors.use.receiveToken();
+  const sendBalanceInUSDC = useTradeStoreSelectors.use.sendBalanceInUSDC();
+  const receiveBalanceInUSDC =
+    useTradeStoreSelectors.use.receiveBalanceInUSDC();
   const getQuoteAmount = useTradeStoreSelectors.use.getQuoteAmount();
   const getBalance = useTradeStoreSelectors.use.getBalance();
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
@@ -140,6 +143,7 @@ const TradeWidget = ({
                 ) : (
                   <p>
                     {+sendBalance} {sendToken.symbol}
+                    {sendBalanceInUSDC ? `| $${sendBalanceInUSDC}` : ""}
                   </p>
                 )}
               </div>
@@ -185,6 +189,9 @@ const TradeWidget = ({
                     ) : (
                       <p>
                         {+receiveBalance} {receiveToken.symbol}
+                        {receiveBalanceInUSDC
+                          ? `| $${receiveBalanceInUSDC}`
+                          : ""}
                       </p>
                     )}
                   </div>

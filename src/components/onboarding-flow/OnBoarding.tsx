@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check, Coins, Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useTokenBalance } from "../swap/useTokenBalance";
 import { solToken } from "@/lib/tokens/utils/defaultTokens";
 import { AuthLoginSignup } from "../auth/AuthLoginSignup";
+import Image from "next/image";
 
 export const OnBoarding = () => {
   const { balance, refetch } = useTokenBalance(true);
@@ -80,7 +81,7 @@ export const OnBoarding = () => {
                   Purchase SOL with Google/Apple pay and 190 other payment
                   options.
                 </p>
-                <Coins className="w-12 h-12 mx-auto" />
+                <Image src="/on.png" width={100} height={100} alt="logo" />
               </div>
             </Link>
           </div>

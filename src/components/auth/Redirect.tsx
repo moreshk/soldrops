@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -12,5 +13,6 @@ export const Redirect = () => {
       push("/swap");
     }
   }, [session]);
+
   return <></>;
 };
