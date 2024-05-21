@@ -5,6 +5,7 @@ import {
   getTokens,
   getATATokenBalance,
   getSwapTokenBalance,
+  getAllTokensBalance,
 } from "@/lib/api/tokens/queries";
 import { protectedProcedure, publicProcedure, router } from "@/lib/server/trpc";
 import {
@@ -50,6 +51,9 @@ export const tokensRouter = router({
     }),
   getSolTokenBalance: protectedProcedure.query(async () => {
     return getSolTokenBalance();
+  }),
+  getAllTokensBalance: protectedProcedure.query(async () => {
+    return getAllTokensBalance();
   }),
   getATATokenBalance: protectedProcedure
     .input(tokenIdSchema)
