@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { CompleteToken } from "@/lib/db/schema/tokens";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import OnBoardingModal from "../auth/onBoardingModal";
 import { useSearchParams } from "next/navigation";
 import TokenTransferredModal from "../auth/tokenTransferredModal";
 import { SwapConfirmationModal } from "./swapConfirmationModal";
@@ -16,6 +15,7 @@ import { LoginSignupModal } from "../auth/modal/LoginSignupModal";
 import { trpc } from "@/lib/trpc/client";
 import { InputFocusEnum } from "@/store/store-types";
 import { useSwapStoreSelectors } from "@/store/swap-store";
+import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
 
 declare global {
   interface Window {

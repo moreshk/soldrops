@@ -17,6 +17,7 @@ import { trpc } from "@/lib/trpc/client";
 import { TradConfirmationModal } from "./TradConfirmationModal";
 import { solToken, stableUSDC } from "@/lib/tokens/utils/defaultTokens";
 import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
 
 const TradeWidget = ({
   widget,
@@ -237,6 +238,7 @@ const TradeWidget = ({
           )}
         </div>
       </div>
+      {status === "authenticated" && <OnBoardingModal />}
       <TradConfirmationModal
         widgetId={widget.id}
         open={confirmationModal}
