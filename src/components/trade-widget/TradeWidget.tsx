@@ -73,7 +73,7 @@ const TradeWidget = ({
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
-      <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
+      <div className="border p-4 rounded-2xl w-full space-y-4 bg-primary-foreground relative">
         <div className="space-y-2">
           <div className="flex mr-3 justify-between items-center ">
             <p>Enter Amount</p>
