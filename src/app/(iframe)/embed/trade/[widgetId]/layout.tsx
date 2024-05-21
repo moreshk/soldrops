@@ -2,11 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { UserProfileMenu } from "@/components/layout/UserProfileMenu";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
-import { Redirect } from "@/components/auth/Redirect";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="grid min-h-screen w-full bg-transparent">
+    <div className="grid w-full bg-transparent">
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b px-4 lg:h-[60px] lg:px-6">
           <Link href="/" className="flex items-center gap-2 font-semibold">
@@ -19,9 +18,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           <NovuNotification />
           <UserProfileMenu />
         </header>
-        <div className="h-[calc(100vh-80px)] flex justify-center items-center">
-          {children}
-        </div>
+        <div className="flex justify-center items-center">{children}</div>
       </div>
     </div>
   );

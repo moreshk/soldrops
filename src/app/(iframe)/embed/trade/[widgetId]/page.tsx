@@ -34,12 +34,14 @@ const Page = async ({ params }: { params: { widgetId?: string } }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="buy">
-          <div className="border p-4 rounded-xl">
+          <div className="border p-4 rounded-xl mt-6">
             <OnBoarding />
           </div>
         </TabsContent>
         <TabsContent value="swap">
-          <TradeWidget widget={widget} tokens={tokens} />
+          <div className="mt-6">
+            <TradeWidget widget={widget} tokens={tokens} />
+          </div>
         </TabsContent>
       </Tabs>
     );
