@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 import { ConnectWalletProvider } from "@/components/wallet/WalletModalProvider";
 import { PHProvider } from "@/lib/posthog/PosthogProvider";
 import dynamic from "next/dynamic";
+import { TooltipProvider } from "@/components/ui/tooltip";
 const PostHogPageView = dynamic(() => import("@/lib/posthog/PostHogPageView"), {
   ssr: false,
 });
@@ -66,7 +67,9 @@ export default async function RootLayout({
             <NextAuthProvider>
               <TrpcProvider cookies={cookies().toString()}>
                 <ConnectWalletProvider>
-                  {children}
+                  <TooltipProvider delayDuration={0}>
+                    {children}
+                  </TooltipProvider>
                   <PostHogPageView />
                 </ConnectWalletProvider>
               </TrpcProvider>

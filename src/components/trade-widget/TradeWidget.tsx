@@ -3,7 +3,6 @@
 "use client";
 import { CompleteWidget } from "@/lib/db/schema/widgets";
 import { useTradeStoreSelectors } from "@/store/trade-store";
-import { ReloadIcon } from "@radix-ui/react-icons";
 import { ArrowUpDown, ExternalLink, Wallet } from "lucide-react";
 import { AuthLoginSignup } from "../auth/AuthLoginSignup";
 import { useSession } from "next-auth/react";
@@ -15,9 +14,11 @@ import { useEffect, useState } from "react";
 import { IsFetchingEnum } from "@/store/store-types";
 import { trpc } from "@/lib/trpc/client";
 import { TradConfirmationModal } from "./TradConfirmationModal";
-import { solToken, stableUSDC } from "@/lib/tokens/utils/defaultTokens";
+import { solToken } from "@/lib/tokens/utils/defaultTokens";
 import { addressShortener } from "@/lib/tokens/utils/addressShortener";
 import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
+import { InSufficientBalanceTooltip } from "./InSufficientBalanceTooltip";
+import { DefaultAmountButton } from "./DefaultAmountButton";
 
 const TradeWidget = ({
   widget,
@@ -49,6 +50,11 @@ const TradeWidget = ({
   const getQuoteAmount = useTradeStoreSelectors.use.getQuoteAmount();
   const getBalance = useTradeStoreSelectors.use.getBalance();
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
+
+  const inSufficientHalfValue = +sendBalanceInUSDC / 2 <= 0;
+  const inSufficientFullValue = +sendBalanceInUSDC <= 0;
+
+  const insufficientValue = +sendBalanceInUSDC <= +amountInput;
 
   useEffect(() => {
     setReceiveToken(widget.token);
@@ -97,39 +103,43 @@ const TradeWidget = ({
             />
           </div>
           <div className="flex items-center gap-3 justify-end">
-            <button
-              onClick={() => {
-                setAmountInput("50");
-                getQuoteAmount();
-              }}
-              className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
-            >
-              $50
-            </button>
-            <button
-              onClick={() => {
-                setAmountInput("100");
-                getQuoteAmount();
-              }}
-              className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
-            >
-              $100
-            </button>
-            <button
-              onClick={() => {
-                setAmountInput("500");
-                getQuoteAmount();
-              }}
-              className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
-            >
-              $500
-            </button>
-            <button className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold">
-              Half
-            </button>
-            <button className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold">
-              Max
-            </button>
+            <DefaultAmountButton amount={50} balance={+sendBalanceInUSDC} />
+            <DefaultAmountButton amount={100} balance={+sendBalanceInUSDC} />
+            <DefaultAmountButton amount={200} balance={+sendBalanceInUSDC} />
+            {inSufficientHalfValue ? (
+              <InSufficientBalanceTooltip
+                name="Half"
+                description="Insufficient Balance"
+              />
+            ) : (
+              <button
+                className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
+                onClick={() => {
+                  if (+sendBalanceInUSDC) {
+                    setAmountInput(`${+sendBalanceInUSDC / 2 - 0.2}`);
+                  }
+                }}
+              >
+                Half
+              </button>
+            )}
+            {inSufficientFullValue ? (
+              <InSufficientBalanceTooltip
+                name="Full"
+                description="Insufficient Balance"
+              />
+            ) : (
+              <button
+                className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
+                onClick={() => {
+                  if (+sendBalanceInUSDC) {
+                    setAmountInput(`${(+sendBalanceInUSDC - 0.2).toFixed(2)}`);
+                  }
+                }}
+              >
+                Full
+              </button>
+            )}
           </div>
         </div>
         <div>
@@ -143,7 +153,7 @@ const TradeWidget = ({
                 ) : (
                   <p>
                     {+sendBalance} {sendToken.symbol}
-                    {sendBalanceInUSDC ? `| $${sendBalanceInUSDC}` : ""}
+                    {+sendBalanceInUSDC ? ` | $${sendBalanceInUSDC} USD` : ""}
                   </p>
                 )}
               </div>
@@ -189,8 +199,8 @@ const TradeWidget = ({
                     ) : (
                       <p>
                         {+receiveBalance} {receiveToken.symbol}
-                        {receiveBalanceInUSDC
-                          ? `| $${receiveBalanceInUSDC}`
+                        {+receiveBalanceInUSDC
+                          ? ` | $${receiveBalanceInUSDC} USD`
                           : ""}
                       </p>
                     )}
@@ -230,11 +240,25 @@ const TradeWidget = ({
                   setConfirmationModal(true);
                 }
               }}
-              disabled={isFetching}
+              disabled={isFetching || insufficientValue}
               size="lg"
               className="w-full rounded-2xl"
             >
-              {isFetching ? "Fetching details..." : "Review Order"}
+              {isFetching ? (
+                "Fetching details..."
+              ) : (
+                <>
+                  {!amountInput ? (
+                    "Review Order"
+                  ) : (
+                    <>
+                      {insufficientValue
+                        ? "Insufficient Balance"
+                        : "Review Order"}
+                    </>
+                  )}
+                </>
+              )}
             </Button>
           )}
         </div>

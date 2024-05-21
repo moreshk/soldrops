@@ -27,11 +27,16 @@ export const TradConfirmationModal = ({
   widgetId: string;
 }) => {
   const [tx, setTx] = useState<string>("");
+  const setAmountInput = useTradeStoreSelectors.use.setAmountInput();
+  const getBalance = useTradeStoreSelectors.use.getBalance();
+
   const { mutate: trade, isLoading: isTokenSwapping } =
     trpc.tradeRouter.tradeToken.useMutation({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);
+          setAmountInput("");
+          getBalance();
         } else {
           toast.success(res.message || "Something went wrong");
         }

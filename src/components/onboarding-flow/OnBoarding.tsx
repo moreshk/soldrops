@@ -10,7 +10,7 @@ import { solToken } from "@/lib/tokens/utils/defaultTokens";
 import { AuthLoginSignup } from "../auth/AuthLoginSignup";
 import Image from "next/image";
 
-export const OnBoarding = () => {
+export const OnBoarding = ({ title }: { title?: string }) => {
   const { balance, refetch } = useTokenBalance(true);
   const { data: session } = useSession();
   const [copied, setCopied] = useState(false);
@@ -31,7 +31,7 @@ export const OnBoarding = () => {
       <div>
         <div className="grid gap-6 w-full">
           <h1 className="text-center text-3xl text-balance pt-6">
-            Awesome, let’s load up some SOL!
+            {title ?? "Awesome, let’s load up some SOL!"}
           </h1>
           <div>
             <h1 className="font-bold uppercase text-center pt-4">

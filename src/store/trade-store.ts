@@ -5,6 +5,10 @@ import { createSelectors } from "./create-selectors";
 import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 import { IsFetchingEnum } from "./store-types";
+import { getSwapTokenBalance } from "./store-utils/getSwapTokenBalance";
+import { fetchAnyTokenToUSDValue } from "./store-utils/fetchAnyTokenToUSDValue";
+import { fetchUSDToAnyTokenValue } from "./store-utils/fetchUSDToAnyTokenValue";
+import { fetchSwapValue } from "./store-utils/fetchSwapValue";
 
 export interface TradeStoreState {
   sendToken: CompleteToken;
@@ -25,9 +29,7 @@ export interface TradeStoreState {
   setReceiveToken: (token: CompleteToken) => void;
   onArrayUpDownClick: () => void;
   getQuoteAmount: () => void;
-  setSendAmount: (value: string) => void;
   setAmountInput: (value: string) => void;
-  setReceiveAmount: (value: string) => void;
   setLoggedIn: (value: boolean) => void;
   getQuoteTokenURL: () => string | undefined;
   getBalance: () => void;
@@ -54,22 +56,10 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
         state.isLoggedIn = value;
       })
     ),
-  setSendAmount: (input: string) =>
-    set(
-      produce((state: TradeStoreState) => {
-        state.sendAmount = input.replace(/[^\d.]+/g, "");
-      })
-    ),
   setAmountInput: (input: string) =>
     set(
       produce((state: TradeStoreState) => {
         state.amountInput = input.replace(/[^\d.]+/g, "");
-      })
-    ),
-  setReceiveAmount: (input: string) =>
-    set(
-      produce((state: TradeStoreState) => {
-        state.receiveAmount = input.replace(/[^\d.]+/g, "");
       })
     ),
   setSendToken: (token: CompleteToken) =>
@@ -112,14 +102,18 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
 
         state.sendToken = state.receiveToken;
         state.receiveToken = tempSendToken;
+
         state.sendAmount = state.receiveAmount;
-        state.sendBalanceInUSDC = state.receiveBalanceInUSDC;
         state.receiveAmount = tempSendAmount;
+
+        state.sendBalanceInUSDC = state.receiveBalanceInUSDC;
+        state.receiveBalanceInUSDC = tempSendBalanceUSDC;
+
         state.sendBalance = state.receiveBalance;
         state.receiveBalance = tempSendBalance;
-        state.receiveBalanceInUSDC = tempSendBalanceUSDC;
       })
     ),
+
   getQuoteAmount: async () => {
     const { sendToken, receiveToken, amountInput, isLoggedIn, getBalance } =
       get();
@@ -130,46 +124,36 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
             state.isFetching = IsFetchingEnum.loading;
           })
         );
-        const amountUSDC =
-          parseFloat(amountInput) * Math.pow(10, stableUSDC.decimal);
+        const { amount: sendAmount } = await fetchUSDToAnyTokenValue(
+          sendToken,
+          amountInput
+        );
+        const { amount: receiveAmount } = await fetchSwapValue(
+          sendToken,
+          receiveToken,
+          sendAmount
+        );
 
-        const UsdToSOlUrl = `https://quote-api.jup.ag/v6/quote?inputMint=${stableUSDC.address}&outputMint=${sendToken.address}&amount=${amountUSDC}`;
-        const usdcResponse = await fetch(UsdToSOlUrl);
-        const usdcQuoteResponse: QuoteResponse = await usdcResponse.json();
-
-        const url = `https://quote-api.jup.ag/v6/quote?inputMint=${sendToken.address}&outputMint=${receiveToken.address}&amount=${usdcQuoteResponse.outAmount}&platformFeeBps=100&slippageBps=500`;
-        const response = await fetch(url);
-        const quoteResponse: QuoteResponse = await response.json();
-        const sendAmount =
-          +usdcQuoteResponse.outAmount / Math.pow(10, sendToken.decimal);
-        const receiveAmount =
-          +quoteResponse.outAmount / Math.pow(10, receiveToken.decimal);
-        let sendBal: string;
-        let receiveBal: string;
+        let sendBalance: string = "0";
+        let receiveBalance: string = "0";
         if (isLoggedIn) {
-          const { ataTokenBalance, solBalance } =
-            await window.trpc.tokens.getSwapTokenBalance.query({
-              id:
-                sendToken.address === solToken.address
-                  ? receiveToken.address
-                  : sendToken.address,
-            });
-          sendBal =
-            sendToken.address === solToken.address
-              ? `${solBalance / Math.pow(10, sendToken.decimal)}`
-              : `${+ataTokenBalance}`;
-          receiveBal =
-            receiveToken.address === solToken.address
-              ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
-              : `${+ataTokenBalance}`;
+          const { receiveTokenBalance, sendTokenBalance } =
+            await getSwapTokenBalance(sendToken, receiveToken);
+          sendBalance = sendTokenBalance;
+          receiveBalance = receiveTokenBalance;
         }
+        const { amount: sendBalanceInUSDC } = await fetchAnyTokenToUSDValue(
+          sendToken,
+          sendBalance
+        );
         set(
           produce((state: TradeStoreState) => {
             state.isFetching = IsFetchingEnum.loaded;
-            state.receiveAmount = `${receiveAmount}`;
-            state.sendAmount = `${sendAmount}`;
-            state.sendBalance = sendBal || "0";
-            state.receiveBalance = receiveBal || "0";
+            state.receiveAmount = receiveAmount;
+            state.sendAmount = sendAmount;
+            state.sendBalance = sendBalance;
+            state.receiveBalance = receiveBalance;
+            state.sendBalanceInUSDC = sendBalanceInUSDC;
           })
         );
       } catch (error) {
@@ -192,26 +176,26 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
       return url;
     }
   },
+
   getBalance: async () => {
     try {
       const { sendToken, receiveToken } = get();
-      const { ataTokenBalance, solBalance } =
-        await window.trpc.tokens.getSwapTokenBalance.query({
-          id:
-            sendToken.address === solToken.address
-              ? receiveToken.address
-              : sendToken.address,
-        });
+      const { receiveTokenBalance, sendTokenBalance } =
+        await getSwapTokenBalance(sendToken, receiveToken);
+      const { amount: sendBalanceUsdc } = await fetchAnyTokenToUSDValue(
+        sendToken,
+        sendTokenBalance
+      );
+      const { amount: receiveBalanceUsdc } = await fetchAnyTokenToUSDValue(
+        receiveToken,
+        receiveTokenBalance
+      );
       set(
         produce((state: TradeStoreState) => {
-          state.sendBalance =
-            sendToken.address === solToken.address
-              ? `${solBalance / Math.pow(10, sendToken.decimal)}`
-              : `${+ataTokenBalance}`;
-          state.receiveBalance =
-            receiveToken.address === solToken.address
-              ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
-              : `${+ataTokenBalance}`;
+          state.sendBalance = sendTokenBalance;
+          state.receiveBalance = receiveTokenBalance;
+          state.receiveBalanceInUSDC = receiveBalanceUsdc;
+          state.sendBalanceInUSDC = sendBalanceUsdc;
         })
       );
     } catch (e) {
