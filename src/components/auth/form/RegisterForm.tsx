@@ -95,7 +95,6 @@ export const RegisterForm = ({
                         <Input
                           {...field}
                           disabled={isLoading || field.disabled}
-                          placeholder="tim@apple.com"
                         />
                       </FormControl>
                       <FormMessage />

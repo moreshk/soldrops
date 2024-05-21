@@ -5,11 +5,12 @@ export const useTokenBalance = (fetchStatus: boolean) => {
     data: t,
     isLoading,
     isError,
+    refetch,
   } = trpc.tokens.getSolTokenBalance.useQuery(undefined, {
     refetchInterval: 60000,
     refetchIntervalInBackground: true,
     enabled: fetchStatus,
   });
   const balance = t?.balance;
-  return { balance, isLoading: isLoading, isError };
+  return { balance, isLoading: isLoading, isError, refetch };
 };

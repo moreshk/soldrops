@@ -88,7 +88,6 @@ export const LoginForm = ({
                         <Input
                           {...field}
                           disabled={isLoading || field.disabled}
-                          placeholder="tim@apple.com"
                         />
                       </FormControl>
                       <FormMessage />

@@ -1,4 +1,5 @@
 import { AuthLoginSignup } from "@/components/auth/AuthLoginSignup";
+import { Redirect } from "@/components/auth/Redirect";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -28,6 +29,7 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+          <Redirect />
         </section>
       </main>
     </div>

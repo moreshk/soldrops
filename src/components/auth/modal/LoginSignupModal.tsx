@@ -11,7 +11,7 @@ type LoginSignupModalProps = {
 
 export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
   const [isLoading, setLoading] = useState(false);
-  const [form, setForm] = useState<"login" | "register">("register");
+  const [form, setForm] = useState<"login" | "register">("login");
   const [open, setOpen] = useState(false);
 
   const onLoginClick = () => setForm("login");
@@ -25,7 +25,7 @@ export const LoginSignupModal = ({ showOauth }: LoginSignupModalProps) => {
         size="lg"
         onClick={() => setOpen(true)}
       >
-        Sign up
+        Login
       </Button>
       <Dialog open={open} onOpenChange={!isLoading ? setOpen : undefined}>
         <DialogContent className="max-w-md p-0">

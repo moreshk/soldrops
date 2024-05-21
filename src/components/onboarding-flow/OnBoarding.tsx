@@ -10,7 +10,7 @@ import { solToken } from "@/lib/tokens/utils/defaultTokens";
 import { AuthLoginSignup } from "../auth/AuthLoginSignup";
 
 export const OnBoarding = () => {
-  const { balance } = useTokenBalance(true);
+  const { balance, refetch } = useTokenBalance(true);
   const { data: session } = useSession();
   const [copied, setCopied] = useState(false);
   const walletAddress = session?.user.walletAddress;
@@ -29,49 +29,78 @@ export const OnBoarding = () => {
     return (
       <div>
         <div className="grid gap-6 w-full">
-          <h1 className="text-center">Awesome, let’s load up some Solana!</h1>
-          <h1>Solana Account Address</h1>
-          {walletAddress && (
-            <div className="flex items-center justify-between gap-2">
-              <Button
-                onClick={copy}
-                variant="outline"
-                className="p-2 rounded-md border break-all flex-1 justify-start group"
-              >
-                <p>{walletAddress}</p>
-              </Button>
-              <Button
-                onClick={copy}
-                variant="outline"
-                size="icon"
-                className="flex-shrink-0"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
+          <h1 className="text-center text-3xl text-balance pt-6">
+            Awesome, let’s load up some SOL!
+          </h1>
+          <div>
+            <h1 className="font-bold uppercase text-center pt-4">
+              Deposit SOL
+            </h1>
+            <div className="border-2 border-secondary-foreground rounded-2xl p-5 mt-2">
+              <p className="text-center text-balance text-sm">
+                Send SOL from a CEX or another wallet to your Drops account.
+              </p>
+              <div className="mt-5">
+                <p className="text-center">Drops wallet address:</p>
+                {walletAddress && (
+                  <div className="flex items-center">
+                    <Button
+                      onClick={copy}
+                      variant="ghost"
+                      className="break-all text-xs"
+                    >
+                      <p className="font-bold">{walletAddress}</p>
+                    </Button>
+                    <Button
+                      onClick={copy}
+                      variant="ghost"
+                      size="icon"
+                      className="flex-shrink-0"
+                    >
+                      {copied ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
                 )}
-              </Button>
+              </div>
             </div>
-          )}
+          </div>
         </div>
         <div className="mt-8">
           <div className="space-y-4">
-            <p className="mb-4">BUY SOLANA WITH CREDIT/DEBIT CARD</p>
+            <p className="mb-4 font-bold uppercase text-center pt-4 max-w-60 text-balance mx-auto">
+              BUY SOL WITH CREDIT/DEBIT CARD
+            </p>
             <Link href="/buy">
-              <div className="border p-2 rounded-lg text-lg text-center space-y-3">
-                <p className="font-medium">
-                  Purchase Solana with Google/Apple pay and 190 other payment
+              <div className="p-2 rounded-2xl h-40 flex flex-col justify-center items-center text-lg text-center space-y-3 border-2 border-secondary-foreground">
+                <p className=" max-w-sm text-center mx-auto text-balance text-sm">
+                  Purchase SOL with Google/Apple pay and 190 other payment
+                  options.
                 </p>
                 <Coins className="w-12 h-12 mx-auto" />
               </div>
             </Link>
           </div>
         </div>
-        <div className="border rounded-xl p-4 flex gap-2 my-4">
-          <p>Current Sol Balance </p>
-          <div>{balance ? balance / 10 ** solToken.decimal : "-"}</div>
-        </div>
+        {balance ? (
+          <div className="mx-auto w-full flex justify-center items-center mt-3">
+            <Button className="uppercase font-bold rounded-full mt-7">
+              Sol Balance - {balance ? balance / 10 ** solToken.decimal : "-"}
+            </Button>
+          </div>
+        ) : (
+          <div className="mx-auto w-full flex justify-center items-center mt-3">
+            <Button
+              className="uppercase font-bold rounded-full "
+              onClick={async () => await refetch()}
+            >
+              Detect Balance
+            </Button>
+          </div>
+        )}
       </div>
     );
 

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { SideBar } from "@/components/layout/Sidebar";
 import Image from "next/image";
-import { SidebarSheet } from "@/components/layout/SidebarSheet";
 import { UserProfileMenu } from "@/components/layout/UserProfileMenu";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
+import { Redirect } from "@/components/auth/Redirect";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -20,7 +19,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           <NovuNotification />
           <UserProfileMenu />
         </header>
-        <div className="h-[calc(100vh-200px)] flex justify-center items-center">
+        <div className="h-[calc(100vh-80px)] flex justify-center items-center">
           {children}
         </div>
       </div>
