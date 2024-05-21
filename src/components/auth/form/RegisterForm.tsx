@@ -54,7 +54,6 @@ export const RegisterForm = ({
         body: JSON.stringify({
           email: value.email,
           password: value.password,
-          name: value.name,
         }),
       });
       await signIn("credentials", {
@@ -85,26 +84,6 @@ export const RegisterForm = ({
           </CardHeader>
           <CardContent>
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  defaultValue=""
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          disabled={isLoading || field.disabled}
-                          placeholder="Tim took"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <div className="grid gap-2">
                 <FormField
                   control={form.control}
