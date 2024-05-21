@@ -63,13 +63,7 @@ const TradeWidget = ({
   }, [status]);
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-screen p-4">
-      <div className="flex justify-between max-w-md w-full">
-        <button className="bg-primary-foreground p-1 rounded-full mb-1 ml-1">
-          <ReloadIcon />
-        </button>
-      </div>
-
+    <div className="flex flex-col justify-center items-center w-full">
       <div className="border p-4 rounded-2xl max-w-md w-full space-y-4 bg-primary-foreground relative">
         <div className="space-y-2">
           <div className="flex mr-3 justify-between items-center ">

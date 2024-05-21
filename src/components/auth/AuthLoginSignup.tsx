@@ -1,9 +1,6 @@
 "use client";
-import { useEffect } from "react";
 import { LoginSignupDrawer } from "./modal/LoginSignupDrawer";
 import { LoginSignupModal } from "./modal/LoginSignupModal";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 type AuthLoginSignupProps = {
   showOauth?: boolean;
