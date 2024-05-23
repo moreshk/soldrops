@@ -63,6 +63,7 @@ export const authOptions: NextAuthOptions = {
         token.isAdmin = user.isAdmin;
         token.walletAddress = user.walletAddress;
         token.userType = user.userType;
+        token.username = user.username;
         token.email = user.email;
         token.defaultURL = user.defaultURL;
       }
@@ -139,7 +140,7 @@ export const authOptions: NextAuthOptions = {
                 email: user.email || undefined,
                 image: user.image || undefined,
                 name: user.name || undefined,
-                username: user.name || undefined,
+                username: user.username || undefined,
                 walletAddress: user.walletAddress,
                 defaultURL: user.defaultURL || "/",
               };

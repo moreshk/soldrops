@@ -3,13 +3,14 @@ import { trpc } from "@/lib/trpc/client";
 export const useTokenBalance = (fetchStatus: boolean) => {
   const {
     data: t,
-    isFetching,
     isLoading,
     isError,
-  } = trpc.tokens.getTokenBalance.useQuery(undefined, {
-    refetchInterval: 15000,
+    refetch,
+  } = trpc.tokens.getSolTokenBalance.useQuery(undefined, {
+    refetchInterval: 60000,
+    refetchIntervalInBackground: true,
     enabled: fetchStatus,
   });
   const balance = t?.balance;
-  return { balance, isLoading: isFetching || isLoading, isError };
+  return { balance, isLoading: isLoading, isError, refetch };
 };

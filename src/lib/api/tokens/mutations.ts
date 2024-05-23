@@ -29,6 +29,7 @@ import { transactionSenderAndConfirmationWaiter } from "@/lib/tokens/utils/trans
 import { QuoteResponse } from "@jup-ag/api";
 import { getFeeAddress } from "@/lib/tokens/utils/getFeeAddress";
 import { solToken } from "@/lib/tokens/utils/defaultTokens";
+// @ts-ignore
 import { TOKEN_PROGRAM_ID, createTransferInstruction } from "@solana/spl-token";
 
 export const connection = new Connection(env.HELIUS_RPC_URL);
@@ -265,7 +266,7 @@ export const swapToken = async (amountQuoteUrl: string) => {
       });
       message.instructions.push(solTransferInstruction);
     } else {
-      const fees = +quoteResponse.inAmount / 100;
+      const fees = Math.ceil(+quoteResponse.inAmount / 100);
       const solTransferInstruction = SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
         toPubkey: feeWallet,

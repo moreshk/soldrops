@@ -42,8 +42,9 @@ const CampaignForm = () => {
   const [isSendingFee, setIsSendingFee] = useState(false);
   const router = useRouter();
   const utils = trpc.useContext();
-
+  // @ts-ignore
   const form = useForm<z.infer<typeof insertCampaignParams>>({
+    // @ts-ignore
     resolver: zodResolver(insertCampaignParams),
     defaultValues: {
       tokenContractAddress: "",

@@ -6,17 +6,17 @@ import {
   ButtonTypeEnum,
   IMessage,
 } from "@novu/notification-center";
+import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 
-export const NovuNotification = ({
-  subscriberId,
-}: {
-  subscriberId?: string;
-}) => {
+export const NovuNotification = () => {
+  const { data: session } = useSession();
   const { systemTheme, theme } = useTheme();
-  const notificationTheme = getNotificationTheme(theme, systemTheme);
   const { push } = useRouter();
+  const notificationTheme = getNotificationTheme(theme, systemTheme);
+  const subscriberId = session?.user.id;
+
   if (!subscriberId) {
     return null;
   }
@@ -41,7 +41,11 @@ export const NovuNotification = ({
           if (message.cta?.data.url) push(message.cta?.data.url);
         }}
       >
-        {({ unseenCount }) => <NotificationBell unseenCount={unseenCount} />}
+        {({ unseenCount }) => (
+          <div className="border rounded-full p-1">
+            <NotificationBell unseenCount={unseenCount} />
+          </div>
+        )}
       </PopoverNotificationCenter>
     </NovuProvider>
   );

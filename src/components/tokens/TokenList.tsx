@@ -15,11 +15,13 @@ export default function TokenList({ tokens }: { tokens: CompleteToken[] }) {
   }
 
   return (
-    <ul>
-      {t.tokens.map((token) => (
-        <Token token={token} key={token.id} />
-      ))}
-    </ul>
+    <div className="flex flex-1 justify-center rounded-lg border border-dashed shadow-sm">
+      <ul className="w-full text-left p-3">
+        {t.tokens.map((token) => (
+          <Token token={token} key={token.id} />
+        ))}
+      </ul>
+    </div>
   );
 }
 

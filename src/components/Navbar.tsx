@@ -13,7 +13,6 @@ import { useSession } from "next-auth/react";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   return (
     <div>
@@ -26,7 +25,7 @@ export default function Navbar() {
             </h1>
           </div>
           <div className="flex justify-center items-center gap-2">
-            <NovuNotification subscriberId={session?.user.id} />
+            <NovuNotification />
             <Button variant="ghost" onClick={() => setOpen(!open)}>
               <AlignRight />
             </Button>
@@ -58,7 +57,7 @@ export default function Navbar() {
         ) : null}
       </div>
       <div className="absolute right-24 top-10 sm:block hidden">
-        <NovuNotification subscriberId={session?.user.id} />
+        <NovuNotification />
       </div>
     </div>
   );

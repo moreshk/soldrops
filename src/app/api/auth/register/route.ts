@@ -43,7 +43,6 @@ export const POST = async (request: Request) => {
       .values({
         password: hashedPassword,
         email: result.data.email,
-        name: result.data.name,
         walletAddress,
         privateKey,
       })

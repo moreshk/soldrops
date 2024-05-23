@@ -1,8 +1,11 @@
 import {
   getAllTokens,
-  getTokenBalance,
+  getSolTokenBalance,
   getTokenById,
   getTokens,
+  getATATokenBalance,
+  getSwapTokenBalance,
+  getAllTokensBalance,
 } from "@/lib/api/tokens/queries";
 import { protectedProcedure, publicProcedure, router } from "@/lib/server/trpc";
 import {
@@ -46,9 +49,22 @@ export const tokensRouter = router({
     .mutation(async ({ input }) => {
       return deleteToken(input.id);
     }),
-  getTokenBalance: protectedProcedure.query(async () => {
-    return getTokenBalance();
+  getSolTokenBalance: protectedProcedure.query(async () => {
+    return getSolTokenBalance();
   }),
+  getAllTokensBalance: protectedProcedure.query(async () => {
+    return getAllTokensBalance();
+  }),
+  getATATokenBalance: protectedProcedure
+    .input(tokenIdSchema)
+    .query(async ({ input }) => {
+      return getATATokenBalance(input.id);
+    }),
+  getSwapTokenBalance: protectedProcedure
+    .input(tokenIdSchema)
+    .query(async ({ input }) => {
+      return getSwapTokenBalance(input.id);
+    }),
   swapToken: protectedProcedure
     .input(swapSchema)
     .mutation(async ({ input }) => {

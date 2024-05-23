@@ -4,6 +4,7 @@ import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
 import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
+import { InputFocusEnum, IsFetchingEnum } from "./store-types";
 
 export interface SwapState {
   sendToken: CompleteToken;
@@ -11,35 +12,40 @@ export interface SwapState {
   receiveAmount: string;
   receiveToken: CompleteToken;
   quoteResponse?: QuoteResponse;
-  inputFocus: "receive" | "send";
-  isFetching: "unloaded" | "loaded" | "loading" | "error";
-  isSwapping: "unloaded" | "loaded" | "loading" | "error";
+  sendBalance: string;
+  receiveBalance: string;
+  inputFocus: InputFocusEnum;
+  isFetching: IsFetchingEnum;
+  isSwapping: IsFetchingEnum;
   setSendToken: (token: CompleteToken) => void;
   setReceiveToken: (token: CompleteToken) => void;
   onArrayUpDownClick: () => void;
   getQuoteAmount: () => void;
   setSendAmount: (value: string) => void;
   setReceiveAmount: (value: string) => void;
-  setFocus: (value: "receive" | "send") => void;
+  setFocus: (value: InputFocusEnum) => void;
   getQuoteTokenURL: () => string | undefined;
+  getBalance: () => void;
 }
 
 export const useSwapStore = create<SwapState>()((set, get) => ({
   sendAmount: "",
   receiveAmount: "",
-  inputFocus: "send",
-  isSwapping: "unloaded",
+  sendBalance: "",
+  receiveBalance: "",
+  inputFocus: InputFocusEnum.send,
+  isSwapping: IsFetchingEnum.unloaded,
   sendToken: solToken,
   receiveToken: stableUSDC,
   quoteResponse: undefined,
-  isFetching: "unloaded",
+  isFetching: IsFetchingEnum.unloaded,
   setSendAmount: (input: string) =>
     set(
       produce((state: SwapState) => {
         state.sendAmount = input.replace(/[^\d.]+/g, "");
       })
     ),
-  setFocus: (inputFocus: "receive" | "send") =>
+  setFocus: (inputFocus: InputFocusEnum) =>
     set(
       produce((state: SwapState) => {
         state.inputFocus = inputFocus;
@@ -85,8 +91,15 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
     set(
       produce((state: SwapState) => {
         const tempSendToken = state.sendToken;
+        const tempSendAmount = state.sendAmount;
+        const tempSendBalance = state.sendBalance;
+
         state.sendToken = state.receiveToken;
         state.receiveToken = tempSendToken;
+        state.sendAmount = state.receiveAmount;
+        state.receiveAmount = tempSendAmount;
+        state.sendBalance = state.receiveBalance;
+        state.receiveBalance = tempSendBalance;
       })
     ),
   getQuoteAmount: async () => {
@@ -101,18 +114,18 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
         try {
           set(
             produce((state: SwapState) => {
-              state.isFetching = "loading";
+              state.isFetching = IsFetchingEnum.loading;
             })
           );
           let inputMint;
           let outputMint;
           let amount;
-          if (inputFocus === "send") {
+          if (inputFocus === InputFocusEnum.send) {
             inputMint = sendToken;
             outputMint = receiveToken;
             amount = parseFloat(sendAmount) * Math.pow(10, sendToken.decimal);
           }
-          if (inputFocus === "receive") {
+          if (inputFocus === InputFocusEnum.receive) {
             inputMint = receiveToken;
             outputMint = sendToken;
             amount =
@@ -123,28 +136,54 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
           const quoteResponse = await response.json();
           const quotePrice =
             quoteResponse.outAmount / Math.pow(10, outputMint?.decimal!);
-          if (inputFocus === "receive") {
+          const { ataTokenBalance, solBalance } =
+            await window.trpc.tokens.getSwapTokenBalance.query({
+              id:
+                sendToken.address === solToken.address
+                  ? receiveToken.address
+                  : sendToken.address,
+            });
+
+          if (inputFocus === InputFocusEnum.receive) {
             set(
               produce((state: SwapState) => {
-                state.isFetching = "loaded";
+                state.isFetching = IsFetchingEnum.loaded;
                 state.sendAmount = quotePrice.toString();
                 state.quoteResponse = quoteResponse;
+                state.sendBalance =
+                  sendToken.address === solToken.address
+                    ? `${solBalance / Math.pow(10, sendToken.decimal)}`
+                    : `${+ataTokenBalance}`;
+                state.receiveBalance =
+                  receiveToken.address === solToken.address
+                    ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
+                    : `${+ataTokenBalance}`;
               })
             );
           }
-          if (inputFocus === "send") {
+          if (inputFocus === InputFocusEnum.send) {
             set(
               produce((state: SwapState) => {
-                state.isFetching = "loaded";
+                state.isFetching = IsFetchingEnum.loaded;
                 state.receiveAmount = quotePrice.toString();
                 state.quoteResponse = quoteResponse;
+                state.sendBalance =
+                  sendToken.address === solToken.address
+                    ? `${solBalance / Math.pow(10, sendToken.decimal)}`
+                    : `${+ataTokenBalance / Math.pow(10, sendToken.decimal)}`;
+                state.receiveBalance =
+                  receiveToken.address === solToken.address
+                    ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
+                    : `${
+                        +ataTokenBalance / Math.pow(10, receiveToken.decimal)
+                      }`;
               })
             );
           }
         } catch (e) {
           set(
             produce((state: SwapState) => {
-              state.isFetching = "error";
+              state.isFetching = IsFetchingEnum.error;
             })
           );
         }
@@ -158,18 +197,44 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
       let inputMint;
       let outputMint;
       let amount;
-      if (inputFocus === "send") {
+      if (inputFocus === InputFocusEnum.send) {
         inputMint = sendToken;
         outputMint = receiveToken;
         amount = parseFloat(sendAmount) * Math.pow(10, sendToken.decimal);
       }
-      if (inputFocus === "receive") {
+      if (inputFocus === InputFocusEnum.receive) {
         inputMint = receiveToken;
         outputMint = sendToken;
         amount = parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
       }
       const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}`;
       return url;
+    }
+  },
+  getBalance: async () => {
+    try {
+      const { sendToken, receiveToken } = get();
+      const { ataTokenBalance, solBalance } =
+        await window.trpc.tokens.getSwapTokenBalance.query({
+          id:
+            sendToken.address === solToken.address
+              ? receiveToken.address
+              : sendToken.address,
+        });
+      set(
+        produce((state: SwapState) => {
+          state.sendBalance =
+            sendToken.address === solToken.address
+              ? `${solBalance / Math.pow(10, sendToken.decimal)}`
+              : `${+ataTokenBalance}`;
+          state.receiveBalance =
+            receiveToken.address === solToken.address
+              ? `${solBalance / Math.pow(10, receiveToken.decimal)}`
+              : `${+ataTokenBalance}`;
+        })
+      );
+    } catch (e) {
+      console.error(e);
     }
   },
 }));
