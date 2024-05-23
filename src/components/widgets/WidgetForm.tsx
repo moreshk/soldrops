@@ -1,11 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-
-import {
-  Widget,
-  NewWidgetParams,
-  insertWidgetParams,
-} from "@/lib/db/schema/widgets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -18,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/lib/trpc-client/client";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -37,9 +31,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { useState } from "react";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import {
+  NewWidgetParams,
+  Widget,
+  insertWidgetParams,
+} from "@/lib/trpc-api/widgets/widgets.type";
 
 const WidgetForm = ({
   widget,

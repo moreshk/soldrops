@@ -1,10 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import {
-  NewCampaignParams,
-  insertCampaignParams,
-} from "@/lib/db/schema/campaign";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -16,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/lib/trpc-client/client";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { Loader2 } from "lucide-react";
@@ -34,6 +30,10 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import { LaunchDate } from "./LaunchDate";
+import {
+  NewCampaignParams,
+  insertCampaignParams,
+} from "@/lib/trpc-api/campaign/campaign.types";
 
 const CampaignForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,9 +42,7 @@ const CampaignForm = () => {
   const [isSendingFee, setIsSendingFee] = useState(false);
   const router = useRouter();
   const utils = trpc.useContext();
-  // @ts-ignore
   const form = useForm<z.infer<typeof insertCampaignParams>>({
-    // @ts-ignore
     resolver: zodResolver(insertCampaignParams),
     defaultValues: {
       tokenContractAddress: "",

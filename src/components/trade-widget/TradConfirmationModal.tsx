@@ -3,9 +3,9 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2, X } from "lucide-react";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/lib/trpc-client/client";
 import { toast } from "sonner";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +31,7 @@ export const TradConfirmationModal = ({
   const getBalance = useTradeStoreSelectors.use.getBalance();
 
   const { mutate: trade, isLoading: isTokenSwapping } =
-    trpc.tradeRouter.tradeToken.useMutation({
+    trpc.trade.tradeToken.useMutation({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);

@@ -1,5 +1,5 @@
 import EditCampaign from "@/components/campaign/form/EditCampaign";
-import { api } from "@/lib/trpc/api";
+import { api } from "@/lib/trpc-client/api";
 import { notFound } from "next/navigation";
 
 const EditPage = async ({

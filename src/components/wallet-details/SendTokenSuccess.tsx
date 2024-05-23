@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 
 export const SendTokenSuccess = ({
   sendAmount,

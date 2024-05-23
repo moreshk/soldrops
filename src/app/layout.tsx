@@ -3,13 +3,14 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
-import NextAuthProvider from "@/lib/auth/Provider";
-import TrpcProvider from "@/lib/trpc/Provider";
+import TrpcProvider from "@/lib/trpc-client/Provider";
 import { cookies } from "next/headers";
 import { ConnectWalletProvider } from "@/components/wallet/WalletModalProvider";
 import { PHProvider } from "@/lib/posthog/PosthogProvider";
 import dynamic from "next/dynamic";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/components/auth/AuthProvider";
+
 const PostHogPageView = dynamic(() => import("@/lib/posthog/PostHogPageView"), {
   ssr: false,
 });
@@ -63,8 +64,8 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <PHProvider>
-            <NextAuthProvider>
+          <AuthProvider>
+            <PHProvider>
               <TrpcProvider cookies={cookies().toString()}>
                 <ConnectWalletProvider>
                   <TooltipProvider delayDuration={0}>
@@ -73,9 +74,9 @@ export default async function RootLayout({
                   <PostHogPageView />
                 </ConnectWalletProvider>
               </TrpcProvider>
-            </NextAuthProvider>
-            <Toaster richColors />
-          </PHProvider>
+              <Toaster richColors />
+            </PHProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

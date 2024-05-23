@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CompleteToken } from "@/lib/db/schema/tokens";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { addressShortener } from "@/utils/addressShortener";
 import { CircleCheck, ExternalLink } from "lucide-react";
 
 const TokenListModal = ({

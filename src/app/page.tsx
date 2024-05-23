@@ -1,5 +1,4 @@
-import { AuthLoginSignup } from "@/components/auth/AuthLoginSignup";
-import { Redirect } from "@/components/auth/Redirect";
+import { AuthButton } from "@/components/auth/AuthButton";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -25,11 +24,10 @@ export default function LandingPage() {
                 </h1>
               </div>
               <div className="flex flex-col gap-2">
-                <AuthLoginSignup showOauth />
+                <AuthButton />
               </div>
             </div>
           </div>
-          <Redirect />
         </section>
       </main>
     </div>

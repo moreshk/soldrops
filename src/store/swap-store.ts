@@ -1,10 +1,10 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { create } from "zustand";
 import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
-import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
+import { stableUSDC, solToken } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 import { InputFocusEnum, IsFetchingEnum } from "./store-types";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
 
 export interface SwapState {
   sendToken: CompleteToken;
@@ -137,7 +137,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
           const quotePrice =
             quoteResponse.outAmount / Math.pow(10, outputMint?.decimal!);
           const { ataTokenBalance, solBalance } =
-            await window.trpc.tokens.getSwapTokenBalance.query({
+            await window.trpc.tokenBalance.getSwapTokenBalance.query({
               id:
                 sendToken.address === solToken.address
                   ? receiveToken.address
@@ -215,7 +215,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
     try {
       const { sendToken, receiveToken } = get();
       const { ataTokenBalance, solBalance } =
-        await window.trpc.tokens.getSwapTokenBalance.query({
+        await window.trpc.tokenBalance.getSwapTokenBalance.query({
           id:
             sendToken.address === solToken.address
               ? receiveToken.address

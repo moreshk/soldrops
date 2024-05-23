@@ -1,9 +1,9 @@
-import { api } from "@/lib/trpc/api";
+import { api } from "@/lib/trpc-client/api";
 import dynamic from "next/dynamic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OnBoarding } from "@/components/onboarding-flow/OnBoarding";
 import { WalletDetails } from "@/components/wallet-details/WalletDetails";
-import { AuthWrapper } from "@/components/auth/AuthWrapper";
+import { SignedIn } from "@clerk/nextjs";
 
 const TradeWidget = dynamic(
   () => import("@/components/trade-widget/TradeWidget"),
@@ -43,9 +43,9 @@ const Page = async ({ params }: { params: { widgetId?: string } }) => {
         </TabsList>
         <TabsContent value="buy">
           <div className="border p-4 rounded-xl mt-6">
-            <AuthWrapper>
+            <SignedIn>
               <OnBoarding />
-            </AuthWrapper>
+            </SignedIn>
           </div>
         </TabsContent>
         <TabsContent value="swap">
@@ -55,9 +55,9 @@ const Page = async ({ params }: { params: { widgetId?: string } }) => {
         </TabsContent>
         <TabsContent value="wallet">
           <div className="border rounded-xl mt-6">
-            <AuthWrapper>
+            <SignedIn>
               <WalletDetails tokens={tokens} />
-            </AuthWrapper>
+            </SignedIn>
           </div>
         </TabsContent>
       </Tabs>

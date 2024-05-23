@@ -1,10 +1,11 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { CompleteToken } from "@/lib/db/schema/tokens";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+
 import { ArrowLeftRight, ExternalLink, Plus, Send } from "lucide-react";
 import { useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 import { TypeSelectedToken, TypeWalletTokenDetails } from "./WalletDetails";
 
 export const WalletSPLTokenDetails = ({

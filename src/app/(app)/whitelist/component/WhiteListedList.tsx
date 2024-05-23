@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { Campaign } from "@/lib/db/schema/campaign";
-import { Whitelist } from "@/lib/db/schema/whitelist";
+import { Campaign } from "@/lib/trpc-api/campaign/campaign.types";
+import { Whitelist } from "@/lib/trpc-api/whitelist/whitelist.type";
 import { format } from "date-fns";
 
 interface CampaignWhiteList extends Whitelist {

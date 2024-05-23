@@ -1,8 +1,9 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+
 import { create } from "zustand";
 import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
-import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
+import { stableUSDC, solToken } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 import { IsFetchingEnum } from "./store-types";
 import { getSwapTokenBalance } from "./store-utils/getSwapTokenBalance";

@@ -10,12 +10,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import TokenForm from "./TokenForm";
-import { Token } from "@/lib/db/schema/tokens";
+import { Token } from "@/lib/trpc-api/tokens/tokens.type";
 
-export default function TokenModal({ 
+export default function TokenModal({
   token,
   emptyState,
-}: { 
+}: {
   token?: Token;
   emptyState?: boolean;
 }) {
@@ -25,7 +25,7 @@ export default function TokenModal({
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-      { emptyState ? (
+        {emptyState ? (
           <Button>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -45,16 +45,17 @@ export default function TokenModal({
             New Token
           </Button>
         ) : (
-        <Button
-          variant={editing ? "ghost" : "outline"}
-          size={editing ? "sm" : "icon"}
-        >
-          {editing ? "Edit" : "+"}
-        </Button> )}
+          <Button
+            variant={editing ? "ghost" : "outline"}
+            size={editing ? "sm" : "icon"}
+          >
+            {editing ? "Edit" : "+"}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5">
-          <DialogTitle>{ editing ? "Edit" : "Create" } Token</DialogTitle>
+          <DialogTitle>{editing ? "Edit" : "Create"} Token</DialogTitle>
         </DialogHeader>
         <div className="px-5 pb-5">
           <TokenForm closeModal={closeModal} token={token} />

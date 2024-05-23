@@ -1,5 +1,5 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { solToken } from "@/utils/defaultTokens";
 
 export const getSwapTokenBalance = async (
   sendToken: CompleteToken,
@@ -12,7 +12,7 @@ export const getSwapTokenBalance = async (
       ? receiveToken.address
       : sendToken.address;
     const { ataTokenBalance, solBalance } =
-      await window.trpc.tokens.getSwapTokenBalance.query({
+      await window.trpc.tokenBalance.getSwapTokenBalance.query({
         id: splTokenAddress,
       });
 

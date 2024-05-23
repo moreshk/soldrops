@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ArrowDown, BadgeCheck, ExternalLink, Loader2, X } from "lucide-react";
 import { useSwapStoreSelectors } from "@/store/swap-store";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/lib/trpc-client/client";
 import { toast } from "sonner";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 
 export const SwapConfirmationModal = ({
   open,
@@ -19,7 +19,7 @@ export const SwapConfirmationModal = ({
 }) => {
   const [tx, setTx] = useState<string>("");
   const { mutate: swapToken, isLoading: isTokenSwapping } =
-    trpc.tokens.swapToken.useMutation({
+    trpc.swap.swapToken.useMutation({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);

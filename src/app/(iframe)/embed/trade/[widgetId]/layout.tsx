@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { UserProfileMenu } from "@/components/layout/UserProfileMenu";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
+import { SignedIn, UserProfile } from "@clerk/nextjs";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -16,7 +16,9 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           </Link>
           <div className="flex-1"></div>
           <NovuNotification />
-          <UserProfileMenu />
+          <SignedIn>
+            <UserProfile />
+          </SignedIn>
         </header>
         <div className="flex justify-center items-center">{children}</div>
       </div>

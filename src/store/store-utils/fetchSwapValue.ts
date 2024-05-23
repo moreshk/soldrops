@@ -1,5 +1,6 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
+import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+
+import { solToken } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 
 export const fetchSwapValue = async (

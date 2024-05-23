@@ -1,13 +1,6 @@
 "use client";
-
-import {
-  Token,
-  NewTokenParams,
-  insertTokenParams,
-} from "@/lib/db/schema/tokens";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import {
   Form,
   FormControl,
@@ -17,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/lib/trpc-client/client";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,6 +19,11 @@ import { toast } from "sonner";
 import { TokenContractAddress } from "./TokenContractAddress";
 import { useState } from "react";
 import { Textarea } from "../ui/textarea";
+import {
+  NewTokenParams,
+  Token,
+  insertTokenParams,
+} from "@/lib/trpc-api/tokens/tokens.type";
 
 const TokenForm = ({
   token,
@@ -61,7 +59,7 @@ const TokenForm = ({
       return;
     }
 
-    await utils.tokens.getTokens.invalidate();
+    await utils.tokens.getUsersTokens.invalidate();
     router.refresh();
     if (closeModal) closeModal();
     toast.success(`Token ${action}d!`);

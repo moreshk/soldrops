@@ -1,6 +1,6 @@
 import EditCampaign from "@/components/campaign/form/EditCampaign";
 import JoinCampaign from "@/components/join-campaign/JoinCampaign";
-import { api } from "@/lib/trpc/api";
+import { api } from "@/lib/trpc-client/api";
 import { notFound } from "next/navigation";
 
 const Page = async ({
