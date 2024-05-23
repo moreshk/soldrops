@@ -6,6 +6,7 @@ import {
   Keypair,
   PublicKey,
   SystemProgram,
+  Transaction,
   TransactionMessage,
   VersionedTransaction,
 } from "@solana/web3.js";
@@ -21,6 +22,14 @@ import { QuoteResponse } from "@jup-ag/api";
 import { solToken } from "@/lib/tokens/utils/defaultTokens";
 import { api } from "@/lib/trpc/api";
 import { widgetsTx } from "@/lib/db/schema/transaction";
+import {
+  createATAInstruction,
+  getATAAddressSync,
+  u64,
+} from "@saberhq/token-utils";
+// @ts-ignore
+import { createTransferInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { getFeeAddress } from "@/lib/tokens/utils/getFeeAddress";
 
 export const connection = new Connection(env.HELIUS_RPC_URL);
 
@@ -179,7 +188,140 @@ export const tradeToken = async (
     //   .returning();
     return { signature };
   } catch (err) {
-    console.log(err);
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+    throw { message };
+  }
+};
+
+export const sendSPLToken = async (
+  receiveAddress: string,
+  receiveAmount: string,
+  tokenAddress: string
+) => {
+  try {
+    const { session } = await getUserAuth();
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, session?.user.id!));
+    const hashedPrivatekey = user.privateKey;
+    var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
+    const privateKey = bs58.encode(
+      Uint8Array.from(
+        decrypt
+          .toString(CryptoJS.enc.Utf8)
+          .split(",")
+          .map((a) => Number(a))
+      )
+    );
+    const wallet = Keypair.fromSecretKey(bs58.decode(privateKey));
+    const mint = new PublicKey(tokenAddress);
+    const senderAddress = wallet.publicKey;
+    const receiverAddress = new PublicKey(receiveAddress);
+    const { ix: rIx, pubkey: receiverAtAAddress } = await getFeeAddress(
+      connection,
+      receiverAddress,
+      new PublicKey(mint),
+      wallet.publicKey
+    );
+    const { pubkey: senderAtaAddress } = await getFeeAddress(
+      connection,
+      senderAddress,
+      new PublicKey(mint),
+      wallet.publicKey
+    );
+    const preInstructions = rIx ? [rIx] : [];
+    const transaction = new Transaction().add(
+      ...preInstructions,
+      createTransferInstruction(
+        senderAtaAddress,
+        receiverAtAAddress,
+        senderAddress,
+        +receiveAmount,
+        [wallet.publicKey],
+        TOKEN_PROGRAM_ID
+      )
+    );
+    const { blockhash } = await connection.getRecentBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = senderAddress;
+    transaction.sign(wallet);
+
+    const { value: simulatedTransactionResponse } =
+      await connection.simulateTransaction(transaction, [wallet]);
+    const { err, logs } = simulatedTransactionResponse;
+    if (err) {
+      console.error("Simulation Error:");
+      console.error({ err, logs });
+      return { message: "Simulation Error:" };
+    }
+
+    const signature = await connection.sendRawTransaction(
+      transaction.serialize()
+    );
+    await connection.confirmTransaction(signature, "confirmed");
+    return { success: true, signature };
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+    throw { message };
+  }
+};
+
+export const sendSol = async (
+  receiveAddress: string,
+  receiveAmount: string,
+  tokenAddress: string
+) => {
+  try {
+    const { session } = await getUserAuth();
+
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, session?.user.id!));
+    const hashedPrivatekey = user.privateKey;
+    var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
+    const privateKey = bs58.encode(
+      Uint8Array.from(
+        decrypt
+          .toString(CryptoJS.enc.Utf8)
+          .split(",")
+          .map((a) => Number(a))
+      )
+    );
+    const wallet = Keypair.fromSecretKey(bs58.decode(privateKey));
+    const senderAddress = wallet.publicKey;
+    const receiverAddress = new PublicKey(receiveAddress);
+    const remainingFeeTx = SystemProgram.transfer({
+      fromPubkey: wallet.publicKey,
+      toPubkey: new PublicKey(receiverAddress),
+      lamports: +receiveAmount,
+    });
+
+    const transaction = new Transaction().add(remainingFeeTx);
+    const { blockhash } = await connection.getRecentBlockhash();
+    transaction.recentBlockhash = blockhash;
+    transaction.feePayer = senderAddress;
+    transaction.sign(wallet);
+
+    const { value: simulatedTransactionResponse } =
+      await connection.simulateTransaction(transaction, [wallet]);
+    const { err, logs } = simulatedTransactionResponse;
+    if (err) {
+      console.error("Simulation Error:");
+      console.error({ err, logs });
+      return { message: "Simulation Error:" };
+    }
+
+    const signature = await connection.sendRawTransaction(
+      transaction.serialize()
+    );
+    await connection.confirmTransaction(signature, "confirmed");
+    return { success: true, signature };
+  } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
     throw { message };

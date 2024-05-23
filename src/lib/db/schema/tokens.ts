@@ -72,6 +72,16 @@ export const tradeSchema = z.object({
   receiveTokenId: z.string().min(5, "Invalid"),
 });
 
+export const sendTokenSchema = z.object({
+  sendAddress: z.string().min(31, "Invalid Wallet Address"),
+  tokenAddress: z.string().min(31, "Invalid Wallet Address"),
+  sendAmount: z.string().min(1, "Enter Amount"),
+});
+
+export type FullSendTokenSchemaType = z.infer<typeof sendTokenSchema>;
+
+export type SendTokenSchemaType = Omit<FullSendTokenSchemaType, "tokenAddress">;
+
 // Types for tokens - used to type API request params and within Components
 export type Token = typeof tokens.$inferSelect;
 export type NewToken = z.infer<typeof insertTokenSchema>;
