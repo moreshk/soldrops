@@ -118,6 +118,7 @@ const TradeWidget = ({
                 onClick={() => {
                   if (+sendBalanceInUSDC) {
                     setAmountInput(`${+sendBalanceInUSDC / 2 - 0.2}`);
+                    getQuoteAmount();
                   }
                 }}
               >
@@ -135,6 +136,7 @@ const TradeWidget = ({
                 onClick={() => {
                   if (+sendBalanceInUSDC) {
                     setAmountInput(`${(+sendBalanceInUSDC - 0.2).toFixed(2)}`);
+                    getQuoteAmount();
                   }
                 }}
               >

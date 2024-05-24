@@ -26,7 +26,7 @@ export const WalletSPLTokenDetails = ({
       <div className="m-4 border rounded-2xl">
         <div
           className="bg-secondary p-4 rounded-lg  cursor-pointer"
-          onClick={() => setShowDetails(true)}
+          onClick={() => setShowDetails(!showDetails)}
         >
           <div className="w-full">
             <div className="flex gap-2 items-center">

@@ -3,7 +3,7 @@ import NewTokenModal from "@/components/tokens/TokenModal";
 import { api } from "@/lib/trpc-client/api";
 
 export default async function Tokens() {
-  const { tokens } = await api.tokens.getAllTokens.query();
+  const { tokens } = await api.tokens.getUsersTokens.query();
 
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
