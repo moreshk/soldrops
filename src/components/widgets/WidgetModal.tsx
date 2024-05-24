@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import WidgetForm from "./WidgetForm";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
-import { Widget } from "@/lib/trpc-api/widgets/widgets.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { Widget } from "@/trpc/server/actions/widgets/widgets.type";
 
 export default function WidgetModal({
   widget,

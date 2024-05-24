@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils";
 import TokenListModal from "../tokens/TokenListModal";
 import { InputHTMLAttributes, ReactNode, forwardRef, useState } from "react";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 import { ChevronDown } from "lucide-react";
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ArrowDown, BadgeCheck, ExternalLink, Loader2, X } from "lucide-react";
 import { useSwapStoreSelectors } from "@/store/swap-store";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { addressShortener } from "@/utils/addressShortener";
 

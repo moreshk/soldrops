@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";

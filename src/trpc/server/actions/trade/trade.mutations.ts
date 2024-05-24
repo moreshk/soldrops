@@ -17,12 +17,12 @@ import { getSignature } from "@/utils/getSignature";
 import { transactionSenderAndConfirmationWaiter } from "@/utils/transactionSender";
 import { QuoteResponse } from "@jup-ag/api";
 import { solToken } from "@/utils/defaultTokens";
-import { api } from "@/lib/trpc-client/api";
 import { widgetsTx } from "@/lib/db/schema/transaction";
 // @ts-ignore
 import { createTransferInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { getFeeAddress } from "@/utils/getFeeAddress";
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { server } from "@/trpc/server/api";
 
 export const connection = new Connection(env.HELIUS_RPC_URL);
 
@@ -33,8 +33,8 @@ export const tradeToken = async (
   receiveTokenId: string
 ) => {
   try {
-    const { userId, sessionClaims } = auth().protect();
-    const { widget } = await api.widgets.getWidgetById.query({
+    const { userId } = auth().protect();
+    const { widget } = await server.widgets.getWidgetById.query({
       id: widgetId,
     });
     if (!widget) return { message: "No Widget found" };

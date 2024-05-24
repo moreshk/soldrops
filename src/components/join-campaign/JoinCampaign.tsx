@@ -2,12 +2,12 @@
 /* eslint-disable @next/next/no-img-element */
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
-import { Whitelist } from "@/lib/trpc-api/whitelist/whitelist.type";
-import { Campaign } from "@/lib/trpc-api/campaign/campaign.types";
+import { Whitelist } from "@/trpc/server/actions/whitelist/whitelist.type";
+import { Campaign } from "@/trpc/server/actions/campaign/campaign.types";
 import { useUser } from "@clerk/nextjs";
 
 interface CampaignWhiteList extends Whitelist {

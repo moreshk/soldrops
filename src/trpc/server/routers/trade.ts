@@ -1,10 +1,13 @@
-import { protectedProcedure, router } from "@/lib/trpc-server/trpc";
+import { protectedProcedure, router } from "@/trpc/server";
 import {
   sendSPLToken,
   sendSol,
   tradeToken,
-} from "@/lib/trpc-api/trade/trade.mutations";
-import { sendTokenSchema, tradeSchema } from "@/lib/trpc-api/trade/trade.type";
+} from "@/trpc/server/actions/trade/trade.mutations";
+import {
+  sendTokenSchema,
+  tradeSchema,
+} from "@/trpc/server/actions/trade/trade.type";
 
 export const trade = router({
   tradeToken: protectedProcedure

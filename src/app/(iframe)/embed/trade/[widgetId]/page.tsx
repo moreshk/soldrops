@@ -1,9 +1,9 @@
-import { api } from "@/lib/trpc-client/api";
 import dynamic from "next/dynamic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OnBoarding } from "@/components/onboarding-flow/OnBoarding";
 import { WalletDetails } from "@/components/wallet-details/WalletDetails";
 import { SignedIn } from "@clerk/nextjs";
+import { server } from "@/trpc/server/api";
 
 const TradeWidget = dynamic(
   () => import("@/components/trade-widget/TradeWidget"),
@@ -13,10 +13,10 @@ const TradeWidget = dynamic(
 );
 
 const Page = async ({ params }: { params: { widgetId?: string } }) => {
-  const { widget } = await api.widgets.getWidgetById.query({
+  const { widget } = await server.widgets.getWidgetById.query({
     id: params.widgetId ?? "",
   });
-  const { tokens } = await api.tokens.getAllTokens.query();
+  const { tokens } = await server.tokens.getAllTokens.query();
 
   if (widget?.id) {
     return (

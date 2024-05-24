@@ -1,19 +1,19 @@
-import { protectedProcedure, router } from "@/lib/trpc-server/trpc";
+import { protectedProcedure, router } from "@/trpc/server";
 import {
   createCampaign,
   deleteCampaign,
   updateCampaign,
-} from "@/lib/trpc-api/campaign/campaign.mutations";
+} from "@/trpc/server/actions/campaign/campaign.mutations";
 import {
   getCampaignById,
   getCampaigns,
   getLiveCampaigns,
-} from "@/lib/trpc-api/campaign/campaign.queries";
+} from "@/trpc/server/actions/campaign/campaign.queries";
 import {
   campaignIdSchema,
   insertCampaignParams,
   updateCampaignParams,
-} from "@/lib/trpc-api/campaign/campaign.types";
+} from "@/trpc/server/actions/campaign/campaign.types";
 
 export const campaignRouter = router({
   getCampaigns: protectedProcedure.query(async () => {

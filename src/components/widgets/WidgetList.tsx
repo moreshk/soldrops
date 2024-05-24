@@ -1,12 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import WidgetModal from "./WidgetModal";
 import { Button } from "../ui/button";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { CompleteWidget } from "@/lib/trpc-api/widgets/widgets.type";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteWidget } from "@/trpc/server/actions/widgets/widgets.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 import { addressShortener } from "@/utils/addressShortener";
 
 export default function WidgetList({

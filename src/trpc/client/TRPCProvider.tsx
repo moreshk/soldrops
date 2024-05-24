@@ -3,12 +3,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import React, { useState } from "react";
-
-import { trpc } from "./client";
-
 import SuperJSON from "superjson";
+import { trpc } from "@/trpc/client/api";
 
-export default function TrpcProvider({
+export default function TrpcReactProvider({
   children,
   cookies,
 }: {

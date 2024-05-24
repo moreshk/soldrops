@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,7 +23,7 @@ import {
   NewTokenParams,
   Token,
   insertTokenParams,
-} from "@/lib/trpc-api/tokens/tokens.type";
+} from "@/trpc/server/actions/tokens/tokens.type";
 
 const TokenForm = ({
   token,

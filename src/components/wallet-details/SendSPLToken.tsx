@@ -14,10 +14,10 @@ import { TypeSelectedToken } from "./WalletDetails";
 import { SendHorizontal, Loader2, ArrowLeft } from "lucide-react";
 import { addressShortener } from "@/utils/addressShortener";
 import { SendTokenInputForm } from "./SendTokenInputForm";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { SendTokenSuccess } from "./SendTokenSuccess";
-import { SendTokenSchemaType } from "@/lib/trpc-api/trade/trade.type";
+import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
 
 export const SendSPLToken = ({
   sendSPLTokenDetails,

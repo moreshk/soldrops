@@ -1,11 +1,11 @@
-import { protectedProcedure, router } from "@/lib/trpc-server/trpc";
+import { protectedProcedure, router } from "@/trpc/server";
 import {
   getATATokenBalance,
   getAllTokensBalance,
   getSolTokenBalance,
   getSwapTokenBalance,
-} from "@/lib/trpc-api/token-balance/token-balance.queries";
-import { tokenIdSchema } from "@/lib/trpc-api/tokens/tokens.type";
+} from "@/trpc/server/actions/token-balance/token-balance.queries";
+import { tokenIdSchema } from "@/trpc/server/actions/tokens/tokens.type";
 
 export const tokenBalanceRouter = router({
   getSolTokenBalance: protectedProcedure.query(async () => {

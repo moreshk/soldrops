@@ -1,9 +1,9 @@
-import { api } from "@/lib/trpc-client/api";
+import { server } from "@/trpc/server/api";
 import { WhiteListedList } from "./component/WhiteListedList";
 import { SignedIn } from "@clerk/nextjs";
 
 export default async function Whitelist() {
-  const { whitelist } = await api.whitelist.getWhitelist.query();
+  const { whitelist } = await server.whitelist.getWhitelist.query();
 
   return (
     <SignedIn>

@@ -3,13 +3,13 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
-import TrpcProvider from "@/lib/trpc-client/Provider";
 import { cookies } from "next/headers";
 import { ConnectWalletProvider } from "@/components/wallet/WalletModalProvider";
 import { PHProvider } from "@/lib/posthog/PosthogProvider";
 import dynamic from "next/dynamic";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/components/auth/AuthProvider";
+import TrpcReactProvider from "@/trpc/client/TRPCProvider";
 
 const PostHogPageView = dynamic(() => import("@/lib/posthog/PostHogPageView"), {
   ssr: false,
@@ -66,14 +66,14 @@ export default async function RootLayout({
         >
           <AuthProvider>
             <PHProvider>
-              <TrpcProvider cookies={cookies().toString()}>
+              <TrpcReactProvider cookies={cookies().toString()}>
                 <ConnectWalletProvider>
                   <TooltipProvider delayDuration={0}>
                     {children}
                   </TooltipProvider>
                   <PostHogPageView />
                 </ConnectWalletProvider>
-              </TrpcProvider>
+              </TrpcReactProvider>
               <Toaster richColors />
             </PHProvider>
           </AuthProvider>

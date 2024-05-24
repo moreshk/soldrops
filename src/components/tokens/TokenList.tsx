@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import TokenModal from "./TokenModal";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 export default function TokenList({ tokens }: { tokens: CompleteToken[] }) {
   const { data: t } = trpc.tokens.getUsersTokens.useQuery(undefined, {

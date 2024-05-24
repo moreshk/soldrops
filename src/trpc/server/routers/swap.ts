@@ -1,9 +1,9 @@
-import { protectedProcedure, router } from "@/lib/trpc-server/trpc";
+import { protectedProcedure, router } from "@/trpc/server";
 import {
   swapToken,
   swapTokenOutputFee,
-} from "@/lib/trpc-api/swap/swap.mutations";
-import { swapSchema } from "@/lib/trpc-api/swap/swap.type";
+} from "@/trpc/server/actions/swap/swap.mutations";
+import { swapSchema } from "@/trpc/server/actions/swap/swap.type";
 
 export const swapRouter = router({
   swapToken: protectedProcedure

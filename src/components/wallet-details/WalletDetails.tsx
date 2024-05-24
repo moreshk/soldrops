@@ -1,6 +1,6 @@
 "use client";
 
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { Loader2 } from "lucide-react";
 import { WalletSPLTokenDetails } from "./WalletSPLTokenDetails";
 import { AccountInfo, ParsedAccountData, PublicKey } from "@solana/web3.js";
@@ -8,7 +8,7 @@ import { WalletSOLDetails } from "./WalletSOLDetails";
 import { useState } from "react";
 import { SendSPLToken } from "./SendSPLToken";
 import { SendSol } from "./SendSOL";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 export type TypeWalletTokenDetails = {
   pubkey: PublicKey;

@@ -1,8 +1,6 @@
 import "server-only";
 
-import { appRouter } from "@/lib/server/routers/_app";
 import { env } from "@/lib/env.mjs";
-import { createTRPCContext } from "./context";
 
 import {
   createTRPCProxyClient,
@@ -12,22 +10,19 @@ import {
 import { callProcedure } from "@trpc/server";
 import { type TRPCErrorResponse } from "@trpc/server/rpc";
 import { observable } from "@trpc/server/observable";
-
 import { cache } from "react";
-import { cookies } from "next/headers";
-
 import SuperJSON from "superjson";
+import { appRouter } from "./routers";
+import { createTRPCContext } from "./index";
+import { headers } from "next/headers";
 
-const createContext = cache(() => {
-  return createTRPCContext({
-    headers: new Headers({
-      cookie: cookies().toString(),
-      "x-trpc-source": "rsc",
-    }),
-  });
+const cachedCreateContext = cache(async () => {
+  const heads = new Headers(headers());
+  heads.set("x-trpc-source", "rsc");
+  return createTRPCContext({ headers: heads });
 });
 
-export const api = createTRPCProxyClient<typeof appRouter>({
+export const server = createTRPCProxyClient<typeof appRouter>({
   transformer: SuperJSON,
   links: [
     loggerLink({
@@ -35,14 +30,10 @@ export const api = createTRPCProxyClient<typeof appRouter>({
         env.NODE_ENV === "development" ||
         (op.direction === "down" && op.result instanceof Error),
     }),
-    /**
-     * Custom RSC link that lets us invoke procedures without using http requests. Since Server
-     * Components always run on the server, we can just call the procedure as a function.
-     */
     () =>
       ({ op }) =>
         observable((observer) => {
-          createContext()
+          cachedCreateContext()
             .then((ctx) => {
               return callProcedure({
                 procedures: appRouter._def.procedures,

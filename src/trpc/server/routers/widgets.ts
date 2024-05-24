@@ -2,21 +2,17 @@ import {
   createWidget,
   deleteWidget,
   updateWidget,
-} from "@/lib/trpc-api/widgets/widgets.mutations";
+} from "@/trpc/server/actions/widgets/widgets.mutations";
 import {
   getWidgetById,
   getWidgets,
-} from "@/lib/trpc-api/widgets/widgets.queries";
+} from "@/trpc/server/actions/widgets/widgets.queries";
 import {
   insertWidgetParams,
   updateWidgetParams,
   widgetIdSchema,
-} from "@/lib/trpc-api/widgets/widgets.type";
-import {
-  protectedProcedure,
-  publicProcedure,
-  router,
-} from "@/lib/trpc-server/trpc";
+} from "@/trpc/server/actions/widgets/widgets.type";
+import { protectedProcedure, publicProcedure, router } from "@/trpc/server";
 
 export const widgetsRouter = router({
   getWidgets: protectedProcedure.query(async () => {

@@ -7,7 +7,7 @@ import {
   insertCampaignSchema,
   campaignIdSchema,
   updateCampaignParams,
-} from "@/lib/trpc-api/campaign/campaign.types";
+} from "@/trpc/server/actions/campaign/campaign.types";
 import { campaign } from "@/lib/db/schema/campaign";
 import { novu } from "@/lib/novu/novu";
 import { revalidatePath } from "next/cache";

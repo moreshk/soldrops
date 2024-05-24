@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { DrawerFooter } from "../ui/drawer";
-import { SendTokenSchemaType } from "@/lib/trpc-api/trade/trade.type";
+import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
 
 export const SendTokenInputForm = ({
   onClose,

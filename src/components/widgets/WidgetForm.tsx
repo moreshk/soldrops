@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -33,12 +33,12 @@ import {
 } from "@/components/ui/popover";
 import { useState } from "react";
 import { addressShortener } from "@/utils/addressShortener";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 import {
   NewWidgetParams,
   Widget,
   insertWidgetParams,
-} from "@/lib/trpc-api/widgets/widgets.type";
+} from "@/trpc/server/actions/widgets/widgets.type";
 
 const WidgetForm = ({
   widget,

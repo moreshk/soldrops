@@ -7,7 +7,7 @@ import { useState } from "react";
 import { solToken } from "@/utils/defaultTokens";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 
 export const OnBoarding = ({ title }: { title?: string }) => {
   const { data, refetch } = trpc.tokenBalance.getSolTokenBalance.useQuery(

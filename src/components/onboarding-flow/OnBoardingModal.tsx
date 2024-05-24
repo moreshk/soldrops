@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { OnBoarding } from "./OnBoarding";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 
 const OnBoardingModal = () => {
   const [open, setOpen] = useState(false);

@@ -1,11 +1,11 @@
 import WidgetList from "@/components/widgets/WidgetList";
 import NewWidgetModal from "@/components/widgets/WidgetModal";
-import { api } from "@/lib/trpc-client/api";
+import { server } from "@/trpc/server/api";
 import { SignedIn } from "@clerk/nextjs";
 
 export default async function Widgets() {
-  const { widgets } = await api.widgets.getWidgets.query();
-  const { tokens } = await api.tokens.getAllTokens.query();
+  const { widgets } = await server.widgets.getWidgets.query();
+  const { tokens } = await server.tokens.getAllTokens.query();
 
   return (
     <SignedIn>

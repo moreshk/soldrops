@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2, X } from "lucide-react";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { addressShortener } from "@/utils/addressShortener";
 import {

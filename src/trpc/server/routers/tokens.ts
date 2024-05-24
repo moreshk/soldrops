@@ -2,22 +2,18 @@ import {
   getAllTokens,
   getTokenById,
   getUsersTokens,
-} from "@/lib/trpc-api/tokens/tokens.queries";
-import {
-  protectedProcedure,
-  publicProcedure,
-  router,
-} from "@/lib/trpc-server/trpc";
+} from "@/trpc/server/actions/tokens/tokens.queries";
+import { protectedProcedure, publicProcedure, router } from "@/trpc/server";
 import {
   createToken,
   deleteToken,
   updateToken,
-} from "@/lib/trpc-api/tokens/tokens.mutations";
+} from "@/trpc/server/actions/tokens/tokens.mutations";
 import {
   insertTokenParams,
   tokenIdSchema,
   updateTokenParams,
-} from "@/lib/trpc-api/tokens/tokens.type";
+} from "@/trpc/server/actions/tokens/tokens.type";
 
 export const tokensRouter = router({
   getUsersTokens: protectedProcedure.query(async () => {

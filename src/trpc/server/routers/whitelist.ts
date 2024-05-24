@@ -1,20 +1,20 @@
-import { protectedProcedure, router } from "@/lib/trpc-server/trpc";
-import { campaignIdSchema } from "@/lib/trpc-api/campaign/campaign.types";
+import { protectedProcedure, router } from "@/trpc/server";
+import { campaignIdSchema } from "@/trpc/server/actions/campaign/campaign.types";
 import {
   getWhiteListCampaignById,
   getWhitelistById,
   getWhitelists,
-} from "@/lib/trpc-api/whitelist/whitelist.queries";
+} from "@/trpc/server/actions/whitelist/whitelist.queries";
 import {
   insertWhitelistParams,
   updateWhitelistParams,
   whitelistIdSchema,
-} from "@/lib/trpc-api/whitelist/whitelist.type";
+} from "@/trpc/server/actions/whitelist/whitelist.type";
 import {
   createWhitelist,
   deleteWhitelist,
   updateWhitelist,
-} from "@/lib/trpc-api/whitelist/whitelist.mutations";
+} from "@/trpc/server/actions/whitelist/whitelist.mutations";
 
 export const whitelistRouter = router({
   getWhitelist: protectedProcedure.query(async () => {

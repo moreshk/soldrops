@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ import {
   Campaign,
   UpdateCampaignParams,
   updateCampaignParams,
-} from "@/lib/trpc-api/campaign/campaign.types";
+} from "@/trpc/server/actions/campaign/campaign.types";
 
 const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
   const router = useRouter();

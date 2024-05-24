@@ -9,11 +9,11 @@ import { useSearchParams } from "next/navigation";
 import TokenTransferredModal from "../auth/tokenTransferredModal";
 import { SwapConfirmationModal } from "./swapConfirmationModal";
 import { useEffect, useState } from "react";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { InputFocusEnum } from "@/store/store-types";
 import { useSwapStoreSelectors } from "@/store/swap-store";
 import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 import { SignedIn, useUser } from "@clerk/nextjs";
 
 declare global {

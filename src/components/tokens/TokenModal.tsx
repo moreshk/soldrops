@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import TokenForm from "./TokenForm";
-import { Token } from "@/lib/trpc-api/tokens/tokens.type";
+import { Token } from "@/trpc/server/actions/tokens/tokens.type";
 
 export default function TokenModal({
   token,

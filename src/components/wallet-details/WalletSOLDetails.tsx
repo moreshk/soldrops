@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { solToken } from "@/utils/defaultTokens";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 import { useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowLeftRight, ExternalLink, Send } from "lucide-react";

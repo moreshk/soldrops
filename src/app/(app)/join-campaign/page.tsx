@@ -1,9 +1,9 @@
 import JoinCampaignList from "@/components/join-campaign/JoinCampaignList";
-import { api } from "@/lib/trpc-client/api";
+import { server } from "@/trpc/server/api";
 import { SignedIn } from "@clerk/nextjs";
 
 export default async function Campaign() {
-  const { campaign } = await api.campaign.getLiveCampaigns.query();
+  const { campaign } = await server.campaign.getLiveCampaigns.query();
 
   return (
     <SignedIn>

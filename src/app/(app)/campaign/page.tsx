@@ -1,11 +1,11 @@
 import CampaignList from "@/components/campaign/CampaignList";
-import { api } from "@/lib/trpc-client/api";
 import { SignedIn } from "@clerk/nextjs";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import { server } from "@/trpc/server/api";
 
 export default async function Campaign() {
-  const { campaign } = await api.campaign.getCampaigns.query();
+  const { campaign } = await server.campaign.getCampaigns.query();
 
   return (
     <SignedIn>

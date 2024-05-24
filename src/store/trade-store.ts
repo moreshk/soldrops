@@ -1,4 +1,4 @@
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 import { create } from "zustand";
 import { produce } from "immer";

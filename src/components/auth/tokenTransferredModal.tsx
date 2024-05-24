@@ -10,7 +10,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
-import { trpc } from "@/lib/trpc-client/client";
+import { trpc } from "@/trpc/client/api";
 
 const TokenTransferredModal = () => {
   const [open, setOpen] = useState(true);

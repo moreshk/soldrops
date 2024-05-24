@@ -1,4 +1,4 @@
-import { CompleteToken } from "@/lib/trpc-api/tokens/tokens.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 import { solToken } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
