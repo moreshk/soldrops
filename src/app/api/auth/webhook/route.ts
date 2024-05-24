@@ -56,9 +56,9 @@ async function handler(request: Request) {
       },
     });
     const emailDetails = evt.data.email_addresses as unknown as {
-      email_addresses: string;
+      email_address: string;
     }[];
-    const email = emailDetails[0].email_addresses as string;
+    const email = emailDetails[0].email_address as string;
     await db.insert(users).values({
       email: email,
       id: id as string,
