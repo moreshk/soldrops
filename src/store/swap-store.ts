@@ -75,6 +75,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
   setReceiveToken: (token: CompleteToken) =>
     set(
       produce((state: SwapState) => {
+        console.log(state);
         if (!(token.address === state.receiveToken.address)) {
           const tempReceiveToken = state.receiveToken;
           if (token.address === solToken.address) {

@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { SendTokenSuccess } from "./SendTokenSuccess";
 import { solToken } from "@/utils/defaultTokens";
 import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
+import { TokenPrice } from "@/trpc/server/actions/token-balance/token-balance.type";
 
 export const SendSol = ({
   open,
@@ -27,6 +28,7 @@ export const SendSol = ({
   open: boolean;
   maxAmount: string;
   onClose: () => void;
+  tokenPrice: TokenPrice;
 }) => {
   const [sendDetails, setSendDetails] = useState<
     SendTokenSchemaType | undefined

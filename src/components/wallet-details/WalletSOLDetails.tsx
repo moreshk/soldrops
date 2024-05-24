@@ -1,21 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
 import { solToken } from "@/utils/defaultTokens";
-import { trpc } from "@/trpc/client/api";
 import { useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowLeftRight, ExternalLink, Send } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { TokenPrice } from "@/trpc/server/actions/token-balance/token-balance.type";
 
 export const WalletSOLDetails = ({
   setShowSendSol,
+  tokenPrice,
+  amount,
+  swapTab,
 }: {
   setShowSendSol: (amount: number) => void;
+  tokenPrice: TokenPrice;
+  amount: number;
+  swapTab: () => void;
 }) => {
-  const { data, isLoading } = trpc.tokenBalance.getSolTokenBalance.useQuery();
-  const amount = data?.balance ? data.balance / 10 ** solToken.decimal : 0;
   const [showDetails, setShowDetails] = useState(false);
   const { user } = useUser();
   const walletAddress = user?.publicMetadata.walletAddress as string;
+  const isAmountLoaded = tokenPrice[solToken.address];
+  const usdValue = isAmountLoaded ? tokenPrice[solToken.address].value : 0;
+  const valueChange = isAmountLoaded
+    ? tokenPrice[solToken.address].priceChange24h
+    : 0;
 
   return (
     <div className="m-4 border rounded-2xl">
@@ -30,17 +39,27 @@ export const WalletSOLDetails = ({
               alt="log"
               className="w-9 h-9 rounded-full"
             />
-            <div>
-              <div>{solToken.symbol}</div>
-              <div className="text-sm opacity-60 flex gap-2 items-center">
-                <>
-                  {isLoading ? (
-                    <div className="w-14 h-3 rounded-xl bg-muted-foreground" />
-                  ) : (
-                    <>{amount}</>
-                  )}
-                </>{" "}
-                {solToken.symbol}
+            <div className="w-full">
+              <div className="flex justify-between items-center w-full">
+                <p className="font-semibold">{solToken.symbol}</p>
+                {isAmountLoaded && (
+                  <p className="text-sm ">${usdValue.toFixed(2)}</p>
+                )}
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="text-sm opacity-60 flex gap-2 items-center">
+                  {amount.toFixed(5)} {solToken.symbol}
+                </div>
+                {valueChange < 0 && isAmountLoaded && (
+                  <p className={`text-sm text-rose-600`}>
+                    -${(valueChange * -1).toFixed(2)}
+                  </p>
+                )}
+                {valueChange > 0 && isAmountLoaded && (
+                  <p className={`text-sm text-green-600`}>
+                    +${(valueChange * -1).toFixed(2)}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -65,6 +84,9 @@ export const WalletSOLDetails = ({
                 <p>Send</p>
               </Button>
               <Button
+                onClick={() => {
+                  swapTab();
+                }}
                 variant="secondary"
                 className="rounded-xl flex flex-col justify-center items-center p-2 h-full"
               >

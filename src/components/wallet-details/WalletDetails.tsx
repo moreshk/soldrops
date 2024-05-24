@@ -20,7 +20,13 @@ export type TypeSelectedToken = {
   tokenDetails: CompleteToken;
 };
 
-export const WalletDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
+export const WalletDetails = ({
+  tokens,
+  swapTab,
+}: {
+  tokens: CompleteToken[];
+  swapTab: () => void;
+}) => {
   const [sendSol, setSendSol] = useState<{ show: boolean; amount: number }>({
     show: false,
     amount: 0,
@@ -35,7 +41,7 @@ export const WalletDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
       refetchOnMount: false,
     }
   );
-  const accounts = data?.accounts;
+
   if (isLoading) {
     return (
       <div className="p-4 flex justify-center items-center h-40">
@@ -43,26 +49,36 @@ export const WalletDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
       </div>
     );
   }
-  if (accounts) {
+  if (data) {
+    const accounts = data.accounts;
+    const tokenPrice = data.tokenPrice;
+    const solBalance = data.balance;
+
     return (
       <div>
         <div>
           <WalletSOLDetails
+            amount={solBalance}
             setShowSendSol={(amount) => setSendSol({ amount, show: true })}
+            tokenPrice={tokenPrice}
+            swapTab={swapTab}
           />
         </div>
         {accounts.map((token, index) => (
           <WalletSPLTokenDetails
+            swapTab={swapTab}
             setSendSPLTokenDetails={setSendSPLTokenDetails}
             walletTokenDetails={token as TypeWalletTokenDetails}
             tokens={tokens}
             key={`${token.pubkey.toString()}${index}`}
+            tokenPrice={tokenPrice}
           />
         ))}
         {sendSPLTokenDetails && (
           <SendSPLToken
             sendSPLTokenDetails={sendSPLTokenDetails}
             open={Boolean(sendSPLTokenDetails)}
+            tokenPrice={tokenPrice}
             onClose={() => {
               setSendSPLTokenDetails(undefined);
             }}
@@ -71,6 +87,7 @@ export const WalletDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
         <SendSol
           open={sendSol.show}
           maxAmount={`${sendSol.amount}`}
+          tokenPrice={tokenPrice}
           onClose={() => setSendSol({ amount: 0, show: false })}
         />
       </div>

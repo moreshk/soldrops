@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { IsFetchingEnum } from "@/store/store-types";
 import { trpc } from "@/trpc/client/api";
 import { TradConfirmationModal } from "./TradConfirmationModal";
-import { solToken } from "@/utils/defaultTokens";
 import { addressShortener } from "@/utils/addressShortener";
 import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
 import { InSufficientBalanceTooltip } from "./InSufficientBalanceTooltip";
@@ -57,12 +56,6 @@ const TradeWidget = ({
   const inSufficientFullValue = +sendBalanceInUSDC <= 0;
 
   const insufficientValue = +sendBalanceInUSDC <= +amountInput;
-
-  useEffect(() => {
-    setReceiveToken(widget.token);
-    const sol = tokens.find((token) => token.address === solToken.address);
-    if (sol) setSendToken(sol);
-  }, []);
 
   useEffect(() => {
     if (isSignedIn) setLoggedIn(true);

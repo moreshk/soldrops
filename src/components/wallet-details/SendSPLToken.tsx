@@ -18,6 +18,7 @@ import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { SendTokenSuccess } from "./SendTokenSuccess";
 import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
+import { TokenPrice } from "@/trpc/server/actions/token-balance/token-balance.type";
 
 export const SendSPLToken = ({
   sendSPLTokenDetails,
@@ -27,6 +28,7 @@ export const SendSPLToken = ({
   sendSPLTokenDetails: TypeSelectedToken;
   open: boolean;
   onClose: () => void;
+  tokenPrice: TokenPrice;
 }) => {
   const info = sendSPLTokenDetails.walletTokenDetails.account.data.parsed.info;
   const [sendDetails, setSendDetails] = useState<
