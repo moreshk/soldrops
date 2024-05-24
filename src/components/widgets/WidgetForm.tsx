@@ -39,6 +39,7 @@ import {
   Widget,
   insertWidgetParams,
 } from "@/trpc/server/actions/widgets/widgets.type";
+import { solToken } from "@/utils/defaultTokens";
 
 const WidgetForm = ({
   widget,
@@ -134,7 +135,7 @@ const WidgetForm = ({
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full text-left justify-start"
+                          className="w-full text-left justify-start h-16"
                         >
                           {selectedToken ? (
                             <div className="flex gap-2 items-center flex-1">
@@ -161,41 +162,45 @@ const WidgetForm = ({
                           <CommandInput placeholder="Search framework..." />
                           <CommandEmpty>No token found.</CommandEmpty>
                           <CommandGroup>
-                            {tokens.map((token) => (
-                              <CommandItem
-                                key={token.id}
-                                value={token.id}
-                                className="w-full border rounded-lg my-2 flex items-center gap-1"
-                                onSelect={(currentValue) => {
-                                  onChange(
-                                    currentValue === value ? "" : currentValue
-                                  );
-                                  setOpen(false);
-                                }}
-                              >
-                                <div className="flex gap-2 items-center flex-1">
-                                  <img
-                                    src={token.imageUrl}
-                                    alt="log"
-                                    className="w-9 h-9 rounded-full"
-                                  />
-                                  <div>
-                                    <div>{token.symbol}</div>
-                                    <div className="text-xs opacity-60">
-                                      {addressShortener(token.address)}
+                            {tokens
+                              .filter(
+                                (token) => solToken.address !== token.address
+                              )
+                              .map((token) => (
+                                <CommandItem
+                                  key={token.id}
+                                  value={token.id}
+                                  className="w-full border rounded-lg my-2 flex items-center gap-1"
+                                  onSelect={() => {
+                                    onChange(
+                                      token.id === value ? "" : token.id
+                                    );
+                                    setOpen(false);
+                                  }}
+                                >
+                                  <div className="flex gap-2 items-center flex-1">
+                                    <img
+                                      src={token.imageUrl}
+                                      alt="log"
+                                      className="w-9 h-9 rounded-full"
+                                    />
+                                    <div>
+                                      <div>{token.symbol}</div>
+                                      <div className="text-xs opacity-60">
+                                        {addressShortener(token.address)}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-7 w-7 p-1",
-                                    value === token.id
-                                      ? "opacity-100 bg-secondary rounded-full"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-7 w-7 p-1",
+                                      value === token.id
+                                        ? "opacity-100 bg-secondary rounded-full"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
                           </CommandGroup>
                         </Command>
                       </PopoverContent>
