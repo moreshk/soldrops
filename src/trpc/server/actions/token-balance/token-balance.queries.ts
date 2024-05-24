@@ -6,9 +6,9 @@ import { connection } from "@/utils/connection";
 import { TokenId, tokenIdSchema } from "../tokens/tokens.type";
 
 export const getSolTokenBalance = async () => {
-  const { userId } = auth();
+  const { sessionClaims } = auth().protect();
   try {
-    const walletAddress = new PublicKey(userId!);
+    const walletAddress = new PublicKey(sessionClaims.walletAddress as string);
     const balance = await connection.getBalance(walletAddress);
     return { balance };
   } catch (err) {
@@ -19,7 +19,7 @@ export const getSolTokenBalance = async () => {
 };
 
 export const getAllTokensBalance = async () => {
-  const { userId } = auth();
+  const { sessionClaims } = auth().protect();
 
   try {
     const accounts = await connection.getParsedProgramAccounts(
@@ -32,7 +32,7 @@ export const getAllTokensBalance = async () => {
           {
             memcmp: {
               offset: 32,
-              bytes: userId!,
+              bytes: sessionClaims.walletAddress as string,
             },
           },
         ],

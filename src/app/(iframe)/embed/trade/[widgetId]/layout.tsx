@@ -1,9 +1,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
-import { SignedIn, UserProfile } from "@clerk/nextjs";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { widgetId: string };
+}) => {
   return (
     <div className="grid w-full bg-transparent">
       <div className="flex flex-col">
@@ -17,7 +23,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
           <div className="flex-1"></div>
           <NovuNotification />
           <SignedIn>
-            <UserProfile />
+            <UserButton afterSignOutUrl={`/embed/trade/${params.widgetId}`} />
           </SignedIn>
         </header>
         <div className="flex justify-center items-center">{children}</div>

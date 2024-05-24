@@ -232,7 +232,7 @@ const TradeWidget = ({
         </div>
         <div>
           <SignedOut>
-            <AuthButton />
+            <AuthButton fallbackUrl={`/embed/trade/${widget.id}`} />
           </SignedOut>
           <SignedIn>
             <Button

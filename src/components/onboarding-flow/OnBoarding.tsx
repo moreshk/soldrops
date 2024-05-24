@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -47,14 +47,15 @@ export const OnBoarding = ({ title }: { title?: string }) => {
             <div className="mt-5">
               <p className="text-center">Drops wallet address:</p>
               {walletAddress && (
-                <div className="flex items-center">
-                  <Button
+                <div className="flex items-center justify-center">
+                  <button
                     onClick={copy}
-                    variant="ghost"
-                    className="break-all text-xs"
+                    className={
+                      "text-xs break-all font-bold bg-secondary text-balance rounded-lg p-3"
+                    }
                   >
-                    <p className="font-bold">{walletAddress}</p>
-                  </Button>
+                    {walletAddress}
+                  </button>
                   <Button
                     onClick={copy}
                     variant="ghost"
