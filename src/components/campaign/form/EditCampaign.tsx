@@ -28,9 +28,7 @@ import {
 const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
   const router = useRouter();
   const utils = trpc.useContext();
-  // @ts-ignore
   const form = useForm<z.infer<typeof updateCampaignParams>>({
-    // @ts-ignore
     resolver: zodResolver(updateCampaignParams),
     defaultValues: {
       ...campaign,
