@@ -6,6 +6,8 @@ import { Webhook, WebhookRequiredHeaders } from "svix";
 import { Keypair } from "@solana/web3.js";
 import CryptoJS from "crypto-js";
 import { env } from "@/lib/env.mjs";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema/user";
 
 const webhookSecret = process.env.WEBHOOK_SECRET || "";
 
@@ -44,6 +46,7 @@ async function handler(request: Request) {
     if (user.privateMetadata.privateKey) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
+    console.log("goo no");
     await clerkClient.users.updateUserMetadata(id as string, {
       privateMetadata: {
         privateKey,
@@ -53,7 +56,15 @@ async function handler(request: Request) {
         walletAddress,
       },
     });
-
+    const emailDetails = evt.data.email_addresses as unknown as {
+      email_addresses: string;
+    }[];
+    const email = emailDetails[0].email_addresses as string;
+    await db.insert(users).values({
+      email: email,
+      id: id as string,
+      walletAddress: walletAddress,
+    });
     return NextResponse.json({ success: true }, { status: 200 });
   }
 }

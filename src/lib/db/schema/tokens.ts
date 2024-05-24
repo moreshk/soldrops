@@ -8,7 +8,7 @@ import {
   text,
 } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
-import { users } from "./auth";
+import { users } from "./user";
 
 export const tokens = pgTable("tokens", {
   id: varchar("id", { length: 191 })

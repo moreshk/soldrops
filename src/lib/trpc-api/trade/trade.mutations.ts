@@ -1,5 +1,4 @@
 import { db } from "@/lib/db/index";
-import { eq } from "drizzle-orm";
 import {
   AddressLookupTableAccount,
   Connection,
@@ -12,7 +11,6 @@ import {
 } from "@solana/web3.js";
 import fetch from "cross-fetch";
 import bs58 from "bs58";
-import { users } from "@/lib/db/schema/auth";
 import { env } from "@/lib/env.mjs";
 import CryptoJS from "crypto-js";
 import { getSignature } from "@/utils/getSignature";
@@ -24,7 +22,7 @@ import { widgetsTx } from "@/lib/db/schema/transaction";
 // @ts-ignore
 import { createTransferInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { getFeeAddress } from "@/utils/getFeeAddress";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 
 export const connection = new Connection(env.HELIUS_RPC_URL);
 
@@ -35,15 +33,15 @@ export const tradeToken = async (
   receiveTokenId: string
 ) => {
   try {
-    const { userId } = auth().protect();
+    const { userId, sessionClaims } = auth().protect();
     const { widget } = await api.widgets.getWidgetById.query({
       id: widgetId,
     });
-
     if (!widget) return { message: "No Widget found" };
-
-    const [user] = await db.select().from(users).where(eq(users.id, userId));
-    const hashedPrivatekey = user.privateKey;
+    const user = await clerkClient.users.getUser(userId as string);
+    const hashedPrivatekey = user.privateMetadata.privateKey as string;
+    if (!hashedPrivatekey) throw { message: "something went wrong" };
+    const walletAddress = user.privateMetadata.walletAddress;
     var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
     const privateKey = bs58.encode(
       Uint8Array.from(
@@ -71,7 +69,7 @@ export const tradeToken = async (
         },
         body: JSON.stringify({
           quoteResponse,
-          userPublicKey: user.walletAddress,
+          userPublicKey: walletAddress,
           wrapAndUnwrapSol: true,
           prioritizationFeeLamports: { autoMultiplier: 3 },
         }),
@@ -193,9 +191,9 @@ export const sendSPLToken = async (
 ) => {
   try {
     const { userId } = auth().protect();
-
-    const [user] = await db.select().from(users).where(eq(users.id, userId!));
-    const hashedPrivatekey = user.privateKey;
+    const user = await clerkClient.users.getUser(userId! as string);
+    const hashedPrivatekey = user.privateMetadata.privateKey as string;
+    if (!hashedPrivatekey) throw { message: "something went wrong" };
     var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
     const privateKey = bs58.encode(
       Uint8Array.from(
@@ -266,8 +264,9 @@ export const sendSol = async (
 ) => {
   try {
     const { userId } = auth().protect();
-    const [user] = await db.select().from(users).where(eq(users.id, userId!));
-    const hashedPrivatekey = user.privateKey;
+    const user = await clerkClient.users.getUser(userId as string);
+    const hashedPrivatekey = user.privateMetadata.privateKey as string;
+    if (!hashedPrivatekey) throw { message: "something went wrong" };
     var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
     const privateKey = bs58.encode(
       Uint8Array.from(

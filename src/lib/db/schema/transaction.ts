@@ -1,11 +1,10 @@
 import { relations, sql } from "drizzle-orm";
 import { varchar, timestamp, pgTable, text } from "drizzle-orm/pg-core";
 
-import { users } from "@/lib/db/schema/auth";
-
 import { nanoid } from "@/lib/utils";
 import { tokens } from "./tokens";
 import { widgets } from "./widgets";
+import { users } from "./user";
 
 export const widgetsTx = pgTable("widgets_tx", {
   id: varchar("id", { length: 191 })

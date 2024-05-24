@@ -1,9 +1,9 @@
 import { relations, sql } from "drizzle-orm";
 import { boolean, varchar, timestamp, pgTable } from "drizzle-orm/pg-core";
-import { users } from "@/lib/db/schema/auth";
 import { campaign } from "@/lib/db/schema/campaign";
 
 import { nanoid } from "@/lib/utils";
+import { users } from "./user";
 
 export const whitelist = pgTable("whitelist", {
   id: varchar("id", { length: 256 })

@@ -6,8 +6,8 @@ import {
   boolean,
   pgTable,
 } from "drizzle-orm/pg-core";
-import { users } from "@/lib/db/schema/auth";
 import { nanoid } from "@/lib/utils";
+import { users } from "./user";
 
 export const campaign = pgTable("campaign", {
   id: varchar("id", { length: 191 })

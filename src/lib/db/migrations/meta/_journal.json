@@ -36,6 +36,20 @@
       "when": 1716479862903,
       "tag": "0004_high_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1716531983609,
+      "tag": "0005_cool_grey_gargoyle",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1716532242608,
+      "tag": "0006_remarkable_annihilus",
+      "breakpoints": true
     }
   ]
 }

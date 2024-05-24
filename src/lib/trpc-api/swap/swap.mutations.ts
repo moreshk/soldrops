@@ -10,7 +10,6 @@ import {
 } from "@solana/web3.js";
 import fetch from "cross-fetch";
 import bs58 from "bs58";
-import { users } from "@/lib/db/schema/auth";
 import { env } from "@/lib/env.mjs";
 import CryptoJS from "crypto-js";
 import { getSignature } from "@/utils/getSignature";
@@ -20,14 +19,16 @@ import { getFeeAddress } from "@/utils/getFeeAddress";
 import { solToken } from "@/utils/defaultTokens";
 // @ts-ignore
 import { TOKEN_PROGRAM_ID, createTransferInstruction } from "@solana/spl-token";
-import { auth } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { connection } from "@/utils/connection";
 
 export const swapTokenOutputFee = async (amountQuoteUrl: string) => {
   try {
     const { userId } = auth();
-    const [user] = await db.select().from(users).where(eq(users.id, userId!));
-    const hashedPrivatekey = user.privateKey;
+    const user = await clerkClient.users.getUser(userId! as string);
+    const hashedPrivatekey = user.privateMetadata.privateKey as string;
+    if (!hashedPrivatekey) throw { message: "something went wrong" };
+    const walletAddress = user.privateMetadata.walletAddress;
     var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
     const privateKey = bs58.encode(
       Uint8Array.from(
@@ -55,7 +56,7 @@ export const swapTokenOutputFee = async (amountQuoteUrl: string) => {
         },
         body: JSON.stringify({
           quoteResponse,
-          userPublicKey: user.walletAddress,
+          userPublicKey: walletAddress,
           wrapAndUnwrapSol: true,
         }),
       }
@@ -162,9 +163,11 @@ export const swapTokenOutputFee = async (amountQuoteUrl: string) => {
 };
 export const swapToken = async (amountQuoteUrl: string) => {
   try {
-    const { userId } = auth();
-    const [user] = await db.select().from(users).where(eq(users.id, userId!));
-    const hashedPrivatekey = user.privateKey;
+    const { userId } = auth().protect();
+    const user = await clerkClient.users.getUser(userId);
+    const hashedPrivatekey = user.privateMetadata.privateKey as string;
+    if (!hashedPrivatekey) throw { message: "something went wrong" };
+    const walletAddress = user.privateMetadata.walletAddress;
     var decrypt = CryptoJS.AES.decrypt(hashedPrivatekey, env.DECODE_ENCODE_KEY);
     const privateKey = bs58.encode(
       Uint8Array.from(
@@ -192,7 +195,7 @@ export const swapToken = async (amountQuoteUrl: string) => {
         },
         body: JSON.stringify({
           quoteResponse,
-          userPublicKey: user.walletAddress,
+          userPublicKey: walletAddress,
           wrapAndUnwrapSol: true,
         }),
       }
