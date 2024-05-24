@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { env } from "@/lib/env.mjs";
-import { auth } from "@clerk/nextjs/server";
 import { tokenData } from "@/trpc/server/actions/tokens/tokens.type";
+import { auth } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
   try {

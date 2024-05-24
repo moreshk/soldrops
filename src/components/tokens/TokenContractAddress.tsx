@@ -27,7 +27,7 @@ export const TokenContractAddress = ({
     if (address.length >= 40) {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/token/metadata`, {
+        const response = await fetch(`/api/token-metadata`, {
           method: "POST",
           body: JSON.stringify({
             tokenAddress: address,

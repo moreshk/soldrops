@@ -46,7 +46,6 @@ async function handler(request: Request) {
     if (user.privateMetadata.privateKey) {
       return NextResponse.json({ success: true }, { status: 200 });
     }
-    console.log("goo no");
     await clerkClient.users.updateUserMetadata(id as string, {
       privateMetadata: {
         privateKey,
