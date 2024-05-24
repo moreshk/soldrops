@@ -1,11 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import {
-  Campaign,
-  UpdateCampaignParams,
-  updateCampaignParams,
-} from "@/lib/db/schema/campaign";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,13 +12,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { LaunchDate } from "./LaunchDate";
+import {
+  Campaign,
+  UpdateCampaignParams,
+  updateCampaignParams,
+} from "@/trpc/server/actions/campaign/campaign.types";
 
 const EditCampaign = ({ campaign }: { campaign: Campaign }) => {
   const router = useRouter();

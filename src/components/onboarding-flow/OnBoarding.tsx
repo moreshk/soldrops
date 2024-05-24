@@ -2,18 +2,25 @@
 
 import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
-import { useTokenBalance } from "../swap/useTokenBalance";
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
+import { solToken } from "@/utils/defaultTokens";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
+import { trpc } from "@/trpc/client/api";
 
 export const OnBoarding = ({ title }: { title?: string }) => {
-  const { balance, refetch } = useTokenBalance(true);
-  const { data: session } = useSession();
+  const { data, refetch } = trpc.tokenBalance.getSolTokenBalance.useQuery(
+    undefined,
+    {
+      refetchInterval: 60000,
+      refetchIntervalInBackground: true,
+    }
+  );
+  const balance = data?.balance;
   const [copied, setCopied] = useState(false);
-  const walletAddress = session?.user.walletAddress;
+  const { user } = useUser();
+  const walletAddress = user?.publicMetadata.walletAddress as string;
 
   const copy = () => {
     if (walletAddress) {

@@ -7,11 +7,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { DrawerFooter } from "../ui/drawer";
-import { SendTokenSchemaType } from "@/lib/db/schema/tokens";
+import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
 
 export const SendTokenInputForm = ({
   onClose,

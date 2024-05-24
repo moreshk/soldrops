@@ -3,19 +3,18 @@
 import { ArrowUpDown, Wallet } from "lucide-react";
 import { SwapInput } from "../ui/swap-Input";
 import { Button } from "../ui/button";
-import { useSession } from "next-auth/react";
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { useDebouncedCallback } from "use-debounce";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "next/navigation";
 import TokenTransferredModal from "../auth/tokenTransferredModal";
 import { SwapConfirmationModal } from "./swapConfirmationModal";
 import { useEffect, useState } from "react";
-import { LoginSignupModal } from "../auth/modal/LoginSignupModal";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { InputFocusEnum } from "@/store/store-types";
 import { useSwapStoreSelectors } from "@/store/swap-store";
 import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { SignedIn, useUser } from "@clerk/nextjs";
 
 declare global {
   interface Window {
@@ -24,8 +23,8 @@ declare global {
 }
 
 export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
-  const { status } = useSession();
   window.trpc = trpc.useUtils().client;
+  const { isSignedIn } = useUser();
   const [confirmation, setConfirmation] = useState<boolean>(false);
   const searchParams = useSearchParams();
   const tokenTransfer = searchParams.get("tokenTransfer") as
@@ -52,9 +51,9 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const getQuoteAmountDebounced = useDebouncedCallback(getQuoteAmount, 1000);
 
   useEffect(() => {
-    if (status === "authenticated") getBalance();
+    if (isSignedIn) getBalance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [isSignedIn]);
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
@@ -174,11 +173,12 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           tokens={tokens}
           selectedToken={receiveToken}
         />
-        {status === "unauthenticated" && <LoginSignupModal showOauth />}
-        {status === "authenticated" && !tokenTransfer && <OnBoardingModal />}
-        {(tokenTransfer === "success" || tokenTransfer === "error") &&
-          status === "authenticated" && <TokenTransferredModal />}
-        {status === "authenticated" && (
+        <SignedIn>
+          {!tokenTransfer && <OnBoardingModal />}
+          {(tokenTransfer === "success" || tokenTransfer === "error") && (
+            <TokenTransferredModal />
+          )}
+
           <Button
             disabled={isFetching === "loading"}
             onClick={() => {
@@ -196,7 +196,8 @@ export const SwapDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
           >
             Confirm
           </Button>
-        )}
+        </SignedIn>
+
         <SwapConfirmationModal open={confirmation} setOpen={setConfirmation} />
       </div>
     </div>

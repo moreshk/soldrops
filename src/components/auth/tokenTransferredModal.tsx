@@ -10,12 +10,16 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
-import { useTokenBalance } from "../swap/useTokenBalance";
+import { trpc } from "@/trpc/client/api";
 
 const TokenTransferredModal = () => {
   const [open, setOpen] = useState(true);
   const router = useRouter();
-  const { balance } = useTokenBalance(true);
+  const { data } = trpc.tokenBalance.getSolTokenBalance.useQuery(undefined, {
+    refetchInterval: 60000,
+    refetchIntervalInBackground: true,
+  });
+  const balance = data?.balance;
 
   const searchParams = useSearchParams();
   const tokenTransfer = searchParams.get("tokenTransfer") as

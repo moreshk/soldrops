@@ -1,14 +1,14 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
-import { Campaign } from "@/lib/db/schema/campaign";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { useSession } from "next-auth/react";
-import { Whitelist } from "@/lib/db/schema/whitelist";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { useState } from "react";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import { Whitelist } from "@/trpc/server/actions/whitelist/whitelist.type";
+import { Campaign } from "@/trpc/server/actions/campaign/campaign.types";
+import { useUser } from "@clerk/nextjs";
 
 interface CampaignWhiteList extends Whitelist {
   campaignDetails: Campaign;
@@ -24,6 +24,8 @@ const JoinCampaign = ({ whiteList }: { whiteList: CampaignWhiteList }) => {
   const [whiteListed, setWhitelisted] = useState<boolean>(
     whiteList.whitelisted
   );
+  const { user } = useUser();
+  const walletAddress = user?.publicMetadata.walletAddress as string;
 
   const {
     mutate: updateFollowTwitter,
@@ -56,7 +58,7 @@ const JoinCampaign = ({ whiteList }: { whiteList: CampaignWhiteList }) => {
     });
   const isWhitelisted = followTwitter && retweet && whiteListed;
   const campaign = whiteList.campaignDetails;
-  const { data: session } = useSession();
+
   return (
     <div className="max-w-xl mx-auto">
       <div className="text-xl mb-5">
@@ -185,7 +187,7 @@ const JoinCampaign = ({ whiteList }: { whiteList: CampaignWhiteList }) => {
                 )}
                 {isAddWhiteListUpdating
                   ? `Whitelisting....`
-                  : ` Join WhiteList ${session?.user.walletAddress}`}
+                  : ` Join WhiteList ${walletAddress}`}
               </Button>
             )}
           </fieldset>

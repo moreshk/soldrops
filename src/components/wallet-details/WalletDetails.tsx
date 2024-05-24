@@ -1,14 +1,14 @@
 "use client";
 
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { Loader2 } from "lucide-react";
 import { WalletSPLTokenDetails } from "./WalletSPLTokenDetails";
 import { AccountInfo, ParsedAccountData, PublicKey } from "@solana/web3.js";
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { WalletSOLDetails } from "./WalletSOLDetails";
 import { useState } from "react";
 import { SendSPLToken } from "./SendSPLToken";
 import { SendSol } from "./SendSOL";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 export type TypeWalletTokenDetails = {
   pubkey: PublicKey;
@@ -28,7 +28,7 @@ export const WalletDetails = ({ tokens }: { tokens: CompleteToken[] }) => {
   const [sendSPLTokenDetails, setSendSPLTokenDetails] = useState<
     TypeSelectedToken | undefined
   >();
-  const { data, isLoading } = trpc.tokens.getAllTokensBalance.useQuery(
+  const { data, isLoading } = trpc.tokenBalance.getAllTokensBalance.useQuery(
     undefined,
     {
       refetchInterval: 60000,

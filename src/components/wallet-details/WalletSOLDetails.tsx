@@ -1,25 +1,27 @@
 /* eslint-disable @next/next/no-img-element */
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
-import { trpc } from "@/lib/trpc/client";
+import { solToken } from "@/utils/defaultTokens";
+import { trpc } from "@/trpc/client/api";
 import { useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { ArrowLeftRight, ExternalLink, Send } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useUser } from "@clerk/nextjs";
 
 export const WalletSOLDetails = ({
   setShowSendSol,
 }: {
   setShowSendSol: (amount: number) => void;
 }) => {
-  const { data, isLoading } = trpc.tokens.getSolTokenBalance.useQuery();
+  const { data, isLoading } = trpc.tokenBalance.getSolTokenBalance.useQuery();
   const amount = data?.balance ? data.balance / 10 ** solToken.decimal : 0;
   const [showDetails, setShowDetails] = useState(false);
-  const { data: session } = useSession();
+  const { user } = useUser();
+  const walletAddress = user?.publicMetadata.walletAddress as string;
+
   return (
     <div className="m-4 border rounded-2xl">
       <div
         className="bg-secondary p-4 rounded-lg  cursor-pointer"
-        onClick={() => setShowDetails(true)}
+        onClick={() => setShowDetails(!showDetails)}
       >
         <div className="w-full">
           <div className="flex gap-2 items-center">
@@ -71,7 +73,7 @@ export const WalletSOLDetails = ({
               </Button>
               <a
                 target="_blank"
-                href={`https://solscan.io/account/${session?.user.walletAddress}`}
+                href={`https://solscan.io/account/${walletAddress}`}
                 className={`${buttonVariants({
                   variant: "secondary",
                 })} rounded-xl flex flex-col justify-center items-center p-2 h-full`}

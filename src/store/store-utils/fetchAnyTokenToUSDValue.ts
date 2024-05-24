@@ -1,5 +1,6 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
-import { stableUSDC } from "@/lib/tokens/utils/defaultTokens";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+
+import { stableUSDC } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 
 export const fetchAnyTokenToUSDValue = async (

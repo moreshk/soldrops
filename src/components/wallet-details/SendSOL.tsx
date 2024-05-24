@@ -1,7 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { SendTokenSchemaType } from "@/lib/db/schema/tokens";
 import {
   Drawer,
   DrawerContent,
@@ -12,12 +11,13 @@ import {
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { SendHorizontal, Loader2, ArrowLeft } from "lucide-react";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 import { SendTokenInputForm } from "./SendTokenInputForm";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { SendTokenSuccess } from "./SendTokenSuccess";
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
+import { solToken } from "@/utils/defaultTokens";
+import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
 
 export const SendSol = ({
   open,
@@ -34,7 +34,7 @@ export const SendSol = ({
   const [confirm, setConfirm] = useState(false);
   const [tx, setTx] = useState("");
   const { mutate: send, isLoading: isTokenSending } =
-    trpc.tradeRouter.sendSol.useMutation({
+    trpc.trade.sendSol.useMutation({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);

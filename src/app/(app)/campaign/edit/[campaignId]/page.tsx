@@ -1,5 +1,5 @@
 import EditCampaign from "@/components/campaign/form/EditCampaign";
-import { api } from "@/lib/trpc/api";
+import { server } from "@/trpc/server/api";
 import { notFound } from "next/navigation";
 
 const EditPage = async ({
@@ -7,7 +7,7 @@ const EditPage = async ({
 }: {
   params: { campaignId: string };
 }) => {
-  const { campaign } = await api.campaign.getCampaignById.query({
+  const { campaign } = await server.campaign.getCampaignById.query({
     id: campaignId,
   });
   if (!campaign) return notFound();

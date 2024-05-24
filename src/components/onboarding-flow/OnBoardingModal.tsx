@@ -2,12 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useTokenBalance } from "../swap/useTokenBalance";
 import { OnBoarding } from "./OnBoarding";
+import { trpc } from "@/trpc/client/api";
 
 const OnBoardingModal = () => {
   const [open, setOpen] = useState(false);
-  const { balance } = useTokenBalance(true);
+  const { data } = trpc.tokenBalance.getSolTokenBalance.useQuery(undefined, {
+    refetchInterval: 60000,
+    refetchIntervalInBackground: true,
+  });
+  const balance = data?.balance;
 
   useEffect(() => {
     if (typeof balance === "number") {

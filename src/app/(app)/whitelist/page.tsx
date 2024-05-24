@@ -1,17 +1,18 @@
-import { api } from "@/lib/trpc/api";
-import { checkAuth } from "@/lib/auth/utils";
+import { server } from "@/trpc/server/api";
 import { WhiteListedList } from "./component/WhiteListedList";
+import { SignedIn } from "@clerk/nextjs";
 
 export default async function Whitelist() {
-  await checkAuth();
-  const { whitelist } = await api.whitelist.getWhitelist.query();
+  const { whitelist } = await server.whitelist.getWhitelist.query();
 
   return (
-    <main>
-      <div className="flex justify-between">
-        <h1 className="font-semibold text-2xl my-2">Whitelist</h1>
-      </div>
-      <WhiteListedList list={whitelist} />
-    </main>
+    <SignedIn>
+      <main>
+        <div className="flex justify-between">
+          <h1 className="font-semibold text-2xl my-2">Whitelist</h1>
+        </div>
+        <WhiteListedList list={whitelist} />
+      </main>
+    </SignedIn>
   );
 }

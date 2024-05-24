@@ -1,24 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { CompleteWidget } from "@/lib/db/schema/widgets";
 import { useTradeStoreSelectors } from "@/store/trade-store";
 import { ArrowUpDown, ExternalLink, Wallet } from "lucide-react";
-import { AuthLoginSignup } from "../auth/AuthLoginSignup";
-import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 import { SelectToken } from "./SelectToken";
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { useDebouncedCallback } from "use-debounce";
 import { useEffect, useState } from "react";
 import { IsFetchingEnum } from "@/store/store-types";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { TradConfirmationModal } from "./TradConfirmationModal";
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { solToken } from "@/utils/defaultTokens";
+import { addressShortener } from "@/utils/addressShortener";
 import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
 import { InSufficientBalanceTooltip } from "./InSufficientBalanceTooltip";
 import { DefaultAmountButton } from "./DefaultAmountButton";
+import { CompleteWidget } from "@/trpc/server/actions/widgets/widgets.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { AuthButton } from "../auth/AuthButton";
 
 const TradeWidget = ({
   widget,
@@ -27,9 +28,10 @@ const TradeWidget = ({
   widget: CompleteWidget;
   tokens: CompleteToken[];
 }) => {
+  const { user, isSignedIn } = useUser();
+  const walletAddress = user?.publicMetadata.walletAddress as string;
   const [confirmationModal, setConfirmationModal] = useState(false);
   window.trpc = trpc.useUtils().client;
-  const { status, data } = useSession();
   const amountInput = useTradeStoreSelectors.use.amountInput();
   const setLoggedIn = useTradeStoreSelectors.use.setLoggedIn();
   const sendBalance = useTradeStoreSelectors.use.sendBalance();
@@ -63,13 +65,12 @@ const TradeWidget = ({
   }, []);
 
   useEffect(() => {
-    if (status === "authenticated") setLoggedIn(status === "authenticated");
-  }, [status]);
+    if (isSignedIn) setLoggedIn(true);
+  }, [isSignedIn]);
 
   useEffect(() => {
-    if (status === "authenticated") getBalance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+    if (isSignedIn) getBalance();
+  }, [isSignedIn]);
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
@@ -77,13 +78,13 @@ const TradeWidget = ({
         <div className="space-y-2">
           <div className="flex mr-3 justify-between items-center ">
             <p>Enter Amount</p>
-            {data?.user.walletAddress && (
+            {walletAddress && (
               <a
                 target="_blank"
-                href={`https://solscan.io/account/${data?.user.walletAddress}#portfolio`}
+                href={`https://solscan.io/account/${walletAddress}#portfolio`}
                 className="text-xs underline flex items-center gap-2"
               >
-                Account {addressShortener(data.user.walletAddress)}
+                Account {addressShortener(walletAddress)}
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}
@@ -117,6 +118,7 @@ const TradeWidget = ({
                 onClick={() => {
                   if (+sendBalanceInUSDC) {
                     setAmountInput(`${+sendBalanceInUSDC / 2 - 0.2}`);
+                    getQuoteAmount();
                   }
                 }}
               >
@@ -134,6 +136,7 @@ const TradeWidget = ({
                 onClick={() => {
                   if (+sendBalanceInUSDC) {
                     setAmountInput(`${(+sendBalanceInUSDC - 0.2).toFixed(2)}`);
+                    getQuoteAmount();
                   }
                 }}
               >
@@ -228,8 +231,10 @@ const TradeWidget = ({
           </div>
         </div>
         <div>
-          {status === "unauthenticated" && <AuthLoginSignup />}
-          {status === "authenticated" && (
+          <SignedOut>
+            <AuthButton />
+          </SignedOut>
+          <SignedIn>
             <Button
               onClick={() => {
                 const isSendNumber =
@@ -260,10 +265,12 @@ const TradeWidget = ({
                 </>
               )}
             </Button>
-          )}
+          </SignedIn>
         </div>
       </div>
-      {status === "authenticated" && <OnBoardingModal />}
+      <SignedIn>
+        <OnBoardingModal />
+      </SignedIn>
       <TradConfirmationModal
         widgetId={widget.id}
         open={confirmationModal}
