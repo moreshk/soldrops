@@ -26,13 +26,10 @@ export const WidgetTabs = ({
   widget: CompleteWidget;
 }) => {
   const [tab, setTab] = useState("swap");
-  const setSendToken = useTradeStoreSelectors.use.setSendToken();
   const setReceiveToken = useTradeStoreSelectors.use.setReceiveToken();
 
   useEffect(() => {
     setReceiveToken(widget.token);
-    const sol = tokens.find((token) => token.address === solToken.address);
-    if (sol) setSendToken(sol);
   }, []);
 
   const swapTab = () => setTab("swap");
