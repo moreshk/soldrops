@@ -33,7 +33,7 @@ export const DefaultAmountButton = ({
       <DepositModal
         open={open}
         setOpen={setOpen}
-        title="Insufficient SOl Please Deposit"
+        title="Not enough SOL. Please deposit."
         buyUrl={buyUrl}
       />
     </>

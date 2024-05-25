@@ -67,12 +67,20 @@ export const WalletSPLTokenDetails = ({
                   </div>
                   {valueChange < 0 && isAmountLoaded && (
                     <p className={`text-sm text-rose-600`}>
-                      -${(valueChange * -1).toFixed(2)}
+                      -$
+                      {(
+                        valueChange *
+                        -1 *
+                        +info.tokenAmount.uiAmountString
+                      ).toFixed(2)}
                     </p>
                   )}
                   {valueChange > 0 && isAmountLoaded && (
                     <p className={`text-sm text-green-600`}>
-                      +${valueChange.toFixed(2)}
+                      +$
+                      {(valueChange * +info.tokenAmount.uiAmountString).toFixed(
+                        2
+                      )}
                     </p>
                   )}
                 </div>
