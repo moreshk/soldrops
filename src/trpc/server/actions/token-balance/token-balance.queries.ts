@@ -1,4 +1,4 @@
-import { ParsedAccountData, PublicKey } from "@solana/web3.js";
+import { AccountInfo, ParsedAccountData, PublicKey } from "@solana/web3.js";
 import { getATAAddressSync } from "@saberhq/token-utils";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { auth } from "@clerk/nextjs/server";
@@ -9,37 +9,48 @@ import { solToken } from "@/utils/defaultTokens";
 
 export const getSolTokenBalance = async () => {
   const { sessionClaims } = auth().protect();
-  try {
-    const walletAddress = new PublicKey(sessionClaims.walletAddress as string);
-    const balance = await connection.getBalance(walletAddress);
-    return { balance };
-  } catch (err) {
-    const message = (err as Error).message ?? "Error, please try again";
-    console.error(message);
-    throw { message };
+  if (sessionClaims.walletAddress) {
+    try {
+      const walletAddress = new PublicKey(
+        sessionClaims.walletAddress as string
+      );
+      const balance = await connection.getBalance(walletAddress);
+      return { balance };
+    } catch (err) {
+      const message = (err as Error).message ?? "Error, please try again";
+      console.error(message);
+      throw { message };
+    }
   }
+  return { balance: 0 };
 };
 
 export const getAllTokensBalance = async () => {
   const { sessionClaims } = auth().protect();
+  let accounts: {
+    pubkey: PublicKey;
+    account: AccountInfo<ParsedAccountData | Buffer>;
+  }[] = [];
 
   try {
-    const accounts = await connection.getParsedProgramAccounts(
-      TOKEN_PROGRAM_ID,
-      {
-        filters: [
-          {
-            dataSize: 165,
+    accounts = await connection.getParsedProgramAccounts(TOKEN_PROGRAM_ID, {
+      filters: [
+        {
+          dataSize: 165,
+        },
+        {
+          memcmp: {
+            offset: 32,
+            bytes: sessionClaims.walletAddress as string,
           },
-          {
-            memcmp: {
-              offset: 32,
-              bytes: sessionClaims.walletAddress as string,
-            },
-          },
-        ],
-      }
-    );
+        },
+      ],
+    });
+  } catch (err) {
+    const message = (err as Error).message ?? "Error, please try again";
+    console.error(message);
+  }
+  try {
     const allAccounts = accounts
       .map((token) => {
         const data = token.account.data as ParsedAccountData;
@@ -77,7 +88,6 @@ export const getAllTokensBalance = async () => {
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
-    throw { message };
   }
 };
 

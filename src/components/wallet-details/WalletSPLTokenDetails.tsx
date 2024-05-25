@@ -29,7 +29,9 @@ export const WalletSPLTokenDetails = ({
 
   if (tokenDetails) {
     const isAmountLoaded =
-      !!info.tokenAmount.uiAmountString && tokenPrice[tokenDetails.address];
+      !!info.tokenAmount.uiAmountString &&
+      tokenPrice &&
+      tokenPrice[tokenDetails.address];
     const usdValue = isAmountLoaded
       ? +info.tokenAmount.uiAmountString *
         tokenPrice[tokenDetails.address].value

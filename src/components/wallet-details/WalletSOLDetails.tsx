@@ -20,7 +20,7 @@ export const WalletSOLDetails = ({
   const [showDetails, setShowDetails] = useState(false);
   const { user } = useUser();
   const walletAddress = user?.publicMetadata.walletAddress as string;
-  const isAmountLoaded = tokenPrice[solToken.address];
+  const isAmountLoaded = tokenPrice && tokenPrice[solToken.address];
   const usdValue = isAmountLoaded ? tokenPrice[solToken.address].value : 0;
   const valueChange = isAmountLoaded
     ? tokenPrice[solToken.address].priceChange24h
