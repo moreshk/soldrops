@@ -74,7 +74,7 @@ export const WalletSOLDetails = ({
                 {amount} {solToken.symbol}
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-1 mt-3">
+            <div className="grid grid-cols-2 gap-1 mt-3">
               <Button
                 onClick={() => setShowSendSol(amount)}
                 variant="secondary"
@@ -82,16 +82,6 @@ export const WalletSOLDetails = ({
               >
                 <Send />
                 <p>Send</p>
-              </Button>
-              <Button
-                onClick={() => {
-                  swapTab();
-                }}
-                variant="secondary"
-                className="rounded-xl flex flex-col justify-center items-center p-2 h-full"
-              >
-                <ArrowLeftRight />
-                <p>Swap</p>
               </Button>
               <a
                 target="_blank"
