@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useTradeStoreSelectors } from "@/store/trade-store";
 
 export const TradConfirmationModal = ({
@@ -27,8 +27,8 @@ export const TradConfirmationModal = ({
   widgetId: string;
 }) => {
   const [tx, setTx] = useState<string>("");
+  const reset = useTradeStoreSelectors.use.reset();
   const setAmountInput = useTradeStoreSelectors.use.setAmountInput();
-  const getBalance = useTradeStoreSelectors.use.getBalance();
 
   const { mutate: trade, isLoading: isTokenSwapping } =
     trpc.trade.tradeToken.useMutation({
@@ -36,7 +36,6 @@ export const TradConfirmationModal = ({
         if (res.signature) {
           setTx(res.signature);
           setAmountInput("");
-          getBalance();
         } else {
           toast.success(res.message || "Something went wrong");
         }
@@ -91,6 +90,7 @@ export const TradConfirmationModal = ({
                   onClick={() => {
                     setOpen(false);
                     setTx("");
+                    reset();
                   }}
                 >
                   Done
@@ -153,7 +153,9 @@ export const TradConfirmationModal = ({
                       });
                     }
                   }}
-                  className="w-full rounded-2xl"
+                  className={`w-full  ${buttonVariants({
+                    variant: "primary",
+                  })}} rounded-2xl`}
                 >
                   {isTokenSwapping && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

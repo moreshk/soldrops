@@ -34,6 +34,7 @@ export interface TradeStoreState {
   setLoggedIn: (value: boolean) => void;
   getQuoteTokenURL: () => string | undefined;
   getBalance: () => void;
+  reset: () => void;
 }
 
 export const useTradeStore = create<TradeStoreState>()((set, get) => ({
@@ -168,6 +169,17 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
     } else {
       getBalance();
     }
+  },
+  reset: () => {
+    const { getBalance } = get();
+    set(
+      produce((state: TradeStoreState) => {
+        state.receiveAmount = `0`;
+        state.sendAmount = `0`;
+        state.amountInput = "";
+      })
+    );
+    getBalance();
   },
   getQuoteTokenURL: () => {
     const { sendToken, receiveToken, amountInput, sendAmount } = get();

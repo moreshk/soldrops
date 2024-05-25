@@ -71,7 +71,6 @@ export const tradeToken = async (
           quoteResponse,
           userPublicKey: walletAddress,
           wrapAndUnwrapSol: true,
-          prioritizationFeeLamports: { autoMultiplier: 3 },
         }),
       }
     );
