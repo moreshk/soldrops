@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
 import { SignedIn, UserButton } from "@clerk/nextjs";
+import { SolBalance } from "@/components/wallet-details/SOLBalance";
 
 const Layout = async ({
   children,
@@ -21,7 +22,9 @@ const Layout = async ({
             </span>
           </Link>
           <div className="flex-1"></div>
-          <NovuNotification />
+          <SignedIn>
+            <SolBalance />
+          </SignedIn>
           <SignedIn>
             <UserButton afterSignOutUrl={`/embed/trade/${params.widgetId}`} />
           </SignedIn>

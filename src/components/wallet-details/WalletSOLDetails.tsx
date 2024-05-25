@@ -43,7 +43,7 @@ export const WalletSOLDetails = ({
               <div className="flex justify-between items-center w-full">
                 <p className="font-semibold">{solToken.symbol}</p>
                 {isAmountLoaded && (
-                  <p className="text-sm ">${usdValue.toFixed(2)}</p>
+                  <p className="text-sm ">${(+amount * usdValue).toFixed(2)}</p>
                 )}
               </div>
               <div className="flex justify-between items-center">
@@ -57,7 +57,7 @@ export const WalletSOLDetails = ({
                 )}
                 {valueChange > 0 && isAmountLoaded && (
                   <p className={`text-sm text-green-600`}>
-                    +${(valueChange * -1).toFixed(2)}
+                    +${valueChange.toFixed(2)}
                   </p>
                 )}
               </div>
