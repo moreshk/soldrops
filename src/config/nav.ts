@@ -1,4 +1,4 @@
-import { SidebarLink } from "@/components/SidebarItems";
+import { SidebarLink } from "@/components/layout/layout-utils";
 import { ArrowRightLeft, Cog, Globe, HomeIcon } from "lucide-react";
 
 type AdditionalLinks = {

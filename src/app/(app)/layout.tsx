@@ -1,5 +1,4 @@
 import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar";
 import { SignedIn } from "@clerk/nextjs";
 
 export default async function AppLayout({
@@ -11,7 +10,6 @@ export default async function AppLayout({
     <SignedIn>
       <main>
         <div className="flex h-screen">
-          <Sidebar />
           <main className="flex-1 md:p-8 pt-2 p-8 overflow-y-auto">
             <Navbar />
             {children}
