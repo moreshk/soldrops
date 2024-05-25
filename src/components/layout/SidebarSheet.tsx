@@ -6,12 +6,15 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
-import { layoutDefaultLinks } from "./layout-utils";
+import { adminLinks, layoutDefaultLinks } from "./layout-utils";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 export const SidebarSheet = () => {
   const fullPathname = usePathname();
   const pathname = "/" + fullPathname.split("/")[1];
+  const { user } = useUser();
+  const isAdmin = user?.publicMetadata.userType === "admin";
 
   return (
     <Sheet>
@@ -46,6 +49,27 @@ export const SidebarSheet = () => {
               {link.title}
             </Link>
           ))}
+          {isAdmin && (
+            <div>
+              <p className="flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary">
+                Admin
+              </p>
+              {adminLinks.map((link) => (
+                <Link
+                  href={link.href}
+                  key={link.href}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary ${
+                    pathname === link.href
+                      ? "text-primary bg-muted"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  <link.icon className="h-4 w-4" />
+                  {link.title}
+                </Link>
+              ))}
+            </div>
+          )}
         </nav>
       </SheetContent>
     </Sheet>
