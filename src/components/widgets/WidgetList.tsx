@@ -59,6 +59,9 @@ const Widget = ({
             </div>
           </div>
         </div>
+        {widget.website && (
+          <div className="mt-2">website - {widget.website}</div>
+        )}
         <div className="mt-2">Fee wallet {widget.feeWalletAddress}</div>
         <div className="mt-2">Commissions {widget.feePercentage}%</div>
         <div className="p-3 mt-4 border border-dashed rounded-2xl">

@@ -57,9 +57,10 @@ const WidgetForm = ({
 
   const form = useForm<z.infer<typeof insertWidgetParams>>({
     resolver: zodResolver(insertWidgetParams),
-    defaultValues: widget ?? {
-      feeWalletAddress: "",
-      tokenId: "",
+    defaultValues: {
+      feeWalletAddress: widget?.feeWalletAddress ?? "",
+      tokenId: widget?.tokenId ?? "",
+      website: widget?.website ?? "",
     },
   });
 
@@ -211,6 +212,19 @@ const WidgetForm = ({
               </FormItem>
             );
           }}
+        />
+        <FormField
+          control={form.control}
+          name="website"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website URL</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
         <Button
           type="submit"

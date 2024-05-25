@@ -11,6 +11,7 @@ export const insertWidgetParams = baseSchema
   .extend({
     feeWalletAddress: z.string().min(12, "Please Add Fee wallet"),
     tokenId: z.string().min(12, "Please select token"),
+    website: z.string().url("Invalid url").optional(),
   })
   .omit({
     id: true,
@@ -26,6 +27,7 @@ export const updateWidgetParams = baseSchema
   .extend({
     feeWalletAddress: z.string().min(12, "Please Add Fee wallet"),
     tokenId: z.string().min(12, "Please select token"),
+    website: z.string().url().optional(),
   })
   .omit({
     userId: true,

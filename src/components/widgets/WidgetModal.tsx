@@ -25,6 +25,7 @@ export default function WidgetModal({
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
   const editing = !!widget?.id;
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>

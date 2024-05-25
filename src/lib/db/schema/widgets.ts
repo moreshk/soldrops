@@ -1,5 +1,11 @@
 import { relations, sql } from "drizzle-orm";
-import { varchar, timestamp, pgTable, integer } from "drizzle-orm/pg-core";
+import {
+  varchar,
+  timestamp,
+  pgTable,
+  integer,
+  text,
+} from "drizzle-orm/pg-core";
 import { nanoid } from "@/lib/utils";
 import { tokens } from "./tokens";
 import { users } from "./user";
@@ -10,6 +16,7 @@ export const widgets = pgTable("widgets", {
     .$defaultFn(() => `wget_${nanoid()}`),
   feeWalletAddress: varchar("fee_wallet_address", { length: 256 }).notNull(),
   feePercentage: integer("fee_percentage").default(30).notNull(),
+  website: text("widget_site"),
   tokenId: varchar("token_id", { length: 256 })
     .references(() => tokens.id, { onDelete: "cascade" })
     .notNull(),

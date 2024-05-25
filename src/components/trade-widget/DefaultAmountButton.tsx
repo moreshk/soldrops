@@ -5,9 +5,11 @@ import { useState } from "react";
 export const DefaultAmountButton = ({
   amount,
   balance,
+  buyUrl,
 }: {
   amount: number;
   balance: number;
+  buyUrl?: string;
 }) => {
   const [open, setOpen] = useState(false);
   const setAmountInput = useTradeStoreSelectors.use.setAmountInput();
@@ -31,7 +33,8 @@ export const DefaultAmountButton = ({
       <DepositModal
         open={open}
         setOpen={setOpen}
-        title="Insufficient SOl Please Deposit "
+        title="Insufficient SOl Please Deposit"
+        buyUrl={buyUrl}
       />
     </>
   );

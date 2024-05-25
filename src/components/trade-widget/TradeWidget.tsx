@@ -97,9 +97,21 @@ const TradeWidget = ({
             />
           </div>
           <div className="flex items-center gap-3 justify-end">
-            <DefaultAmountButton amount={50} balance={+sendBalanceInUSDC} />
-            <DefaultAmountButton amount={100} balance={+sendBalanceInUSDC} />
-            <DefaultAmountButton amount={200} balance={+sendBalanceInUSDC} />
+            <DefaultAmountButton
+              amount={50}
+              balance={+sendBalanceInUSDC}
+              buyUrl={`/embed/buy/${widget.id}`}
+            />
+            <DefaultAmountButton
+              amount={100}
+              balance={+sendBalanceInUSDC}
+              buyUrl={`/embed/buy/${widget.id}`}
+            />
+            <DefaultAmountButton
+              amount={200}
+              balance={+sendBalanceInUSDC}
+              buyUrl={`/embed/buy/${widget.id}`}
+            />
             {inSufficientHalfValue ? (
               <InSufficientBalanceTooltip
                 name="Half"
