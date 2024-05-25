@@ -109,7 +109,7 @@ const TradeWidget = ({
               <button
                 className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
                 onClick={() => {
-                  if (+sendBalanceInUSDC) {
+                  if (typeof +sendBalanceInUSDC === "number") {
                     setAmountInput(`${+sendBalanceInUSDC / 2 - 0.2}`);
                     getQuoteAmount();
                   }
@@ -120,20 +120,20 @@ const TradeWidget = ({
             )}
             {inSufficientFullValue ? (
               <InSufficientBalanceTooltip
-                name="Full"
+                name="Max"
                 description="Insufficient Balance"
               />
             ) : (
               <button
                 className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
                 onClick={() => {
-                  if (+sendBalanceInUSDC) {
+                  if (typeof +sendBalanceInUSDC === "number") {
                     setAmountInput(`${(+sendBalanceInUSDC - 0.2).toFixed(2)}`);
                     getQuoteAmount();
                   }
                 }}
               >
-                Full
+                Max
               </button>
             )}
           </div>
@@ -148,8 +148,10 @@ const TradeWidget = ({
                   <div className="w-16 h-4 bg-secondary rounded-lg " />
                 ) : (
                   <p>
-                    {+sendBalance} {sendToken.symbol}
-                    {+sendBalanceInUSDC ? ` | $${sendBalanceInUSDC} USD` : ""}
+                    {(+sendBalance).toFixed(4)} {sendToken.symbol}
+                    {typeof +sendBalanceInUSDC === "number"
+                      ? ` | $${(+sendBalanceInUSDC).toFixed(2)}`
+                      : ""}
                   </p>
                 )}
               </div>
@@ -194,9 +196,9 @@ const TradeWidget = ({
                       <div className="w-16 h-4 bg-secondary rounded-lg " />
                     ) : (
                       <p>
-                        {+receiveBalance} {receiveToken.symbol}
-                        {+receiveBalanceInUSDC
-                          ? ` | $${receiveBalanceInUSDC} USD`
+                        {(+receiveBalance).toFixed(4)} {receiveToken.symbol}
+                        {typeof +receiveBalanceInUSDC === "number"
+                          ? ` | $${(+receiveBalanceInUSDC).toFixed(2)}`
                           : ""}
                       </p>
                     )}
