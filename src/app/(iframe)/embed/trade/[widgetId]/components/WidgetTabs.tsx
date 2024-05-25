@@ -3,13 +3,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OnBoarding } from "@/components/onboarding-flow/OnBoarding";
 import { WalletDetails } from "@/components/wallet-details/WalletDetails";
-import { SignedIn } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 import dynamic from "next/dynamic";
 import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 import { CompleteWidget } from "@/trpc/server/actions/widgets/widgets.type";
 import { useEffect, useState } from "react";
-import { solToken } from "@/utils/defaultTokens";
 import { useTradeStoreSelectors } from "@/store/trade-store";
+import { AuthButton } from "@/components/auth/AuthButton";
 
 const TradeWidget = dynamic(
   () => import("@/components/trade-widget/TradeWidget"),
@@ -64,8 +64,11 @@ export const WidgetTabs = ({
       <TabsContent value="buy">
         <div className="border p-4 rounded-xl mt-6">
           <SignedIn>
-            <OnBoarding />
+            <OnBoarding buyUrl={`/embed/buy/${widget.id}`} />
           </SignedIn>
+          <SignedOut>
+            <AuthButton fallbackUrl={`/embed/trade/${widget.id}`} />
+          </SignedOut>
         </div>
       </TabsContent>
       <TabsContent value="swap">
@@ -78,6 +81,11 @@ export const WidgetTabs = ({
           <SignedIn>
             <WalletDetails swapTab={swapTab} tokens={tokens} />
           </SignedIn>
+          <SignedOut>
+            <div className="p-4">
+              <AuthButton fallbackUrl={`/embed/trade/${widget.id}`} />
+            </div>
+          </SignedOut>
         </div>
       </TabsContent>
     </Tabs>

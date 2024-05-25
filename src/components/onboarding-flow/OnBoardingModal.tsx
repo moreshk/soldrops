@@ -15,7 +15,11 @@ const OnBoardingModal = ({ buyUrl }: { buyUrl?: string }) => {
 
   useEffect(() => {
     if (typeof balance === "number") {
-      if (!balance) setOpen(true);
+      if (balance) {
+        setOpen(false);
+      } else {
+        setOpen(true);
+      }
     }
   }, [balance]);
 
