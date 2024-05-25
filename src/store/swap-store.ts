@@ -132,7 +132,11 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
             amount =
               parseFloat(receiveAmount) * Math.pow(10, receiveToken.decimal);
           }
-          const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}&platformFeeBps=100`;
+          const url = `https://quote-api.jup.ag/v6/quote?inputMint=${
+            inputMint?.address
+          }&outputMint=${outputMint?.address}&amount=${amount?.toFixed(
+            0
+          )}&platformFeeBps=100`;
           const response = await fetch(url);
           const quoteResponse = await response.json();
           const quotePrice =
@@ -208,7 +212,9 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
         outputMint = sendToken;
         amount = parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
       }
-      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}`;
+      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${
+        inputMint?.address
+      }&outputMint=${outputMint?.address}&amount=${amount?.toFixed(0)}`;
       return url;
     }
   },

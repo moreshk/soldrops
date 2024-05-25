@@ -71,7 +71,6 @@ export const tradeToken = async (
           quoteResponse,
           userPublicKey: walletAddress,
           wrapAndUnwrapSol: true,
-          prioritizationFeeLamports: 1_000_000_000,
         }),
       }
     );
