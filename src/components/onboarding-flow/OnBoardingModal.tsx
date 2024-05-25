@@ -5,7 +5,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { OnBoarding } from "./OnBoarding";
 import { trpc } from "@/trpc/client/api";
 
-const OnBoardingModal = () => {
+const OnBoardingModal = ({ buyUrl }: { buyUrl?: string }) => {
   const [open, setOpen] = useState(false);
   const { data } = trpc.tokenBalance.getSolTokenBalance.useQuery(undefined, {
     refetchInterval: 60000,
@@ -22,7 +22,7 @@ const OnBoardingModal = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-lg">
-        <OnBoarding />
+        <OnBoarding buyUrl={buyUrl} />
       </DialogContent>
     </Dialog>
   );

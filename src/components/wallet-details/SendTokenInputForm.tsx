@@ -18,12 +18,14 @@ export const SendTokenInputForm = ({
   symbol,
   setSendDetails,
   sendDetails,
+  usdTokenValue,
 }: {
   onClose: () => void;
   maxAmount: string;
   symbol: string;
   sendDetails?: SendTokenSchemaType;
   setSendDetails: (value: SendTokenSchemaType) => void;
+  usdTokenValue: number;
 }) => {
   const form = useForm<SendTokenSchemaType>({
     defaultValues: {
@@ -32,6 +34,7 @@ export const SendTokenInputForm = ({
     },
     mode: "onChange",
   });
+  const useMaxAmount = +maxAmount;
 
   const handleSubmit = (values: SendTokenSchemaType) => {
     setSendDetails(values);
@@ -70,26 +73,44 @@ export const SendTokenInputForm = ({
         <FormField
           control={form.control}
           name="sendAmount"
-          render={({ field: { onChange, ...props } }) => (
+          render={({ field: { onChange, value, ...props } }) => (
             <FormItem className="m-4">
               <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  {...props}
-                  onChange={(e) => {
-                    const input = e.target.value.replace(/[^\d.]+/g, "");
-                    onChange(input);
-                  }}
-                  disabled={props.disabled}
-                  placeholder="Amount"
-                />
+              <FormControl className="w-full">
+                <div className="relative w-full">
+                  <Input
+                    value={value}
+                    {...props}
+                    onChange={(e) => {
+                      const input = e.target.value.replace(/[^\d.]+/g, "");
+                      onChange(input);
+                    }}
+                    disabled={props.disabled}
+                    placeholder="Amount"
+                  />
+
+                  <Button
+                    onClick={() => onChange(`${maxAmount}`)}
+                    type="button"
+                    size="sm"
+                    className="rounded-full text-xs h-7 absolute right-2 top-1.5"
+                    variant="secondary"
+                  >
+                    Max
+                  </Button>
+                </div>
               </FormControl>
               <div className="flex justify-between items-center">
-                <div>
+                <div className="flex items-center gap-2">
+                  {value && +value <= +maxAmount && (
+                    <p className="text-sm text-muted-foreground">
+                      ${(+value * usdTokenValue).toFixed(2)}
+                    </p>
+                  )}
                   <FormMessage />
                 </div>
                 <div className="flex justify-end text-end text-muted-foreground text-sm">
-                  Available {maxAmount} {symbol}
+                  Available {useMaxAmount} {symbol}
                 </div>
               </div>
             </FormItem>
@@ -101,8 +122,8 @@ export const SendTokenInputForm = ({
             },
             validate: (value) => {
               return (
-                +value < +maxAmount ||
-                `Amount should not exceed ${maxAmount} ${symbol}`
+                +value <= +maxAmount ||
+                `Amount should not exceed ${useMaxAmount} ${symbol}`
               );
             },
           }}

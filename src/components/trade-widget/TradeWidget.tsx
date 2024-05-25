@@ -264,7 +264,7 @@ const TradeWidget = ({
         </div>
       </div>
       <SignedIn>
-        <OnBoardingModal />
+        <OnBoardingModal buyUrl={`/embed/buy/${widget.id}`} />
       </SignedIn>
       <TradConfirmationModal
         widgetId={widget.id}

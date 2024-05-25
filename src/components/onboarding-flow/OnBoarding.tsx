@@ -9,7 +9,13 @@ import Image from "next/image";
 import { useUser } from "@clerk/nextjs";
 import { trpc } from "@/trpc/client/api";
 
-export const OnBoarding = ({ title }: { title?: string }) => {
+export const OnBoarding = ({
+  title,
+  buyUrl,
+}: {
+  title?: string;
+  buyUrl?: string;
+}) => {
   const { data, refetch } = trpc.tokenBalance.getSolTokenBalance.useQuery(
     undefined,
     {
@@ -79,15 +85,27 @@ export const OnBoarding = ({ title }: { title?: string }) => {
           <p className="mb-4 font-bold uppercase text-center pt-4 max-w-60 text-balance mx-auto">
             BUY SOL WITH CREDIT/DEBIT CARD
           </p>
-          <Link href="/buy">
-            <div className="p-2 rounded-2xl h-40 flex flex-col justify-center items-center text-lg text-center space-y-3 border-2 border-secondary-foreground">
-              <p className=" max-w-sm text-center mx-auto text-balance text-sm">
-                Purchase SOL with Google/Apple pay and 190 other payment
-                options.
-              </p>
-              <Image src="/on.png" width={100} height={100} alt="logo" />
-            </div>
-          </Link>
+          {buyUrl ? (
+            <a href={buyUrl} target="_blank">
+              <div className="p-2 rounded-2xl h-40 flex flex-col justify-center items-center text-lg text-center space-y-3 border-2 border-secondary-foreground">
+                <p className=" max-w-sm text-center mx-auto text-balance text-sm">
+                  Purchase SOL with Google/Apple pay and 190 other payment
+                  options.
+                </p>
+                <Image src="/on.png" width={100} height={100} alt="logo" />
+              </div>
+            </a>
+          ) : (
+            <Link href="/buy">
+              <div className="p-2 rounded-2xl h-40 flex flex-col justify-center items-center text-lg text-center space-y-3 border-2 border-secondary-foreground">
+                <p className=" max-w-sm text-center mx-auto text-balance text-sm">
+                  Purchase SOL with Google/Apple pay and 190 other payment
+                  options.
+                </p>
+                <Image src="/on.png" width={100} height={100} alt="logo" />
+              </div>
+            </Link>
+          )}
         </div>
       </div>
       {balance ? (

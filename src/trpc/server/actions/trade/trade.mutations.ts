@@ -231,7 +231,9 @@ export const sendSPLToken = async (
         TOKEN_PROGRAM_ID
       )
     );
-    const { blockhash } = await connection.getRecentBlockhash();
+    const { blockhash, lastValidBlockHeight } =
+      await connection.getLatestBlockhash();
+
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = senderAddress;
     transaction.sign(wallet);
@@ -248,7 +250,21 @@ export const sendSPLToken = async (
     const signature = await connection.sendRawTransaction(
       transaction.serialize()
     );
-    await connection.confirmTransaction(signature, "confirmed");
+    const serializedTransaction = Buffer.from(transaction.serialize());
+
+    const transactionResponse = await transactionSenderAndConfirmationWaiter({
+      connection,
+      serializedTransaction,
+      blockhashWithExpiryBlockHeight: {
+        blockhash,
+        lastValidBlockHeight: lastValidBlockHeight,
+      },
+    });
+
+    if (!transactionResponse) {
+      console.error("Transaction not confirmed");
+      return { message: "Transaction not confirmed" };
+    }
     return { success: true, signature };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
@@ -286,7 +302,8 @@ export const sendSol = async (
     });
 
     const transaction = new Transaction().add(remainingFeeTx);
-    const { blockhash } = await connection.getRecentBlockhash();
+    const { blockhash, lastValidBlockHeight } =
+      await connection.getLatestBlockhash();
     transaction.recentBlockhash = blockhash;
     transaction.feePayer = senderAddress;
     transaction.sign(wallet);
@@ -303,7 +320,21 @@ export const sendSol = async (
     const signature = await connection.sendRawTransaction(
       transaction.serialize()
     );
-    await connection.confirmTransaction(signature, "confirmed");
+    const serializedTransaction = Buffer.from(transaction.serialize());
+
+    const transactionResponse = await transactionSenderAndConfirmationWaiter({
+      connection,
+      serializedTransaction,
+      blockhashWithExpiryBlockHeight: {
+        blockhash,
+        lastValidBlockHeight: lastValidBlockHeight,
+      },
+    });
+
+    if (!transactionResponse) {
+      console.error("Transaction not confirmed");
+      return { message: "Transaction not confirmed" };
+    }
     return { success: true, signature };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";

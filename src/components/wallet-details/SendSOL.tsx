@@ -24,6 +24,7 @@ export const SendSol = ({
   open,
   onClose,
   maxAmount,
+  tokenPrice,
 }: {
   open: boolean;
   maxAmount: string;
@@ -127,6 +128,7 @@ export const SendSol = ({
               </div>
             ) : (
               <SendTokenInputForm
+                usdTokenValue={tokenPrice[solToken.address].value || 0}
                 sendDetails={sendDetails}
                 setSendDetails={(value: SendTokenSchemaType) => {
                   setSendDetails(value);

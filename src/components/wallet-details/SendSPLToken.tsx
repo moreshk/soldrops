@@ -24,6 +24,7 @@ export const SendSPLToken = ({
   sendSPLTokenDetails,
   open,
   onClose,
+  tokenPrice,
 }: {
   sendSPLTokenDetails: TypeSelectedToken;
   open: boolean;
@@ -132,6 +133,10 @@ export const SendSPLToken = ({
               </div>
             ) : (
               <SendTokenInputForm
+                usdTokenValue={
+                  tokenPrice[sendSPLTokenDetails.tokenDetails.address].value ||
+                  0
+                }
                 sendDetails={sendDetails}
                 setSendDetails={(value: SendTokenSchemaType) => {
                   setSendDetails(value);
