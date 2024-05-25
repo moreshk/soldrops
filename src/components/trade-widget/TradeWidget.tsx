@@ -243,6 +243,7 @@ const TradeWidget = ({
           </SignedOut>
           <SignedIn>
             <Button
+              variant="primary"
               onClick={() => {
                 const isSendNumber =
                   typeof +sendAmount === "number" && +sendAmount > 0;
