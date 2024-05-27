@@ -32,8 +32,8 @@ export default function LandingPage() {
             <div className="flex flex-col justify-center items-center space-y-4">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                  Claim the latest and <br />
-                  greatest airdrops on Solana
+                  Make Memecoin <br />
+                  moves on Mobile
                 </h1>
               </div>
               <div className="flex flex-col gap-2">
