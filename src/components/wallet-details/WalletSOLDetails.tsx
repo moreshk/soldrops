@@ -2,7 +2,7 @@
 import { solToken } from "@/utils/defaultTokens";
 import { useState } from "react";
 import { Button, buttonVariants } from "../ui/button";
-import { ArrowLeftRight, ExternalLink, Send } from "lucide-react";
+import { ExternalLink, Send } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { TokenPrice } from "@/trpc/server/actions/token-balance/token-balance.type";
 

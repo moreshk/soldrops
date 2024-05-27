@@ -17,11 +17,11 @@ export default function LandingPage() {
   }, [isSignedIn, router]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-t from-pink-200 to-blue-600">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <Link href="/" className="flex gap-2 items-center">
           <Image width={40} height={40} src="/favicon-32x32.png" alt="logo" />
-          <h1 className="relative z-10 text-lg  bg-clip-text text-transparent bg-gradient-to-b from-pink-200 to-blue-600  text-center font-sans font-bold flex">
+          <h1 className="relative z-10 text-lg text-white text-center font-sans font-bold flex">
             SolDrops
           </h1>
         </Link>

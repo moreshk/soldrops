@@ -116,29 +116,24 @@ export const TradConfirmationModal = ({
                 </div>
               </AlertDialogHeader>
               <div className="border-b" />
-              <div className="py-1 text-center font-medium text-2xl">
+              <div className="py-1 text-center font-medium text-xl uppercase">
                 <p>
-                  {receiveAmount} {receiveToken.symbol}
+                  you&apos;re spending <span>{amountInput}</span>
                 </p>
+                <p>
+                  Which Equials{" "}
+                  <span className="text-purple-500 font-semibold">
+                    {(+sendAmount).toFixed(4)} {sendToken.symbol}
+                  </span>
+                </p>
+                <p>
+                  To buy{" "}
+                  <span className="text-purple-500 font-semibold">
+                    {(+receiveAmount).toFixed(4)} {receiveToken.symbol}
+                  </span>
+                </p>{" "}
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">Swap Value</p>
-                  <p className="font-semibold text-sm">${amountInput}</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">You’re Paying</p>
-                  <p className="font-semibold text-sm">
-                    {sendAmount} {sendToken.symbol}
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">To Receive</p>
-                  <p className="font-semibold text-sm">
-                    {receiveAmount} {receiveToken.symbol}
-                  </p>
-                </div>
-              </div>
+
               <AlertDialogFooter>
                 <AlertDialogAction
                   disabled={isTokenSwapping}
@@ -160,12 +155,12 @@ export const TradConfirmationModal = ({
                   {isTokenSwapping && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {isTokenSwapping ? "Buying..." : `Buy ${receiveToken.symbol}`}
+                  {isTokenSwapping ? "CONFIRMING..." : `CONFIRM PURCHASE`}
                 </AlertDialogAction>
               </AlertDialogFooter>
               <div className="flex justify-between items-center text-muted-foreground font-medium text-sm">
                 <p>Current {receiveToken.symbol} Balance</p>
-                <p>{receiveBalance}</p>
+                <p>{(+receiveBalance).toFixed(4)}</p>
               </div>
             </>
           )}

@@ -70,7 +70,7 @@ const TradeWidget = ({
       <div className="border p-4 rounded-2xl w-full space-y-4 bg-primary-foreground relative">
         <div className="space-y-2">
           <div className="flex mr-3 justify-between items-center ">
-            <p>Enter Amount</p>
+            <p>Buy Amount</p>
             {walletAddress && (
               <a
                 target="_blank"
@@ -152,7 +152,7 @@ const TradeWidget = ({
         </div>
         <div>
           <div className="pb-2 flex justify-between items-center">
-            <p className="font-medium text-sm">You are paying</p>
+            <p className="font-medium text-sm">Paying with</p>
             {typeof +sendBalance === "number" && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground mr-3">
                 <Wallet className="w-3 h-3" />
