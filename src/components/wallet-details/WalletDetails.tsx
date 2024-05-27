@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/trpc/client/api";
-import { Loader2 } from "lucide-react";
+import { Loader2, RotateCw } from "lucide-react";
 import { WalletSPLTokenDetails } from "./WalletSPLTokenDetails";
 import { AccountInfo, ParsedAccountData, PublicKey } from "@solana/web3.js";
 import { WalletSOLDetails } from "./WalletSOLDetails";
@@ -34,13 +34,11 @@ export const WalletDetails = ({
   const [sendSPLTokenDetails, setSendSPLTokenDetails] = useState<
     TypeSelectedToken | undefined
   >();
-  const { data, isLoading } = trpc.tokenBalance.getAllTokensBalance.useQuery(
-    undefined,
-    {
+  const { data, isLoading, refetch, isFetching } =
+    trpc.tokenBalance.getAllTokensBalance.useQuery(undefined, {
       refetchInterval: 60000,
       refetchOnMount: false,
-    }
-  );
+    });
 
   if (isLoading) {
     return (
@@ -56,6 +54,21 @@ export const WalletDetails = ({
 
     return (
       <div>
+        <div className="flex justify-end mr-4 mt-4">
+          <button
+            onClick={async () => {
+              try {
+                await refetch();
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          >
+            <RotateCw
+              className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`}
+            />
+          </button>
+        </div>
         <div>
           <WalletSOLDetails
             amount={solBalance}
