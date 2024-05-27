@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { OnBoarding } from "./OnBoarding";
 import { trpc } from "@/trpc/client/api";
+import { CircleX } from "lucide-react";
 
 const OnBoardingModal = ({ buyUrl }: { buyUrl?: string }) => {
   const [open, setOpen] = useState(false);
@@ -26,6 +27,11 @@ const OnBoardingModal = ({ buyUrl }: { buyUrl?: string }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-lg">
+        <div className="absolute right-4 top-4">
+          <button onClick={() => setOpen(false)}>
+            <CircleX />
+          </button>
+        </div>
         <OnBoarding buyUrl={buyUrl} />
       </DialogContent>
     </Dialog>
