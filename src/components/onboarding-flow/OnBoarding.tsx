@@ -40,14 +40,16 @@ export const OnBoarding = ({
 
   return (
     <div>
-      <div className="grid gap-6 w-full">
-        <h1 className="text-center text-3xl text-balance pt-6">
+      <div className="grid gap-2 md:gap-6 w-full">
+        <h1 className="text-center md:text-3xl text-balance md:pt-6">
           {title ?? "Awesome, let’s load up some SOL!"}
         </h1>
         <div>
-          <h1 className="font-bold uppercase text-center pt-4">Deposit SOL</h1>
+          <h1 className="font-medium uppercase text-center md:pt-4 text-sm">
+            Deposit SOL
+          </h1>
           <div className="border-2 border-secondary-foreground rounded-2xl p-5 mt-2">
-            <p className="text-center text-balance text-sm">
+            <p className="text-center text-balance text-sm max-w-sm mx-auto">
               Send SOL from a CEX or another wallet to your Drops account.
             </p>
             <div className="mt-5">
@@ -80,9 +82,9 @@ export const OnBoarding = ({
           </div>
         </div>
       </div>
-      <div className="mt-8">
-        <div className="space-y-4">
-          <p className="mb-4 font-bold uppercase text-center pt-4 max-w-60 text-balance mx-auto">
+      <div className="md:mt-8">
+        <div className="md:space-y-4">
+          <p className="mb-4 md:font-bold uppercase text-center pt-4 text-balance mx-auto">
             BUY SOL WITH CREDIT/DEBIT CARD
           </p>
           {buyUrl ? (
@@ -109,13 +111,13 @@ export const OnBoarding = ({
         </div>
       </div>
       {balance ? (
-        <div className="mx-auto w-full flex justify-center items-center mt-3">
+        <div className="mx-auto w-full flex justify-center items-center md:mt-3">
           <Button className="uppercase font-bold rounded-full mt-7">
             Sol Balance - {balance ? balance / 10 ** solToken.decimal : "-"}
           </Button>
         </div>
       ) : (
-        <div className="mx-auto w-full flex justify-center items-center mt-3">
+        <div className="mx-auto w-full flex justify-center items-center md:mt-3">
           <Button
             className="uppercase font-bold rounded-full "
             onClick={async () => await refetch()}
