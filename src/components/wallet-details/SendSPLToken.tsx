@@ -25,10 +25,12 @@ export const SendSPLToken = ({
   open,
   onClose,
   tokenPrice,
+  refresh,
 }: {
   sendSPLTokenDetails: TypeSelectedToken;
   open: boolean;
   onClose: () => void;
+  refresh: () => void;
   tokenPrice: TokenPrice;
 }) => {
   const info = sendSPLTokenDetails.walletTokenDetails.account.data.parsed.info;
@@ -42,6 +44,7 @@ export const SendSPLToken = ({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);
+          refresh();
         } else {
           toast.success(res.message || "Something went wrong");
         }

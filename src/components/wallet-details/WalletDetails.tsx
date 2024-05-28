@@ -48,6 +48,14 @@ export const WalletDetails = ({
       </div>
     );
   }
+  const refresh = async () => {
+    try {
+      await refetch();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   if (data) {
     const accounts = data.accounts;
     const tokenPrice = data.tokenPrice;
@@ -55,15 +63,7 @@ export const WalletDetails = ({
     return (
       <div>
         <div className="flex justify-end mr-4 mt-4">
-          <button
-            onClick={async () => {
-              try {
-                await refetch();
-              } catch (e) {
-                console.error(e);
-              }
-            }}
-          >
+          <button onClick={refresh}>
             <RotateCw
               className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`}
             />
@@ -95,6 +95,7 @@ export const WalletDetails = ({
         ))}
         {sendSPLTokenDetails && (
           <SendSPLToken
+            refresh={refresh}
             sendSPLTokenDetails={sendSPLTokenDetails}
             open={Boolean(sendSPLTokenDetails)}
             tokenPrice={tokenPrice}
@@ -104,6 +105,7 @@ export const WalletDetails = ({
           />
         )}
         <SendSol
+          refresh={refresh}
           open={sendSol.show}
           maxAmount={`${sendSol.amount}`}
           tokenPrice={tokenPrice}

@@ -88,7 +88,10 @@ export const WalletSPLTokenDetails = ({
         {showDetails && (
           <div className="p-4">
             <div className="text-center">
-              <p className="text-lg mb-3">{tokenDetails.symbol}</p>
+              <p className="text-lg mb-3">
+                {tokenDetails.symbol} $
+                {tokenPrice[tokenDetails.address]?.value.toFixed(2)}
+              </p>
               <div className="bg-secondary rounded-xl p-5">
                 <p className="text-2xl">
                   {info.tokenAmount.uiAmountString} {tokenDetails.symbol}

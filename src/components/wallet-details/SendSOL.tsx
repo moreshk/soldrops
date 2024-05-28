@@ -25,10 +25,12 @@ export const SendSol = ({
   onClose,
   maxAmount,
   tokenPrice,
+  refresh,
 }: {
   open: boolean;
   maxAmount: string;
   onClose: () => void;
+  refresh: () => void;
   tokenPrice: TokenPrice;
 }) => {
   const [sendDetails, setSendDetails] = useState<
@@ -41,6 +43,7 @@ export const SendSol = ({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);
+          refresh();
         } else {
           toast.success(res.message || "Something went wrong");
         }
