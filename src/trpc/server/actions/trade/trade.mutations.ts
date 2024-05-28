@@ -23,8 +23,7 @@ import { createTransferInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { getFeeAddress } from "@/utils/getFeeAddress";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 import { server } from "@/trpc/server/api";
-
-export const connection = new Connection(env.HELIUS_RPC_URL);
+import { connection } from "@/utils/connection";
 
 export const tradeToken = async (
   amountQuoteUrl: string,
