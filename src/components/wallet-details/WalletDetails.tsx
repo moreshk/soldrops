@@ -9,6 +9,7 @@ import { useState } from "react";
 import { SendSPLToken } from "./SendSPLToken";
 import { SendSol } from "./SendSOL";
 import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { TotalWalletBalance } from "./TotalWalletBalance";
 
 export type TypeWalletTokenDetails = {
   pubkey: PublicKey;
@@ -50,8 +51,7 @@ export const WalletDetails = ({
   if (data) {
     const accounts = data.accounts;
     const tokenPrice = data.tokenPrice;
-    const solBalance = data.balance;
-
+    const solBalance = data.solBalance;
     return (
       <div>
         <div className="flex justify-end mr-4 mt-4">
@@ -69,6 +69,12 @@ export const WalletDetails = ({
             />
           </button>
         </div>
+        <TotalWalletBalance
+          accounts={accounts as TypeWalletTokenDetails[]}
+          solBalance={solBalance}
+          tokenPrice={tokenPrice}
+          tokens={tokens}
+        />
         <div>
           <WalletSOLDetails
             amount={solBalance}

@@ -50,7 +50,7 @@ export const WalletSOLDetails = ({
                 <div className="text-sm opacity-60 flex gap-2 items-center">
                   {amount.toFixed(5)} {solToken.symbol}
                 </div>
-                {valueChange < 0 && isAmountLoaded && (
+                {/* {valueChange < 0 && isAmountLoaded && (
                   <p className={`text-sm text-rose-600`}>
                     -${(valueChange * -1 * +amount).toFixed(2)}
                   </p>
@@ -59,7 +59,7 @@ export const WalletSOLDetails = ({
                   <p className={`text-sm text-green-600`}>
                     +${(valueChange * +amount).toFixed(2)}
                   </p>
-                )}
+                )} */}
               </div>
             </div>
           </div>

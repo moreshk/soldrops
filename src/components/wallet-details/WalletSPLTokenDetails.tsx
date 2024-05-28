@@ -37,8 +37,7 @@ export const WalletSPLTokenDetails = ({
         tokenPrice[tokenDetails.address].value
       : 0;
     const valueChange = isAmountLoaded
-      ? +info.tokenAmount.uiAmountString *
-        tokenPrice[tokenDetails.address].priceChange24h
+      ? tokenPrice[tokenDetails.address].priceChange24h
       : 0;
 
     return (
@@ -65,7 +64,7 @@ export const WalletSPLTokenDetails = ({
                   <div className="text-sm opacity-60">
                     {info.tokenAmount.uiAmountString} {tokenDetails.symbol}
                   </div>
-                  {valueChange < 0 && isAmountLoaded && (
+                  {/* {valueChange < 0 && isAmountLoaded && (
                     <p className={`text-sm text-rose-600`}>
                       -$
                       {(
@@ -80,7 +79,7 @@ export const WalletSPLTokenDetails = ({
                       +$
                       {valueChange.toFixed(2)}
                     </p>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

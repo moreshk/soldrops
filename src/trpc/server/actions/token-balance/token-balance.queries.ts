@@ -58,7 +58,7 @@ export const getAllTokensBalance = async () => {
         return address;
       })
       .join(",");
-    const balance =
+    const solBalance =
       (await connection.getBalance(
         new PublicKey(sessionClaims.walletAddress as string)
       )) /
@@ -84,7 +84,7 @@ export const getAllTokensBalance = async () => {
       success: boolean;
     };
 
-    return { accounts, tokenPrice: data, balance };
+    return { accounts, tokenPrice: data, solBalance };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
