@@ -14,7 +14,7 @@ export const AuthButton = ({ fallbackUrl }: { fallbackUrl?: string }) => {
           signUpForceRedirectUrl={fallbackUrl}
         >
           <Button size="lg" className="w-full rounded-2xl">
-            Login
+            Sign In
           </Button>
         </SignInButton>
       </div>
