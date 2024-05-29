@@ -20,7 +20,7 @@ export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
 
   useEffect(() => {
     if (data?.balance && !isDeposited) {
-      setIsDeposited(balance + 0.2);
+      setIsDeposited(balance + 0.001);
     }
   }, [balance, data, isDeposited]);
 
