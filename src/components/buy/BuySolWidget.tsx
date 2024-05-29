@@ -13,7 +13,7 @@ export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
   const [isDeposited, setIsDeposited] = useState<number | undefined>();
   const [showBuy, setShowBuy] = useState<boolean>(true);
   const { data } = trpc.tokenBalance.getSolTokenBalance.useQuery(undefined, {
-    refetchInterval: 10000,
+    refetchInterval: 5000,
   });
 
   const balance = data?.balance ? data.balance / 10 ** solToken.decimal : 0;
