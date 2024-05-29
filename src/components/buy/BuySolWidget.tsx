@@ -26,7 +26,7 @@ export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
 
   useEffect(() => {
     if (balance && isDeposited) {
-      if (balance > isDeposited) {
+      if (balance >= isDeposited) {
         setShowBuy(false);
       }
     }
