@@ -118,10 +118,13 @@ export const TradConfirmationModal = ({
               <div className="border-b" />
               <div className="py-1 text-center font-medium text-xl uppercase">
                 <p>
-                  you&apos;re spending <span>{amountInput}</span>
+                  you&apos;re spending{" "}
+                  <span className="text-purple-500 font-semibold">
+                    ${amountInput}
+                  </span>
                 </p>
                 <p>
-                  Which Equials{" "}
+                  Which Equals{" "}
                   <span className="text-purple-500 font-semibold">
                     {(+sendAmount).toFixed(4)} {sendToken.symbol}
                   </span>

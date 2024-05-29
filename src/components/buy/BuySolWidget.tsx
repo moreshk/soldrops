@@ -11,6 +11,7 @@ import { BuySuccess } from "./BuySuccess";
 
 export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
   const [isDeposited, setIsDeposited] = useState<number | undefined>();
+  const [balanceChange, setBalanceChange] = useState<number | undefined>();
   const [showBuy, setShowBuy] = useState<boolean>(true);
   const { data } = trpc.tokenBalance.getSolTokenBalance.useQuery(undefined, {
     refetchInterval: 5000,
@@ -27,6 +28,8 @@ export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
   useEffect(() => {
     if (balance && isDeposited) {
       if (balance >= isDeposited) {
+        const tokenDifference = balance - isDeposited - 0.001;
+        setBalanceChange(tokenDifference);
         setShowBuy(false);
       }
     }
@@ -72,5 +75,7 @@ export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
       </div>
     );
   }
-  return <BuySuccess balance={`${balance.toFixed(4)}`} widget={widget} />;
+  return (
+    <BuySuccess balance={`${balanceChange?.toFixed(4)}`} widget={widget} />
+  );
 };
