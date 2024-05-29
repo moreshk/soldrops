@@ -28,7 +28,8 @@ export const BuySolWidget = ({ widget }: { widget: CompleteWidget }) => {
   useEffect(() => {
     if (balance && isDeposited) {
       if (balance >= isDeposited) {
-        const tokenDifference = balance - isDeposited - 0.001;
+        console.log(balance, isDeposited);
+        const tokenDifference = balance - (isDeposited - 0.001);
         setBalanceChange(tokenDifference);
         setShowBuy(false);
       }
