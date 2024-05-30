@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { CompleteCampaign } from "@/lib/db/schema/campaign";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { format } from "date-fns";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
+import { CompleteCampaign } from "@/trpc/server/actions/campaign/campaign.types";
 
 export default function CampaignList({
   campaign,

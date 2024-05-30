@@ -8,7 +8,6 @@ import { AlignRight } from "lucide-react";
 import { defaultLinks } from "@/config/nav";
 import { NovuNotification } from "@/lib/novu/NovuNotification";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

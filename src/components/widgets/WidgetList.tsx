@@ -1,13 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { CompleteWidget } from "@/lib/db/schema/widgets";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import WidgetModal from "./WidgetModal";
-import { CompleteToken } from "@/lib/db/schema/tokens";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
-import { Button } from "../ui/button";
-import { Check, Copy } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
+import { Check, Copy, ExternalLink } from "lucide-react";
 import { useState } from "react";
+import { CompleteWidget } from "@/trpc/server/actions/widgets/widgets.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { addressShortener } from "@/utils/addressShortener";
 
 export default function WidgetList({
   widgets,
@@ -59,31 +59,55 @@ const Widget = ({
             </div>
           </div>
         </div>
-        <div>Fee wallet {widget.feeWalletAddress}</div>
-        <div>Commissions {widget.feePercentage}%</div>
-        <div className="flex gap-3 items-center  mt-2">
-          <div className="border rounded-xl p-2">
-            {process.env.NEXT_PUBLIC_URL}/embed/trade/{widget.id}
+        {widget.website && (
+          <div className="mt-2">website - {widget.website}</div>
+        )}
+        <div className="mt-2">Fee wallet {widget.feeWalletAddress}</div>
+        <div className="mt-2">Commissions {widget.feePercentage}%</div>
+        <div className="p-3 mt-4 border border-dashed rounded-2xl">
+          <div>Embeddings Code</div>
+          <div className="flex gap-3 items-center  mt-2">
+            <div className="border rounded-xl p-2">
+              {`<iframe src="${process.env.NEXT_PUBLIC_URL}/embed/trade/${widget.id}" width="100%" height="600px" style="border:none;"></iframe>`}
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${process.env.NEXT_PUBLIC_URL}/embed/trade/${widget.id}`
+                );
+                setCopied(true);
+                setTimeout(() => {
+                  setCopied(false);
+                }, 1000);
+              }}
+              className="flex-shrink-0"
+            >
+              {copied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
+            </Button>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => {
-              navigator.clipboard.writeText(
-                `${process.env.NEXT_PUBLIC_URL}/embed/trade/${widget.id}`
-              );
-              setCopied(true);
-              setTimeout(() => {
-                setCopied(false);
-              }, 1000);
-            }}
-          >
-            {copied ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Copy className="w-4 h-4" />
-            )}
-          </Button>
+        </div>
+        <div className="p-3 mt-4 border border-dashed rounded-2xl">
+          <div>Link</div>
+          <div className="flex gap-3 items-center  mt-2">
+            <div className="border rounded-xl p-2">
+              {process.env.NEXT_PUBLIC_URL}/embed/trade/{widget.id}
+            </div>
+            <a
+              target="_blank"
+              href={`${process.env.NEXT_PUBLIC_URL}/embed/trade/${widget.id}`}
+              className={`${buttonVariants({
+                variant: "outline",
+              })} flex-shrink-0`}
+            >
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
         </div>
       </div>
       <WidgetModal widget={widget} tokens={tokens} />

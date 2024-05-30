@@ -1,6 +1,6 @@
 import EditCampaign from "@/components/campaign/form/EditCampaign";
 import JoinCampaign from "@/components/join-campaign/JoinCampaign";
-import { api } from "@/lib/trpc/api";
+import { server } from "@/trpc/server/api";
 import { notFound } from "next/navigation";
 
 const Page = async ({
@@ -8,7 +8,7 @@ const Page = async ({
 }: {
   params: { campaignId: string };
 }) => {
-  const { whiteList } = await api.whitelist.getWhiteListCampaignById.query({
+  const { whiteList } = await server.whitelist.getWhiteListCampaignById.query({
     id: campaignId,
   });
   if (!whiteList) return notFound();

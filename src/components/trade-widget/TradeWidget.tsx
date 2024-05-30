@@ -1,24 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { CompleteWidget } from "@/lib/db/schema/widgets";
 import { useTradeStoreSelectors } from "@/store/trade-store";
 import { ArrowUpDown, ExternalLink, Wallet } from "lucide-react";
-import { AuthLoginSignup } from "../auth/AuthLoginSignup";
-import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 import { SelectToken } from "./SelectToken";
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { useDebouncedCallback } from "use-debounce";
 import { useEffect, useState } from "react";
 import { IsFetchingEnum } from "@/store/store-types";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { TradConfirmationModal } from "./TradConfirmationModal";
-import { solToken } from "@/lib/tokens/utils/defaultTokens";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 import OnBoardingModal from "@/components/onboarding-flow/OnBoardingModal";
 import { InSufficientBalanceTooltip } from "./InSufficientBalanceTooltip";
 import { DefaultAmountButton } from "./DefaultAmountButton";
+import { CompleteWidget } from "@/trpc/server/actions/widgets/widgets.type";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { useUser } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { AuthButton } from "../auth/AuthButton";
 
 const TradeWidget = ({
   widget,
@@ -27,9 +27,10 @@ const TradeWidget = ({
   widget: CompleteWidget;
   tokens: CompleteToken[];
 }) => {
+  const { user, isSignedIn } = useUser();
+  const walletAddress = user?.publicMetadata.walletAddress as string;
   const [confirmationModal, setConfirmationModal] = useState(false);
   window.trpc = trpc.useUtils().client;
-  const { status, data } = useSession();
   const amountInput = useTradeStoreSelectors.use.amountInput();
   const setLoggedIn = useTradeStoreSelectors.use.setLoggedIn();
   const sendBalance = useTradeStoreSelectors.use.sendBalance();
@@ -57,33 +58,26 @@ const TradeWidget = ({
   const insufficientValue = +sendBalanceInUSDC <= +amountInput;
 
   useEffect(() => {
-    setReceiveToken(widget.token);
-    const sol = tokens.find((token) => token.address === solToken.address);
-    if (sol) setSendToken(sol);
-  }, []);
+    if (isSignedIn) setLoggedIn(true);
+  }, [isSignedIn]);
 
   useEffect(() => {
-    if (status === "authenticated") setLoggedIn(status === "authenticated");
-  }, [status]);
-
-  useEffect(() => {
-    if (status === "authenticated") getBalance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+    if (isSignedIn) getBalance();
+  }, [isSignedIn]);
 
   return (
     <div className="flex flex-col justify-center items-center w-full">
       <div className="border p-4 rounded-2xl w-full space-y-4 bg-primary-foreground relative">
         <div className="space-y-2">
           <div className="flex mr-3 justify-between items-center ">
-            <p>Enter Amount</p>
-            {data?.user.walletAddress && (
+            <p>Buy Amount</p>
+            {walletAddress && (
               <a
                 target="_blank"
-                href={`https://solscan.io/account/${data?.user.walletAddress}#portfolio`}
+                href={`https://solscan.io/account/${walletAddress}#portfolio`}
                 className="text-xs underline flex items-center gap-2"
               >
-                Account {addressShortener(data.user.walletAddress)}
+                Account {addressShortener(walletAddress)}
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}
@@ -103,9 +97,21 @@ const TradeWidget = ({
             />
           </div>
           <div className="flex items-center gap-3 justify-end">
-            <DefaultAmountButton amount={50} balance={+sendBalanceInUSDC} />
-            <DefaultAmountButton amount={100} balance={+sendBalanceInUSDC} />
-            <DefaultAmountButton amount={200} balance={+sendBalanceInUSDC} />
+            <DefaultAmountButton
+              amount={50}
+              balance={+sendBalanceInUSDC}
+              buyUrl={`/embed/buy/${widget.id}`}
+            />
+            <DefaultAmountButton
+              amount={100}
+              balance={+sendBalanceInUSDC}
+              buyUrl={`/embed/buy/${widget.id}`}
+            />
+            <DefaultAmountButton
+              amount={200}
+              balance={+sendBalanceInUSDC}
+              buyUrl={`/embed/buy/${widget.id}`}
+            />
             {inSufficientHalfValue ? (
               <InSufficientBalanceTooltip
                 name="Half"
@@ -115,8 +121,9 @@ const TradeWidget = ({
               <button
                 className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
                 onClick={() => {
-                  if (+sendBalanceInUSDC) {
+                  if (typeof +sendBalanceInUSDC === "number") {
                     setAmountInput(`${+sendBalanceInUSDC / 2 - 0.2}`);
+                    getQuoteAmount();
                   }
                 }}
               >
@@ -125,26 +132,27 @@ const TradeWidget = ({
             )}
             {inSufficientFullValue ? (
               <InSufficientBalanceTooltip
-                name="Full"
+                name="Max"
                 description="Insufficient Balance"
               />
             ) : (
               <button
                 className="text-sm hover:bg-secondary text-muted-foreground uppercase rounded-full py-0.5 px-2 border font-semibold"
                 onClick={() => {
-                  if (+sendBalanceInUSDC) {
+                  if (typeof +sendBalanceInUSDC === "number") {
                     setAmountInput(`${(+sendBalanceInUSDC - 0.2).toFixed(2)}`);
+                    getQuoteAmount();
                   }
                 }}
               >
-                Full
+                Max
               </button>
             )}
           </div>
         </div>
         <div>
           <div className="pb-2 flex justify-between items-center">
-            <p className="font-medium text-sm">You are paying</p>
+            <p className="font-medium text-sm">Paying with</p>
             {typeof +sendBalance === "number" && (
               <div className="flex items-center gap-2 text-xs text-muted-foreground mr-3">
                 <Wallet className="w-3 h-3" />
@@ -152,8 +160,10 @@ const TradeWidget = ({
                   <div className="w-16 h-4 bg-secondary rounded-lg " />
                 ) : (
                   <p>
-                    {+sendBalance} {sendToken.symbol}
-                    {+sendBalanceInUSDC ? ` | $${sendBalanceInUSDC} USD` : ""}
+                    {(+sendBalance).toFixed(4)} {sendToken.symbol}
+                    {typeof +sendBalanceInUSDC === "number"
+                      ? ` | $${(+sendBalanceInUSDC).toFixed(2)}`
+                      : ""}
                   </p>
                 )}
               </div>
@@ -198,9 +208,9 @@ const TradeWidget = ({
                       <div className="w-16 h-4 bg-secondary rounded-lg " />
                     ) : (
                       <p>
-                        {+receiveBalance} {receiveToken.symbol}
-                        {+receiveBalanceInUSDC
-                          ? ` | $${receiveBalanceInUSDC} USD`
+                        {(+receiveBalance).toFixed(4)} {receiveToken.symbol}
+                        {typeof +receiveBalanceInUSDC === "number"
+                          ? ` | $${(+receiveBalanceInUSDC).toFixed(2)}`
                           : ""}
                       </p>
                     )}
@@ -228,9 +238,12 @@ const TradeWidget = ({
           </div>
         </div>
         <div>
-          {status === "unauthenticated" && <AuthLoginSignup />}
-          {status === "authenticated" && (
+          <SignedOut>
+            <AuthButton fallbackUrl={`/embed/trade/${widget.id}`} />
+          </SignedOut>
+          <SignedIn>
             <Button
+              variant="primary"
               onClick={() => {
                 const isSendNumber =
                   typeof +sendAmount === "number" && +sendAmount > 0;
@@ -260,10 +273,12 @@ const TradeWidget = ({
                 </>
               )}
             </Button>
-          )}
+          </SignedIn>
         </div>
       </div>
-      {status === "authenticated" && <OnBoardingModal />}
+      <SignedIn>
+        <OnBoardingModal buyUrl={`/embed/buy/${widget.id}`} />
+      </SignedIn>
       <TradConfirmationModal
         widgetId={widget.id}
         open={confirmationModal}

@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 import { Button, buttonVariants } from "../ui/button";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 
 export const SendTokenSuccess = ({
   sendAmount,
@@ -21,8 +21,8 @@ export const SendTokenSuccess = ({
         <Check className="w-7 h-7 text-green-500" />
       </div>
       <p className="text-2xl font-medium mt-5">Sent!</p>
-      <p className="text-muted-foreground mt-3">
-        {sendAmount} {symbol} was successfully send to{" "}
+      <p className="text-muted-foreground mt-3 text-center">
+        {sendAmount} {symbol} was successfully sent to{" "}
         {addressShortener(sentAddress)}
       </p>
       <a

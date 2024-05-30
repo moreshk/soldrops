@@ -1,7 +1,6 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { SendTokenSchemaType } from "@/lib/db/schema/tokens";
 import {
   Drawer,
   DrawerContent,
@@ -13,20 +12,26 @@ import { Button } from "../ui/button";
 import { useState } from "react";
 import { TypeSelectedToken } from "./WalletDetails";
 import { SendHorizontal, Loader2, ArrowLeft } from "lucide-react";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 import { SendTokenInputForm } from "./SendTokenInputForm";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
 import { SendTokenSuccess } from "./SendTokenSuccess";
+import { SendTokenSchemaType } from "@/trpc/server/actions/trade/trade.type";
+import { TokenPrice } from "@/trpc/server/actions/token-balance/token-balance.type";
 
 export const SendSPLToken = ({
   sendSPLTokenDetails,
   open,
   onClose,
+  tokenPrice,
+  refresh,
 }: {
   sendSPLTokenDetails: TypeSelectedToken;
   open: boolean;
   onClose: () => void;
+  refresh: () => void;
+  tokenPrice: TokenPrice;
 }) => {
   const info = sendSPLTokenDetails.walletTokenDetails.account.data.parsed.info;
   const [sendDetails, setSendDetails] = useState<
@@ -35,10 +40,11 @@ export const SendSPLToken = ({
   const [confirm, setConfirm] = useState(false);
   const [tx, setTx] = useState("");
   const { mutate: send, isLoading: isTokenSending } =
-    trpc.tradeRouter.sendSPLToken.useMutation({
+    trpc.trade.sendSPLToken.useMutation({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);
+          refresh();
         } else {
           toast.success(res.message || "Something went wrong");
         }
@@ -130,6 +136,10 @@ export const SendSPLToken = ({
               </div>
             ) : (
               <SendTokenInputForm
+                usdTokenValue={
+                  tokenPrice[sendSPLTokenDetails.tokenDetails.address].value ||
+                  0
+                }
                 sendDetails={sendDetails}
                 setSendDetails={(value: SendTokenSchemaType) => {
                   setSendDetails(value);

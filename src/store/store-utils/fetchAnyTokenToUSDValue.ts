@@ -1,5 +1,6 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
-import { stableUSDC } from "@/lib/tokens/utils/defaultTokens";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+
+import { stableUSDC } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 
 export const fetchAnyTokenToUSDValue = async (
@@ -9,7 +10,9 @@ export const fetchAnyTokenToUSDValue = async (
   if (+tokenAmount > 0 && stableUSDC.address !== token.address) {
     try {
       const amount = +tokenAmount * 10 ** token.decimal;
-      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${token.address}&outputMint=${stableUSDC.address}&amount=${amount}`;
+      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${
+        token.address
+      }&outputMint=${stableUSDC.address}&amount=${amount.toFixed(0)}`;
       const response = await fetch(url);
       const quoteResponse: QuoteResponse = await response.json();
       return {

@@ -1,11 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-
-import {
-  Widget,
-  NewWidgetParams,
-  insertWidgetParams,
-} from "@/lib/db/schema/widgets";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -18,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -37,9 +31,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { useState } from "react";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import {
+  NewWidgetParams,
+  Widget,
+  insertWidgetParams,
+} from "@/trpc/server/actions/widgets/widgets.type";
+import { solToken } from "@/utils/defaultTokens";
 
 const WidgetForm = ({
   widget,
@@ -57,9 +57,10 @@ const WidgetForm = ({
 
   const form = useForm<z.infer<typeof insertWidgetParams>>({
     resolver: zodResolver(insertWidgetParams),
-    defaultValues: widget ?? {
-      feeWalletAddress: "",
-      tokenId: "",
+    defaultValues: {
+      feeWalletAddress: widget?.feeWalletAddress ?? "",
+      tokenId: widget?.tokenId ?? "",
+      website: widget?.website ?? "",
     },
   });
 
@@ -135,7 +136,7 @@ const WidgetForm = ({
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
-                          className="w-full text-left justify-start"
+                          className="w-full text-left justify-start h-16"
                         >
                           {selectedToken ? (
                             <div className="flex gap-2 items-center flex-1">
@@ -162,41 +163,45 @@ const WidgetForm = ({
                           <CommandInput placeholder="Search framework..." />
                           <CommandEmpty>No token found.</CommandEmpty>
                           <CommandGroup>
-                            {tokens.map((token) => (
-                              <CommandItem
-                                key={token.id}
-                                value={token.id}
-                                className="w-full border rounded-lg my-2 flex items-center gap-1"
-                                onSelect={(currentValue) => {
-                                  onChange(
-                                    currentValue === value ? "" : currentValue
-                                  );
-                                  setOpen(false);
-                                }}
-                              >
-                                <div className="flex gap-2 items-center flex-1">
-                                  <img
-                                    src={token.imageUrl}
-                                    alt="log"
-                                    className="w-9 h-9 rounded-full"
-                                  />
-                                  <div>
-                                    <div>{token.symbol}</div>
-                                    <div className="text-xs opacity-60">
-                                      {addressShortener(token.address)}
+                            {tokens
+                              .filter(
+                                (token) => solToken.address !== token.address
+                              )
+                              .map((token) => (
+                                <CommandItem
+                                  key={token.id}
+                                  value={token.id}
+                                  className="w-full border rounded-lg my-2 flex items-center gap-1"
+                                  onSelect={() => {
+                                    onChange(
+                                      token.id === value ? "" : token.id
+                                    );
+                                    setOpen(false);
+                                  }}
+                                >
+                                  <div className="flex gap-2 items-center flex-1">
+                                    <img
+                                      src={token.imageUrl}
+                                      alt="log"
+                                      className="w-9 h-9 rounded-full"
+                                    />
+                                    <div>
+                                      <div>{token.symbol}</div>
+                                      <div className="text-xs opacity-60">
+                                        {addressShortener(token.address)}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-7 w-7 p-1",
-                                    value === token.id
-                                      ? "opacity-100 bg-secondary rounded-full"
-                                      : "opacity-0"
-                                  )}
-                                />
-                              </CommandItem>
-                            ))}
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-7 w-7 p-1",
+                                      value === token.id
+                                        ? "opacity-100 bg-secondary rounded-full"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
                           </CommandGroup>
                         </Command>
                       </PopoverContent>
@@ -207,6 +212,19 @@ const WidgetForm = ({
               </FormItem>
             );
           }}
+        />
+        <FormField
+          control={form.control}
+          name="website"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website URL</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
         <Button
           type="submit"

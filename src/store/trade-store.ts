@@ -1,8 +1,9 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+
 import { create } from "zustand";
 import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
-import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
+import { stableUSDC, solToken } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 import { IsFetchingEnum } from "./store-types";
 import { getSwapTokenBalance } from "./store-utils/getSwapTokenBalance";
@@ -33,6 +34,7 @@ export interface TradeStoreState {
   setLoggedIn: (value: boolean) => void;
   getQuoteTokenURL: () => string | undefined;
   getBalance: () => void;
+  reset: () => void;
 }
 
 export const useTradeStore = create<TradeStoreState>()((set, get) => ({
@@ -167,6 +169,17 @@ export const useTradeStore = create<TradeStoreState>()((set, get) => ({
     } else {
       getBalance();
     }
+  },
+  reset: () => {
+    const { getBalance } = get();
+    set(
+      produce((state: TradeStoreState) => {
+        state.receiveAmount = `0`;
+        state.sendAmount = `0`;
+        state.amountInput = "";
+      })
+    );
+    getBalance();
   },
   getQuoteTokenURL: () => {
     const { sendToken, receiveToken, amountInput, sendAmount } = get();

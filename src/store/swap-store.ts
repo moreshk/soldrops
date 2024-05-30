@@ -1,10 +1,10 @@
-import { CompleteToken } from "@/lib/db/schema/tokens";
 import { create } from "zustand";
 import { produce } from "immer";
 import { createSelectors } from "./create-selectors";
-import { stableUSDC, solToken } from "@/lib/tokens/utils/defaultTokens";
+import { stableUSDC, solToken } from "@/utils/defaultTokens";
 import { QuoteResponse } from "@jup-ag/api";
 import { InputFocusEnum, IsFetchingEnum } from "./store-types";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
 
 export interface SwapState {
   sendToken: CompleteToken;
@@ -75,6 +75,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
   setReceiveToken: (token: CompleteToken) =>
     set(
       produce((state: SwapState) => {
+        console.log(state);
         if (!(token.address === state.receiveToken.address)) {
           const tempReceiveToken = state.receiveToken;
           if (token.address === solToken.address) {
@@ -131,13 +132,17 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
             amount =
               parseFloat(receiveAmount) * Math.pow(10, receiveToken.decimal);
           }
-          const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}&platformFeeBps=100`;
+          const url = `https://quote-api.jup.ag/v6/quote?inputMint=${
+            inputMint?.address
+          }&outputMint=${outputMint?.address}&amount=${amount?.toFixed(
+            0
+          )}&platformFeeBps=100`;
           const response = await fetch(url);
           const quoteResponse = await response.json();
           const quotePrice =
             quoteResponse.outAmount / Math.pow(10, outputMint?.decimal!);
           const { ataTokenBalance, solBalance } =
-            await window.trpc.tokens.getSwapTokenBalance.query({
+            await window.trpc.tokenBalance.getSwapTokenBalance.query({
               id:
                 sendToken.address === solToken.address
                   ? receiveToken.address
@@ -207,7 +212,9 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
         outputMint = sendToken;
         amount = parseFloat(receiveAmount) * Math.pow(10, sendToken.decimal);
       }
-      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${inputMint?.address}&outputMint=${outputMint?.address}&amount=${amount}`;
+      const url = `https://quote-api.jup.ag/v6/quote?inputMint=${
+        inputMint?.address
+      }&outputMint=${outputMint?.address}&amount=${amount?.toFixed(0)}`;
       return url;
     }
   },
@@ -215,7 +222,7 @@ export const useSwapStore = create<SwapState>()((set, get) => ({
     try {
       const { sendToken, receiveToken } = get();
       const { ataTokenBalance, solBalance } =
-        await window.trpc.tokens.getSwapTokenBalance.query({
+        await window.trpc.tokenBalance.getSwapTokenBalance.query({
           id:
             sendToken.address === solToken.address
               ? receiveToken.address

@@ -3,9 +3,9 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2, X } from "lucide-react";
-import { trpc } from "@/lib/trpc/client";
+import { trpc } from "@/trpc/client/api";
 import { toast } from "sonner";
-import { addressShortener } from "@/lib/tokens/utils/addressShortener";
+import { addressShortener } from "@/utils/addressShortener";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useTradeStoreSelectors } from "@/store/trade-store";
 
 export const TradConfirmationModal = ({
@@ -27,16 +27,15 @@ export const TradConfirmationModal = ({
   widgetId: string;
 }) => {
   const [tx, setTx] = useState<string>("");
+  const reset = useTradeStoreSelectors.use.reset();
   const setAmountInput = useTradeStoreSelectors.use.setAmountInput();
-  const getBalance = useTradeStoreSelectors.use.getBalance();
 
   const { mutate: trade, isLoading: isTokenSwapping } =
-    trpc.tradeRouter.tradeToken.useMutation({
+    trpc.trade.tradeToken.useMutation({
       onSuccess: (res) => {
         if (res.signature) {
           setTx(res.signature);
           setAmountInput("");
-          getBalance();
         } else {
           toast.success(res.message || "Something went wrong");
         }
@@ -91,6 +90,7 @@ export const TradConfirmationModal = ({
                   onClick={() => {
                     setOpen(false);
                     setTx("");
+                    reset();
                   }}
                 >
                   Done
@@ -116,29 +116,27 @@ export const TradConfirmationModal = ({
                 </div>
               </AlertDialogHeader>
               <div className="border-b" />
-              <div className="py-1 text-center font-medium text-2xl">
+              <div className="py-1 text-center font-medium text-xl uppercase">
                 <p>
-                  {receiveAmount} {receiveToken.symbol}
+                  you&apos;re spending{" "}
+                  <span className="text-purple-500 font-semibold">
+                    ${amountInput}
+                  </span>
                 </p>
+                <p>
+                  Which Equals{" "}
+                  <span className="text-purple-500 font-semibold">
+                    {(+sendAmount).toFixed(4)} {sendToken.symbol}
+                  </span>
+                </p>
+                <p>
+                  To buy{" "}
+                  <span className="text-purple-500 font-semibold">
+                    {(+receiveAmount).toFixed(4)} {receiveToken.symbol}
+                  </span>
+                </p>{" "}
               </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">Swap Value</p>
-                  <p className="font-semibold text-sm">${amountInput}</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">You’re Paying</p>
-                  <p className="font-semibold text-sm">
-                    {sendAmount} {sendToken.symbol}
-                  </p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-muted-foreground text-sm">To Receive</p>
-                  <p className="font-semibold text-sm">
-                    {receiveAmount} {receiveToken.symbol}
-                  </p>
-                </div>
-              </div>
+
               <AlertDialogFooter>
                 <AlertDialogAction
                   disabled={isTokenSwapping}
@@ -153,17 +151,19 @@ export const TradConfirmationModal = ({
                       });
                     }
                   }}
-                  className="w-full rounded-2xl"
+                  className={`w-full  ${buttonVariants({
+                    variant: "primary",
+                  })}} rounded-2xl`}
                 >
                   {isTokenSwapping && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {isTokenSwapping ? "Buying..." : `Buy ${receiveToken.symbol}`}
+                  {isTokenSwapping ? "CONFIRMING..." : `CONFIRM PURCHASE`}
                 </AlertDialogAction>
               </AlertDialogFooter>
               <div className="flex justify-between items-center text-muted-foreground font-medium text-sm">
                 <p>Current {receiveToken.symbol} Balance</p>
-                <p>{receiveBalance}</p>
+                <p>{(+receiveBalance).toFixed(4)}</p>
               </div>
             </>
           )}

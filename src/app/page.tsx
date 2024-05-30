@@ -1,15 +1,27 @@
-import { AuthLoginSignup } from "@/components/auth/AuthLoginSignup";
-import { Redirect } from "@/components/auth/Redirect";
+"use client";
+import { AuthButton } from "@/components/auth/AuthButton";
+import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LandingPage() {
+  const { isSignedIn } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isSignedIn) {
+      router.push("/dashboard");
+    }
+  }, [isSignedIn, router]);
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-t from-pink-200 to-blue-600">
       <header className="px-4 lg:px-6 h-14 flex items-center">
         <Link href="/" className="flex gap-2 items-center">
           <Image width={40} height={40} src="/favicon-32x32.png" alt="logo" />
-          <h1 className="relative z-10 text-lg  bg-clip-text text-transparent bg-gradient-to-b from-pink-200 to-blue-600  text-center font-sans font-bold flex">
+          <h1 className="relative z-10 text-lg text-white text-center font-sans font-bold flex">
             SolDrops
           </h1>
         </Link>
@@ -20,16 +32,15 @@ export default function LandingPage() {
             <div className="flex flex-col justify-center items-center space-y-4">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                  Claim the latest and <br />
-                  greatest airdrops on Solana
+                  Make Memecoin <br />
+                  moves on Mobile
                 </h1>
               </div>
               <div className="flex flex-col gap-2">
-                <AuthLoginSignup showOauth />
+                <AuthButton />
               </div>
             </div>
           </div>
-          <Redirect />
         </section>
       </main>
     </div>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { CompleteToken } from "@/lib/db/schema/tokens";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import TokenListModal from "../tokens/TokenListModal";

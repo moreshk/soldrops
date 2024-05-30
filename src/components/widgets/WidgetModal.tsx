@@ -10,8 +10,8 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import WidgetForm from "./WidgetForm";
-import { Widget } from "@/lib/db/schema/widgets";
-import { CompleteToken } from "@/lib/db/schema/tokens";
+import { CompleteToken } from "@/trpc/server/actions/tokens/tokens.type";
+import { Widget } from "@/trpc/server/actions/widgets/widgets.type";
 
 export default function WidgetModal({
   widget,
@@ -25,6 +25,7 @@ export default function WidgetModal({
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
   const editing = !!widget?.id;
+
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
