@@ -1,21 +1,9 @@
 "use client";
 import { AuthButton } from "@/components/auth/AuthButton";
-import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function LandingPage() {
-  const { isSignedIn } = useUser();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isSignedIn) {
-      router.push("/dashboard");
-    }
-  }, [isSignedIn, router]);
-
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-t from-pink-200 to-blue-600">
       <header className="px-4 lg:px-6 h-14 flex items-center">
@@ -30,14 +18,24 @@ export default function LandingPage() {
         <section className="w-full py-6 sm:py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col justify-center items-center space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-2 w-full">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
                   Make Memecoin <br />
                   moves on Mobile
                 </h1>
-              </div>
-              <div className="flex flex-col gap-2">
-                <AuthButton />
+                <div className="w-full">
+                  <iframe
+                    style={{
+                      minHeight: "660px",
+                      height: "auto",
+                      maxWidth: "450px",
+                      width: "100%",
+                      borderRadius: "20px",
+                      margin: "auto",
+                    }}
+                    src="https://dropz.cc/e/wget_ok2xj9jyfgcoxk5hmraug"
+                  />
+                </div>
               </div>
             </div>
           </div>

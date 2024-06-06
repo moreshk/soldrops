@@ -64,19 +64,17 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <PHProvider>
-              <TrpcReactProvider cookies={cookies().toString()}>
-                <ConnectWalletProvider>
-                  <TooltipProvider delayDuration={0}>
-                    {children}
-                  </TooltipProvider>
-                  <PostHogPageView />
-                </ConnectWalletProvider>
-              </TrpcReactProvider>
-              <Toaster richColors />
-            </PHProvider>
-          </AuthProvider>
+          {/* <AuthProvider> */}
+          <PHProvider>
+            <TrpcReactProvider cookies={cookies().toString()}>
+              <ConnectWalletProvider>
+                <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+                <PostHogPageView />
+              </ConnectWalletProvider>
+            </TrpcReactProvider>
+            <Toaster richColors />
+          </PHProvider>
+          {/* </AuthProvider> */}
         </ThemeProvider>
       </body>
     </html>
