@@ -28,7 +28,7 @@ export default function LandingPage() {
                     style={{
                       minHeight: "660px",
                       height: "auto",
-                      maxWidth: "450px",
+                      maxWidth: "550px",
                       width: "100%",
                       borderRadius: "20px",
                       margin: "auto",
