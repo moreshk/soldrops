@@ -26,9 +26,9 @@ export default function LandingPage() {
                 <div className="w-full">
                   <iframe
                     style={{
-                      minHeight: "660px",
+                      minHeight: "687px",
                       height: "auto",
-                      maxWidth: "550px",
+                      maxWidth: "512px",
                       width: "100%",
                       borderRadius: "20px",
                       margin: "auto",
