@@ -33,7 +33,7 @@ export default function LandingPage() {
                       borderRadius: "20px",
                       margin: "auto",
                     }}
-                    src="https://dropz.cc/e/wget_ok2xj9jyfgcoxk5hmraug"
+                    src="https://dropz.cc/e/wget_c9rmdhwa7n64dfe752yxs"
                   />
                 </div>
               </div>
