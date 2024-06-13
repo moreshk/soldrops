@@ -23,19 +23,7 @@ export default function LandingPage() {
                   Make Memecoin <br />
                   moves on Mobile
                 </h1>
-                <div className="w-full">
-                  <iframe
-                    style={{
-                      minHeight: "687px",
-                      height: "auto",
-                      maxWidth: "512px",
-                      width: "100%",
-                      borderRadius: "20px",
-                      margin: "auto",
-                    }}
-                    src="https://dropz.cc/e/wget_c9rmdhwa7n64dfe752yxs"
-                  />
-                </div>
+                <div className="w-full" id="dropz-root"></div>
               </div>
             </div>
           </div>

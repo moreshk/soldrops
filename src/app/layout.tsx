@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import TrpcReactProvider from "@/trpc/client/TRPCProvider";
+import Script from "next/script";
 
 const PostHogPageView = dynamic(() => import("@/lib/posthog/PostHogPageView"), {
   ssr: false,
@@ -76,6 +77,7 @@ export default async function RootLayout({
           </PHProvider>
           {/* </AuthProvider> */}
         </ThemeProvider>
+        <Script src="https://widget.dropz.cc/dropz-widget.js" />
       </body>
     </html>
   );
