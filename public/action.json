@@ -1,0 +1,8 @@
+{
+  "rules": [
+    {
+      "pathPattern": "https://dropz.cc/e/*",
+      "apiPath": "https://api.dropz.cc/blink/details/*"
+    }
+  ]
+}
